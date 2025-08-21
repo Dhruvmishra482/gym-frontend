@@ -1,71 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { User, Lock, Dumbbell, Shield, Eye, EyeOff, Zap, Crown, Flame } from 'lucide-react';
 
-export default function GangsterGymForm() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function LoginForm({ formData, errors, showPassword, isSubmitting, focusedField, 
+  handleInputChange, handleSubmit, togglePassword, setFocusedField }) {
+  
   const [isLoaded, setIsLoaded] = useState(false);
-  const [focusedField, setFocusedField] = useState('');
 
-  // Trigger entrance animation
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.email) {
-      newErrors.email = 'Email is required, boss!';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Invalid email format, check again!';
-    }
-    
-    if (!formData.password) {
-      newErrors.password = 'Password required for access!';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password too weak, minimum 6 characters!';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setIsSubmitting(true);
-    
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      setIsSubmitting(false);
-      setFormData({ email: '', password: '' });
-      alert('Welcome to the Iron Throne, Boss! 💪');
-    }, 3000);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-red-900 flex items-center justify-center p-4 relative overflow-hidden">
