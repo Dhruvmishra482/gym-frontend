@@ -6,6 +6,10 @@ import { ToastContainer } from "react-toastify";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/AuthStore";
 import "react-toastify/dist/ReactToastify.css";
+import SignUpForm from "./components/Auth/SignUpForm";
+import SignUpPage from "./components/pages/SignUpPage";
+import AddMemberPage from "./components/pages/AddMemberPage";
+import EditMemberForm from "./components/Member/EditMemberForm";
 
 export default function App() {
   const { checkAuth, loading } = useAuthStore();
@@ -22,7 +26,7 @@ export default function App() {
     <>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<EditMemberForm />} />
 
         {/* ProtectedRoute for dashboard */}
         <Route
