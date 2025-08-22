@@ -1,5 +1,3 @@
-
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/pages/LoginPage";
 import DashboardPage from "./components/pages/DashboardPage";
