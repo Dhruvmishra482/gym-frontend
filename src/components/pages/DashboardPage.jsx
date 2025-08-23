@@ -7,7 +7,7 @@ const DashboardPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  // Sample member data with photoUrl
+  
   const [membersData] = useState([
     {
       id: 1,

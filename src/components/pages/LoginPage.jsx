@@ -35,20 +35,25 @@ export default function LoginPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    try {
-      const success = await login(formData.email, formData.password);
-      if (success) {
-        toast.success("Login successful!");
-        navigate("/dashboard");
-      }
-    } catch (err) {
-      // Catch block optional, error toast already handled in store
-      console.log("Login error:", err);
+  try {
+    const success = await login(formData.email, formData.password);
+
+    if (success) {
+      toast.success("Login successful!");
+      navigate("/dashboard");
+    } else {
+      // 
+      toast.error("Invalid email or password!");
     }
-  };
+  } catch (err) {
+    console.log("Login error:", err);
+    toast.error("Something went wrong!");
+  }
+};
+
 
   return (
     <LoginForm

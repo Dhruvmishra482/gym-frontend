@@ -1,13 +1,35 @@
-
 import axiosInstance from "../../axiosConfig";
+
+export const signUpService = async (userData) => {
+  try {
+    // Clean the data
+    const cleanedData = {
+      firstName: userData.firstName.trim(),
+      lastName: userData.lastName.trim(),
+      mobileNumber: userData.mobileNumber.trim(),
+      email: userData.email.trim().toLowerCase(),
+      password: userData.password,
+      confirmPassword: userData.confirmPassword,  
+    };
+    
+    const res = await axiosInstance.post("/auth/signup", cleanedData, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Full error:", err.response?.data);
+    throw new Error(err.response?.data?.message || "Signup failed");
+  }
+};
+
 
 export const loginService = async (email, password) => {
   try {
     const res = await axiosInstance.post("/auth/login", { email, password });
-    return res.data; // { success, message, user }
+    return res.data;
   } catch (err) {
     const message = err.response?.data?.message || "Login failed!";
-    throw new Error(message); // 👈 Error object
+    throw new Error(message);
   }
 }
 

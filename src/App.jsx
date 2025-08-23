@@ -1,34 +1,45 @@
+// src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import { useAuthStore } from "./store/AuthStore";
+
 import LoginPage from "./components/pages/LoginPage";
+import SignUpPage from "./components/pages/SignUpPage";
 import DashboardPage from "./components/pages/DashboardPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
-import { ToastContainer } from "react-toastify";
-import { useEffect } from "react";
-import { useAuthStore } from "./store/AuthStore";
-import "react-toastify/dist/ReactToastify.css";
-import SignUpForm from "./components/Auth/SignUpForm";
-import SignUpPage from "./components/pages/SignUpPage";
-import AddMemberPage from "./components/pages/AddMemberPage";
-import EditMemberForm from "./components/Member/EditMemberForm";
+// import AddMemberPage from "./components/pages/AddMemberPage";
+// import EditMemberForm from "./components/Member/EditMemberForm";
 
 export default function App() {
-  const { checkAuth, loading } = useAuthStore();
+  const { checkAuth, loading, user } = useAuthStore();
 
-  // App load hote hi /auth/me call kare
+  // Check user authentication on app mount
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  // Loading state while checking authentication
+  // Show loader while checking auth
   if (loading) return <div>Loading...</div>;
 
   return (
     <>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<EditMemberForm />} />
+        {/* Default route */}
+        <Route
+          path="/"
+          element={
+            user ? <Navigate to="/dashboard" replace /> : <Navigate to="/signup" replace />
+          }
+        />
 
-        {/* ProtectedRoute for dashboard */}
+        {/* Auth routes */}
+        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+        <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUpPage />} />
+
+        {/* Protected routes */}
         <Route
           path="/dashboard"
           element={
@@ -37,9 +48,25 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        {/* <Route
+          path="/add-member"
+          element={
+            <ProtectedRoute allowedRoles={["owner"]}>
+              <AddMemberPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-member/:id"
+          element={
+            <ProtectedRoute allowedRoles={["owner"]}>
+              <EditMemberForm />
+            </ProtectedRoute>
+          }
+        /> */}
 
-        {/* Fallback route */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Catch all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       {/* Toast notifications */}
