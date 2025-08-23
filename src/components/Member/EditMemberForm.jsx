@@ -1,21 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   User,
   Calendar,
   DollarSign,
-  Edit3,
-  Save,
-  Search,
-  Zap,
-  Target,
-  Flame,
-  Shield,
+  Clock,
+  CreditCard,
+  CheckCircle,
 } from "lucide-react";
 
 const EditMemberForm = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [editData, setEditData] = useState({
+  const [formData, setFormData] = useState({
     age: "",
     planDuration: "",
     feesAmount: "",
@@ -23,388 +17,282 @@ const EditMemberForm = () => {
     lastPaidOn: "",
     paymentStatus: "",
   });
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [showParticles, setShowParticles] = useState(true);
 
-  // Mock member data
-  const mockMembers = [
-    {
-      _id: "1",
-      name: "Alex Thunder",
-      phoneNo: "+91-9876543210",
-      email: "alex.thunder@gym.com",
-      age: 25,
-      gender: "Male",
-      planDuration: "6 month",
-      feesAmount: 15000,
-      nextDueDate: "2025-12-01",
-      lastPaidOn: "2025-06-01",
-      paymentStatus: "Paid",
-      address: "123 Muscle Street, Beast City",
-    },
-    {
-      _id: "2",
-      name: "Sarah Storm",
-      phoneNo: "+91-9876543211",
-      email: "sarah.storm@gym.com",
-      age: 28,
-      gender: "Female",
-      planDuration: "1 year",
-      feesAmount: 25000,
-      nextDueDate: "2026-01-15",
-      lastPaidOn: "2025-01-15",
-      paymentStatus: "Paid",
-      address: "456 Power Avenue, Strength Valley",
-    },
-  ];
+  const [particles, setParticles] = useState([]);
 
-  const allowedToUpdate = [
-    "age",
-    "planDuration",
-    "feesAmount",
-    "nextDueDate",
-    "lastPaidOn",
-    "paymentStatus",
-  ];
+  useEffect(() => {
+    // Generate random particles for background animation
+    const newParticles = Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 4,
+      duration: 3 + Math.random() * 2,
+    }));
+    setParticles(newParticles);
+  }, []);
 
-  const handleSearch = () => {
-    const member = mockMembers.find(
-      (m) =>
-        m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.phoneNo.includes(searchQuery)
-    );
-
-    if (member) {
-      setSelectedMember(member);
-      // Initialize edit data with current values
-      const initData = {};
-      allowedToUpdate.forEach((field) => {
-        if (field === "nextDueDate" || field === "lastPaidOn") {
-          initData[field] = member[field]
-            ? new Date(member[field]).toISOString().split("T")[0]
-            : "";
-        } else {
-          initData[field] = member[field] || "";
-        }
-      });
-      setEditData(initData);
-    } else {
-      alert("Member not found!");
-    }
-  };
-
-  const handleChange = (field, value) => {
-    setEditData((prev) => ({
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      [name]: value,
     }));
   };
 
-  const handleUpdate = () => {
-    setIsUpdating(true);
-
-    setTimeout(() => {
-      console.log("Updated data:", editData);
-      alert("Member updated successfully!");
-      setIsUpdating(false);
-    }, 2500);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Data:", formData);
+    // Add your form submission logic here
   };
 
-  // Generate floating particles
-  const particles = Array.from({ length: 50 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 4 + 1,
-    speed: Math.random() * 3 + 1,
-    color: ["red", "orange", "yellow", "purple"][Math.floor(Math.random() * 4)],
-  }));
+  const FloatingParticles = () => (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      {particles.map((particle) => (
+        <div
+          key={particle.id}
+          className="absolute w-2 h-2 bg-gradient-to-r from-pink-400 to-orange-400 rounded-full opacity-30"
+          style={{
+            left: `${particle.left}%`,
+            top: `${particle.top}%`,
+            animation: `float ${particle.duration}s ease-in-out infinite ${particle.delay}s`,
+          }}
+        />
+      ))}
+      <style jsx>{`
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0px) rotate(0deg) scale(1);
+          }
+          50% {
+            transform: translateY(-30px) rotate(180deg) scale(1.2);
+          }
+        }
+      `}</style>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-black overflow-hidden relative perspective-1000">
-      {/* Dynamic 3D Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-black to-red-900">
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-900/20 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-purple-900/20 to-transparent"></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+      <FloatingParticles />
 
-      {/* Animated Geometric Shapes */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-red-500 to-orange-500 transform rotate-45 opacity-20 animate-spin duration-20000"></div>
-        <div className="absolute top-40 right-32 w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 transform rotate-12 opacity-30 animate-pulse"></div>
-        <div className="absolute bottom-32 left-40 w-40 h-40 bg-gradient-to-r from-blue-500 to-cyan-500 transform -rotate-12 opacity-15 animate-bounce duration-3000"></div>
-        <div className="absolute bottom-20 right-20 w-28 h-28 bg-gradient-to-r from-yellow-500 to-red-500 transform rotate-45 opacity-25 animate-ping duration-4000"></div>
-      </div>
+      {/* Animated geometric shapes */}
+      <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-pink-500 to-orange-500 opacity-20 transform rotate-45 animate-spin-slow"></div>
+      <div className="absolute bottom-20 right-20 w-24 h-24 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-20 transform rotate-12 animate-bounce"></div>
+      <div className="absolute top-1/2 left-5 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 opacity-30 transform -rotate-12 animate-pulse"></div>
 
-      {/* Floating Particles */}
-      {showParticles && (
-        <div className="absolute inset-0 pointer-events-none">
-          {particles.map((particle) => (
+      <div className="relative z-10 flex items-center justify-center min-h-screen p-6">
+        <div className="w-full max-w-2xl">
+          {/* Header */}
+          <div className="text-center mb-12 transform hover:scale-105 transition-transform duration-500">
+            <h1 className="text-6xl font-bold bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent mb-4 animate-pulse">
+              WARRIOR
+            </h1>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+              EVOLUTION
+            </h2>
+            <p className="text-gray-300 mt-4 text-lg">
+              Transform • Upgrade • Dominate
+            </p>
+          </div>
+
+          {/* 3D Form Container */}
+          <div className="relative">
             <div
-              key={particle.id}
-              className={`absolute rounded-full bg-${particle.color}-500 opacity-40 animate-pulse`}
+              className="bg-black/20 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl transform-gpu hover:rotate-y-2 transition-all duration-700 hover:shadow-pink-500/25"
               style={{
-                left: `${particle.x}%`,
-                top: `${particle.y}%`,
-                width: `${particle.size}px`,
-                height: `${particle.size}px`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${particle.speed}s`,
+                transformStyle: "preserve-3d",
+                boxShadow:
+                  "0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
               }}
-            ></div>
-          ))}
-        </div>
-      )}
+            >
+              {/* Glowing border effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-3xl opacity-20 blur-xl animate-pulse"></div>
 
-      <div className="relative z-10 max-w-7xl mx-auto p-6">
-        {/* Epic Header */}
-        <div className="text-center mb-16 transform-gpu perspective-1000">
-          <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-br from-purple-600 via-red-600 to-orange-600 rounded-full mb-8 shadow-2xl transform hover:rotate-y-180 transition-transform duration-1000 animate-pulse">
-            <Edit3 className="w-14 h-14 text-white animate-bounce" />
-          </div>
-          <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-red-500 via-orange-500 to-yellow-500 mb-6 tracking-widest animate-pulse transform hover:scale-110 transition-transform duration-500">
-            WARRIOR
-          </h1>
-          <h2 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400 mb-4 tracking-wider">
-            EVOLUTION
-          </h2>
-          <p className="text-2xl text-gray-300 font-light tracking-wide animate-fade-in">
-            Transform • Upgrade • Dominate
-          </p>
-        </div>
-
-        {/* Search Section */}
-        <div className="">
-          <div className="bg-black/70 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-purple-500/30 transform hover:scale-105 transition-all duration-500 hover:shadow-purple-500/50">
-            <div className="flex items-center space-x-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search warrior by name or phone..."
-                  className="w-full pl-14 pr-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105 text-lg"
-                />
-              </div>
-              <button
-                onClick={handleSearch}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 via-red-600 to-orange-600 text-white font-bold rounded-xl hover:from-purple-700 hover:via-red-700 hover:to-orange-700 transition-all duration-300 transform hover:scale-110 hover:rotate-2 shadow-xl hover:shadow-2xl flex items-center space-x-2"
-              >
-                <Zap className="w-5 h-5 animate-pulse" />
-                <span>LOCATE</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Member Details & Edit Form */}
-        {selectedMember && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Member Info Card */}
-            <div className="bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-blue-500/30 overflow-hidden transform hover:scale-105 transition-all duration-700 hover:shadow-blue-500/50">
-              <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 h-3 animate-pulse"></div>
-
-              <div className="p-8">
-                <div className="flex items-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mr-4 animate-pulse">
-                    <User className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-                      {selectedMember.name}
-                    </h3>
-                    <p className="text-gray-400">Warrior Profile</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center p-4 bg-gray-900/50 rounded-xl transform hover:scale-105 transition-all duration-300">
-                    <Shield className="w-5 h-5 text-blue-400 mr-3" />
-                    <span className="text-gray-300 font-medium">Phone:</span>
-                    <span className="text-white ml-2">
-                      {selectedMember.phoneNo}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center p-4 bg-gray-900/50 rounded-xl transform hover:scale-105 transition-all duration-300">
-                    <Target className="w-5 h-5 text-green-400 mr-3" />
-                    <span className="text-gray-300 font-medium">Email:</span>
-                    <span className="text-white ml-2">
-                      {selectedMember.email}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center p-4 bg-gray-900/50 rounded-xl transform hover:scale-105 transition-all duration-300">
-                    <Flame className="w-5 h-5 text-red-400 mr-3" />
-                    <span className="text-gray-300 font-medium">Gender:</span>
-                    <span className="text-white ml-2">
-                      {selectedMember.gender}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Edit Form Card */}
-            <div className="bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-red-500/30 overflow-hidden transform hover:scale-105 transition-all duration-700 hover:shadow-red-500/50">
-              <div className="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 h-3 animate-pulse"></div>
-
-              <div className="p-8">
-                <h3 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400 mb-8 flex items-center">
-                  <Edit3 className="w-8 h-8 mr-3 text-red-500 animate-pulse" />
-                  MODIFY STATS
-                </h3>
-
-                <div className="space-y-6">
+              <form onSubmit={handleSubmit} className="relative z-10 space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Age Field */}
                   <div className="group">
-                    <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                      <User className="w-5 h-5 mr-2" />
-                      Battle Age
-                    </label>
-                    <input
-                      type="number"
-                      value={editData.age}
-                      onChange={(e) => handleChange("age", e.target.value)}
-                      className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
-                      placeholder="Warrior age"
-                    />
+                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:rotate-1">
+                      <User className="absolute left-4 top-4 text-pink-400 w-6 h-6 group-hover:animate-bounce" />
+                      <input
+                        type="number"
+                        name="age"
+                        value={formData.age}
+                        onChange={handleInputChange}
+                        placeholder="Warrior Age"
+                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-pink-400 focus:shadow-lg focus:shadow-pink-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
+                        style={{
+                          textShadow: "0 0 10px rgba(255, 255, 255, 0.3)",
+                        }}
+                      />
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-pink-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
                   </div>
 
                   {/* Plan Duration Field */}
                   <div className="group">
-                    <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-orange-400 transition-colors">
-                      <Calendar className="w-5 h-5 mr-2" />
-                      Power Plan
-                    </label>
-                    <select
-                      value={editData.planDuration}
-                      onChange={(e) =>
-                        handleChange("planDuration", e.target.value)
-                      }
-                      className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
-                    >
-                      <option value="">Select Power Level</option>
-                      <option value="1 month">1 Month - Quick Strike</option>
-                      <option value="3 month">3 Months - Thunder Force</option>
-                      <option value="6 month">6 Months - Lightning Bolt</option>
-                      <option value="1 year">1 Year - Storm Master</option>
-                    </select>
+                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:-rotate-1">
+                      <Calendar className="absolute left-4 top-4 text-orange-400 w-6 h-6 group-hover:animate-bounce" />
+                      <select
+                        name="planDuration"
+                        value={formData.planDuration}
+                        onChange={handleInputChange}
+                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-orange-400 focus:shadow-lg focus:shadow-orange-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10 appearance-none"
+                      >
+                        <option value="" className="bg-gray-800">
+                          Select Battle Duration
+                        </option>
+                        <option value="1month" className="bg-gray-800">
+                          1 Month - Rookie
+                        </option>
+                        <option value="3months" className="bg-gray-800">
+                          3 Months - Fighter
+                        </option>
+                        <option value="6months" className="bg-gray-800">
+                          6 Months - Champion
+                        </option>
+                        <option value="12months" className="bg-gray-800">
+                          12 Months - Legend
+                        </option>
+                      </select>
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-400/20 to-yellow-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
                   </div>
 
                   {/* Fees Amount Field */}
                   <div className="group">
-                    <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-yellow-400 transition-colors">
-                      <DollarSign className="w-5 h-5 mr-2" />
-                      Battle Fund
-                    </label>
-                    <input
-                      type="number"
-                      value={editData.feesAmount}
-                      onChange={(e) =>
-                        handleChange("feesAmount", e.target.value)
-                      }
-                      className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
-                      placeholder="Amount in ₹"
-                    />
+                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:rotate-1">
+                      <DollarSign className="absolute left-4 top-4 text-green-400 w-6 h-6 group-hover:animate-bounce" />
+                      <input
+                        type="number"
+                        name="feesAmount"
+                        value={formData.feesAmount}
+                        onChange={handleInputChange}
+                        placeholder="Training Investment"
+                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-green-400 focus:shadow-lg focus:shadow-green-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
+                      />
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
                   </div>
 
                   {/* Next Due Date Field */}
                   <div className="group">
-                    <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-purple-400 transition-colors">
-                      <Calendar className="w-5 h-5 mr-2" />
-                      Next Challenge
-                    </label>
-                    <input
-                      type="date"
-                      value={editData.nextDueDate}
-                      onChange={(e) =>
-                        handleChange("nextDueDate", e.target.value)
-                      }
-                      className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
-                    />
+                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:-rotate-1">
+                      <Clock className="absolute left-4 top-4 text-cyan-400 w-6 h-6 group-hover:animate-bounce" />
+                      <input
+                        type="date"
+                        name="nextDueDate"
+                        value={formData.nextDueDate}
+                        onChange={handleInputChange}
+                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-cyan-400 focus:shadow-lg focus:shadow-cyan-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
+                      />
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
                   </div>
 
                   {/* Last Paid On Field */}
                   <div className="group">
-                    <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-green-400 transition-colors">
-                      <Calendar className="w-5 h-5 mr-2" />
-                      Last Victory
-                    </label>
-                    <input
-                      type="date"
-                      value={editData.lastPaidOn}
-                      onChange={(e) =>
-                        handleChange("lastPaidOn", e.target.value)
-                      }
-                      className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
-                    />
+                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:rotate-1">
+                      <CreditCard className="absolute left-4 top-4 text-purple-400 w-6 h-6 group-hover:animate-bounce" />
+                      <input
+                        type="date"
+                        name="lastPaidOn"
+                        value={formData.lastPaidOn}
+                        onChange={handleInputChange}
+                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-purple-400 focus:shadow-lg focus:shadow-purple-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
+                      />
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
                   </div>
 
                   {/* Payment Status Field */}
                   <div className="group">
-                    <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-cyan-400 transition-colors">
-                      <DollarSign className="w-5 h-5 mr-2" />
-                      Battle Status
-                    </label>
-                    <select
-                      value={editData.paymentStatus}
-                      onChange={(e) =>
-                        handleChange("paymentStatus", e.target.value)
-                      }
-                      className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
-                    >
-                      <option value="Paid">Victory Achieved ⚡</option>
-                      <option value="Pending">Battle Pending 🔥</option>
-                    </select>
+                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:-rotate-1">
+                      <CheckCircle className="absolute left-4 top-4 text-red-400 w-6 h-6 group-hover:animate-bounce" />
+                      <select
+                        name="paymentStatus"
+                        value={formData.paymentStatus}
+                        onChange={handleInputChange}
+                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-red-400 focus:shadow-lg focus:shadow-red-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10 appearance-none"
+                      >
+                        <option value="" className="bg-gray-800">
+                          Battle Status
+                        </option>
+                        <option value="paid" className="bg-gray-800">
+                          ✅ Victory Secured
+                        </option>
+                        <option value="pending" className="bg-gray-800">
+                          ⏳ Battle Pending
+                        </option>
+                        <option value="overdue" className="bg-gray-800">
+                          ⚠️ Mission Failed
+                        </option>
+                      </select>
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-400/20 to-orange-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Update Button */}
-                <div className="mt-10">
+                {/* Submit Button */}
+                <div className="flex justify-center mt-12">
                   <button
-                    onClick={handleUpdate}
-                    disabled={isUpdating}
-                    className={`w-full py-6 px-8 text-xl font-bold text-white rounded-xl transition-all duration-500 transform hover:scale-110 active:scale-95 ${
-                      isUpdating
-                        ? "bg-gray-600 cursor-not-allowed"
-                        : "bg-gradient-to-r from-purple-600 via-red-600 to-orange-600 hover:from-purple-700 hover:via-red-700 hover:to-orange-700 shadow-2xl hover:shadow-red-900/50"
-                    }`}
+                    type="submit"
+                    className="group relative px-12 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-white font-bold text-xl rounded-full transform hover:scale-110 transition-all duration-500 hover:shadow-2xl hover:shadow-pink-500/50 active:scale-95"
+                    style={{
+                      textShadow: "0 0 20px rgba(255, 255, 255, 0.5)",
+                      boxShadow:
+                        "0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                    }}
                   >
-                    {isUpdating ? (
-                      <div className="flex items-center justify-center">
-                        <div className="w-8 h-8 border-3 border-white border-t-transparent rounded-full animate-spin mr-4"></div>
-                        <div className="text-2xl font-black tracking-wider">
-                          EVOLVING WARRIOR...
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center">
-                        <Save className="w-8 h-8 mr-4 animate-pulse" />
-                        <div className="text-2xl font-black tracking-wider">
-                          UPGRADE WARRIOR
-                        </div>
-                        <Flame className="w-8 h-8 ml-4 animate-bounce" />
-                      </div>
-                    )}
+                    <span className="relative z-10 tracking-wider">
+                      EVOLVE WARRIOR
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                    <div className="absolute inset-0 bg-white/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-ping"></div>
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
-        )}
-
-        {/* Floating Action Buttons */}
-        <div className="fixed bottom-8 right-8 flex flex-col space-y-4">
-          <button
-            onClick={() => setShowParticles(!showParticles)}
-            className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-110 hover:rotate-12 flex items-center justify-center"
-          >
-            <Zap className="w-8 h-8 text-white animate-pulse" />
-          </button>
         </div>
       </div>
+
+      {/* Custom CSS for additional animations */}
+      <style jsx>{`
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 10s linear infinite;
+        }
+
+        .transform-gpu {
+          transform: translateZ(0);
+        }
+
+        .hover\\:rotate-y-2:hover {
+          transform: perspective(1000px) rotateY(2deg) translateZ(20px);
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: invert(1);
+          cursor: pointer;
+        }
+
+        select {
+          background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+          background-repeat: no-repeat;
+          background-position: right 1rem center;
+          background-size: 1em;
+        }
+      `}</style>
     </div>
   );
 };

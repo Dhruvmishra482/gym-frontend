@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Eye,
   Plus,
@@ -13,8 +14,8 @@ import {
   Mail,
   MapPin,
   Search,
+  Edit,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const MemberList = ({
   members,
@@ -48,7 +49,20 @@ const MemberList = ({
     )}&background=f97316&color=fff&size=80&rounded=true`;
   };
 
-  const navigate = useNavigate();
+  const handleEditMember = (member) => {
+    console.log("Edit member:", member);
+    // Add your edit functionality here
+    // For example: navigate to edit page or open edit modal
+    setIsModalOpen(false);
+    // navigate(`/edit-member/${member.id}`);
+  };
+
+  const handleAddMember = () => {
+    console.log("Add new member");
+    // Add navigation to add member page
+    // navigate("/AddMemberPage");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
       {/* 3D Background Particles */}
@@ -209,7 +223,7 @@ const MemberList = ({
                     <div className="flex-shrink-0">
                       <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-orange-500/30 group-hover:border-orange-500/50 transition-all">
                         <img
-                          src={member.photoUrl}
+                          src={member.photoUrl || getFallbackImage(member.name)}
                           alt={member.name}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                           onError={(e) => {
@@ -238,18 +252,32 @@ const MemberList = ({
             onClick={() => setIsModalOpen(false)}
           />
           <div className="relative bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-6 right-6 p-2 bg-red-500/20 rounded-full hover:bg-red-500/30 transition-colors"
-            >
-              <X className="w-5 h-5 text-red-400" />
-            </button>
+            {/* Action Buttons */}
+            <div className="absolute top-6 right-6 flex gap-2">
+              <button
+                onClick={() => handleEditMember(selectedMember)}
+                className="p-2 bg-blue-500/20 rounded-full hover:bg-blue-500/30 transition-colors group"
+                title="Edit Member"
+              >
+                <Edit className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
+              </button>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 bg-red-500/20 rounded-full hover:bg-red-500/30 transition-colors group"
+                title="Close"
+              >
+                <X className="w-5 h-5 text-red-400 group-hover:text-red-300" />
+              </button>
+            </div>
 
             {/* Modal Content */}
             <div className="flex gap-6 mb-6">
               <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-orange-500/50 flex-shrink-0">
                 <img
-                  src={selectedMember.photoUrl}
+                  src={
+                    selectedMember.photoUrl ||
+                    getFallbackImage(selectedMember.name)
+                  }
                   alt={selectedMember.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
@@ -329,13 +357,13 @@ const MemberList = ({
 
       {/* Floating Add Button */}
       <button
-        onClick={() => navigate("/AddMemberPage")}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        onClick={handleAddMember}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
+        title="Add New Member"
       >
-        <Plus className="w-6 h-6" />
+        <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
       </button>
     </div>
   );
 };
-
 export default MemberList;

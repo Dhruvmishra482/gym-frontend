@@ -9,7 +9,12 @@ import "react-toastify/dist/ReactToastify.css";
 import SignUpForm from "./components/Auth/SignUpForm";
 import SignUpPage from "./components/pages/SignUpPage";
 import AddMemberPage from "./components/pages/AddMemberPage";
+import EditMemberBySearch from "./components/pages/EditMemberBySearch";
 import EditMemberForm from "./components/Member/EditMemberForm";
+import HeroMain from "./components/Hero/HeroMain";
+import ContactUs from "./components/NavbarNavigation/ContactUs";
+import PricingPage from "./components/NavbarNavigation/PricingPage";
+import Features from "./components/NavbarNavigation/Features";
 
 export default function App() {
   const { checkAuth, loading } = useAuthStore();
@@ -26,7 +31,7 @@ export default function App() {
     <>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<EditMemberForm />} />
+        <Route path="/login" element={<HeroMain />} />
 
         {/* ProtectedRoute for dashboard */}
         <Route
