@@ -1,17 +1,17 @@
 import React from "react";
 import Navigation from "./Navigation";
-import Hero from "./Home";
+import Home from "./Home";
 import Stats from "./Stats";
 import MainFeatures from "./MainFeatures";
 import CTA from "./CTA";
 
 const HeroMain = () => {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white ">
       <Navigation />
-      <Hero />
+      <Home />
       <Stats />
-      <MainFeatures/>
+      <MainFeatures />
       <CTA />
     </div>
   );
