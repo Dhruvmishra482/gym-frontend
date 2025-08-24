@@ -35,7 +35,7 @@ export const loginService = async (email, password) => {
 
 export const fetchCurrentUser = async () => {
   try {
-    const res = await axiosInstance.get("/auth/me");
+    const res = await axiosInstance.get("/auth/me",{ withCredentials: true });
     return res.data; // { user }
   } catch (err) {
     throw null;
