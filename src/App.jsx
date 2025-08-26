@@ -1,6 +1,3 @@
-
-
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navigation from "./components/Hero/Navigation";
 import LoginPage from "./components/pages/LoginPage";
@@ -29,7 +26,7 @@ const App = () => {
       const { initializeAuth } = useAuthStore.getState();
       initializeAuth();
     }
-    
+
     // Then check with server if we have cookies
     const timeout = setTimeout(() => {
       if (!isInitialized) {
@@ -55,23 +52,23 @@ const App = () => {
       <ToastContainer />
       <Routes>
         {/* If user is authenticated, redirect to dashboard, otherwise show home */}
-        <Route 
-          path="/" 
-          element={user ? <Navigate to="/dashboard" replace /> : <HeroMain />} 
+        <Route
+          path="/"
+          element={user ? <Navigate to="/dashboard" replace /> : <HeroMain />}
         />
         <Route path="/home" element={<HeroMain />} />
         <Route path="/features" element={<Features />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/contact" element={<ContactUs />} />
-        
+
         {/* Redirect authenticated users away from auth pages */}
-        <Route 
-          path="/signup" 
-          element={user ? <Navigate to="/dashboard" replace /> : <SignUpPage />} 
+        <Route
+          path="/signup"
+          element={user ? <Navigate to="/dashboard" replace /> : <SignUpPage />}
         />
-        <Route 
-          path="/login" 
-          element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} 
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />}
         />
 
         <Route
@@ -82,12 +79,9 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-           {/* Forgot Password Route */}
-        <Route 
-          path="/forgot-password" 
-          element={<ForgotPasswordPage/>} 
-        />
-          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        {/* Forgot Password Route */}
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         <Route
           path="/add-member"
           element={
@@ -97,7 +91,7 @@ const App = () => {
           }
         />
         <Route path="/unauthorized" element={<div>Unauthorized Access</div>} />
-        
+
         {/* Catch all route - redirect to home if not found */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

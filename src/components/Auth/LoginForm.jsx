@@ -1,14 +1,5 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User, Lock, Dumbbell, Shield, Eye, EyeOff, Zap, Crown, Flame } from 'lucide-react';
-
-export default function LoginForm({ formData, errors, showPassword, isSubmitting, focusedField, 
-  handleInputChange, handleSubmit, togglePassword, setFocusedField }) {
-  
-  const navigate = useNavigate();
-=======
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   User,
   Lock,
@@ -32,7 +23,8 @@ export default function LoginForm({
   togglePassword,
   setFocusedField,
 }) {
->>>>>>> 5f542e5d3c587a336917ed533c0b3417ebad6dba
+  const navigate = useNavigate();
+
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -293,7 +285,7 @@ export default function LoginForm({
             <div className="text-center pt-4">
               <button
                 type="button"
-                onClick={() => navigate('/forgot-password')}
+                onClick={() => navigate("/forgot-password")}
                 className="text-sm font-bold text-gray-400 hover:text-yellow-400 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 mx-auto group"
               >
                 <Shield className="w-4 h-4 group-hover:animate-pulse" />

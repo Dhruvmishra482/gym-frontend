@@ -14,7 +14,10 @@ import {
   Users,
   Camera,
   CreditCard,
+  CheckCircle,
+  AlertCircle,
 } from "lucide-react";
+import { addMember, validateMemberData } from "../services/memberService";
 
 const IronThroneGymForm = () => {
   const [formData, setFormData] = useState({
@@ -34,6 +37,19 @@ const IronThroneGymForm = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notification, setNotification] = useState({
+    show: false,
+    type: "",
+    message: "",
+  });
+  const [validationErrors, setValidationErrors] = useState([]);
+
+  const showNotification = (type, message) => {
+    setNotification({ show: true, type, message });
+    setTimeout(() => {
+      setNotification({ show: false, type: "", message: "" });
+    }, 5000);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,37 +57,114 @@ const IronThroneGymForm = () => {
       ...prev,
       [name]: value,
     }));
+
+    // Clear validation errors when user starts typing
+    if (validationErrors.length > 0) {
+      setValidationErrors([]);
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    // Validate data before submission
+    const validation = validateMemberData(formData);
+
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      showNotification("error", "Please fix the validation errors below");
+      return;
+    }
+
     setIsSubmitting(true);
+    setValidationErrors([]);
 
-    setTimeout(() => {
-      console.log("Member data:", formData);
-      alert("Welcome to the Iron Throne! Member registered successfully!");
+    try {
+      // Prepare data for API (remove empty fields)
+      const memberData = Object.fromEntries(
+        Object.entries(formData).filter(([_, value]) => value !== "")
+      );
+
+      // Call the API
+      const result = await addMember(memberData);
+
+      if (result.success) {
+        showNotification(
+          "success",
+          result.message ||
+            "Welcome to the Iron Throne! Member registered successfully!"
+        );
+
+        // Reset form after successful submission
+        setFormData({
+          name: "",
+          phoneNo: "",
+          age: "",
+          gender: "",
+          email: "",
+          joiningDate: new Date().toISOString().split("T")[0],
+          planDuration: "",
+          feesAmount: "",
+          nextDueDate: "",
+          paymentStatus: "Pending",
+          lastPaidOn: "",
+          address: "",
+          photoUrl: "",
+        });
+      } else {
+        showNotification(
+          "error",
+          result.message || "Failed to register member. Please try again."
+        );
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      showNotification(
+        "error",
+        "An unexpected error occurred. Please try again."
+      );
+    } finally {
       setIsSubmitting(false);
-
-      // Reset form
-      setFormData({
-        name: "",
-        phoneNo: "",
-        age: "",
-        gender: "",
-        email: "",
-        joiningDate: new Date().toISOString().split("T")[0],
-        planDuration: "",
-        feesAmount: "",
-        nextDueDate: "",
-        paymentStatus: "Pending",
-        lastPaidOn: "",
-        address: "",
-        photoUrl: "",
-      });
-    }, 2000);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-900 via-orange-900 to-red-900 relative overflow-hidden">
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-amber-900 via-orange-900 to-red-900 relative overflow-hidden">
+      {/* Notification */}
+      {notification.show && (
+        <div
+          className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-2xl transform transition-all duration-500 ${
+            notification.type === "success"
+              ? "bg-green-600 text-white"
+              : "bg-red-600 text-white"
+          }`}
+        >
+          <div className="flex items-center">
+            {notification.type === "success" ? (
+              <CheckCircle className="w-5 h-5 mr-2" />
+            ) : (
+              <AlertCircle className="w-5 h-5 mr-2" />
+            )}
+            <span className="font-medium">{notification.message}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Validation Errors */}
+      {validationErrors.length > 0 && (
+        <div className="fixed top-4 left-4 z-50 bg-red-600 text-white p-4 rounded-xl shadow-2xl max-w-md">
+          <div className="flex items-start">
+            <AlertCircle className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
+            <div>
+              <div className="font-semibold mb-1">Validation Errors:</div>
+              <ul className="text-sm space-y-1">
+                {validationErrors.map((error, index) => (
+                  <li key={index}>• {error}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         {/* Floating Flames */}
@@ -274,13 +367,14 @@ const IronThroneGymForm = () => {
                 <div className="group">
                   <label className="flex items-center text-orange-300 font-semibold mb-3 group-hover:text-amber-400 transition-colors">
                     <Calendar className="w-5 h-5 mr-2" />
-                    Next Due Date
+                    Next Due Date *
                   </label>
                   <input
                     type="date"
                     name="nextDueDate"
                     value={formData.nextDueDate}
                     onChange={handleChange}
+                    required
                     className="w-full px-4 py-4 bg-slate-800/70 border-2 border-slate-700 rounded-xl text-white focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:bg-slate-800/90 font-medium"
                   />
                 </div>
@@ -300,6 +394,21 @@ const IronThroneGymForm = () => {
                     <option value="Pending">Pending</option>
                     <option value="Paid">Paid</option>
                   </select>
+                </div>
+
+                {/* Last Paid On */}
+                <div className="group">
+                  <label className="flex items-center text-orange-300 font-semibold mb-3 group-hover:text-amber-400 transition-colors">
+                    <Calendar className="w-5 h-5 mr-2" />
+                    Last Paid On
+                  </label>
+                  <input
+                    type="date"
+                    name="lastPaidOn"
+                    value={formData.lastPaidOn}
+                    onChange={handleChange}
+                    className="w-full px-4 py-4 bg-slate-800/70 border-2 border-slate-700 rounded-xl text-white focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:bg-slate-800/90 font-medium"
+                  />
                 </div>
 
                 {/* Address */}
@@ -323,15 +432,14 @@ const IronThroneGymForm = () => {
                 <div className="group md:col-span-2">
                   <label className="flex items-center text-orange-300 font-semibold mb-3 group-hover:text-amber-400 transition-colors">
                     <Camera className="w-5 h-5 mr-2" />
-                    Photo URL *
+                    Photo URL
                   </label>
                   <input
                     type="url"
                     name="photoUrl"
                     value={formData.photoUrl}
                     onChange={handleChange}
-                    required
-                    placeholder="Photo URL"
+                    placeholder="Photo URL (optional)"
                     className="w-full px-4 py-4 bg-slate-800/70 border-2 border-slate-700 rounded-xl text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105 hover:bg-slate-800/90 font-medium"
                   />
                 </div>
