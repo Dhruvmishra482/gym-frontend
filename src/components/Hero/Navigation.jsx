@@ -12,7 +12,7 @@ const Navigation = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 w-full bg-black/80 backdrop-blur-2xl z-50 border-b border-orange-500/30">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-orange-500/30">
       <div
         className="absolute inset-0 opacity-20 pointer-events-none"
         style={{
@@ -20,45 +20,39 @@ const Navigation = () => {
         }}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+        <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-3 group">
             <div className="relative">
-              <Dumbbell className="w-8 h-8 text-orange-500 transform group-hover:rotate-12 transition-transform duration-300" />
+              <Dumbbell className="w-10 h-10 text-orange-500 transform group-hover:rotate-12 transition-transform duration-300" />
               <div className="absolute inset-0 bg-orange-500 blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
             </div>
-            <span className="text-2xl font-black bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 bg-clip-text text-transparent animate-pulse">
+            <span className="text-3xl font-black bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 bg-clip-text text-transparent animate-pulse">
               FitForge
             </span>
           </div>
 
-          {/* Links + Login */}
-          <div className="hidden md:flex items-center space-x-6">
+          <nav className="hidden md:flex space-x-8">
             {["Home", "Features", "Pricing", "Contact"].map((item) => (
               <Link
                 key={item}
-                to={`/${item.toLowerCase()}`}
-                className="text-slate-300 hover:text-orange-400 transition-all duration-300 hover:scale-110 font-semibold"
+                to={item === "Home" ? "/home" : `/${item.toLowerCase()}`}
+                className="text-lg font-semibold transition-all duration-300 hover:text-orange-400 hover:scale-110 text-slate-300"
               >
                 {item}
               </Link>
             ))}
+          </nav>
 
-            {/* Login Button */}
-            <Link
-              to="/signup"
-              className="relative group bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-400 hover:to-yellow-400 text-black px-6 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-110"
-            >
-              <span className="relative z-10 flex items-center">
-                <Rocket className="w-4 h-4 mr-2 group-hover:animate-bounce" />
-                Signup
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
-            </Link>
-          </div>
+          <Link to="/signup" className="relative group inline-block">
+            <span className="relative z-10 flex items-center bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-400 hover:to-yellow-400 text-white px-8 py-3 rounded-full text-lg font-bold transition-all duration-300 transform hover:scale-110 hover:rotate-1">
+              <Rocket className="w-5 h-5 mr-2 group-hover:animate-bounce" />
+              SignUp
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity pointer-events-none" />
+          </Link>
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 

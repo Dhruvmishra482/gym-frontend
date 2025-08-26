@@ -200,7 +200,7 @@ const PricingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-black relative overflow-hidden py-6">
       {/* Animated Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-cyan-900/20"></div>
@@ -493,22 +493,22 @@ const PricingPage = () => {
               discover why over 10,000 gym owners trust FitForge.
             </p>
 
-           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-  <Link to="/signup">
-    <button className="group bg-gradient-to-r from-orange-400 to-pink-500 text-black px-12 py-5 rounded-2xl font-bold text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/50 relative overflow-hidden">
-      <span className="relative z-10 flex items-center">
-        Start Free Trial
-        <Rocket className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
-      </span>
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-    </button>
-  </Link>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <Link to="/signup">
+                <button className="group bg-gradient-to-r from-orange-400 to-pink-500 text-black px-12 py-5 rounded-2xl font-bold text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/50 relative overflow-hidden">
+                  <span className="relative z-10 flex items-center">
+                    Start Free Trial
+                    <Rocket className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                </button>
+              </Link>
 
-  <button className="group border-2 border-white/20 text-white hover:border-white hover:bg-white/10 px-12 py-5 rounded-2xl font-bold text-xl transition-all duration-300 backdrop-blur-lg">
-    Watch Demo
-    <ChevronDown className="inline w-6 h-6 ml-3 group-hover:translate-y-1 transition-transform duration-300" />
-  </button>
-</div>
+              <button className="group border-2 border-white/20 text-white hover:border-white hover:bg-white/10 px-12 py-5 rounded-2xl font-bold text-xl transition-all duration-300 backdrop-blur-lg">
+                Watch Demo
+                <ChevronDown className="inline w-6 h-6 ml-3 group-hover:translate-y-1 transition-transform duration-300" />
+              </button>
+            </div>
 
             <div className="mt-16 text-white/60">
               <p>

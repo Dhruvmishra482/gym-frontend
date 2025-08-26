@@ -56,7 +56,7 @@ const Home = () => {
   return (
     <section
       ref={containerRef}
-      className="relative pb-20 min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-800"
+      className="relative py-24 pb-20 min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-800"
     >
       {/* Animated Background Effects */}
       <div className="fixed inset-0 z-0">
@@ -214,24 +214,24 @@ const Home = () => {
             onMouseEnter={() => setIsHovered("primary")}
             onMouseLeave={() => setIsHovered(null)}
           >
-           <span className="relative z-10 flex items-center justify-center">
-  <Link
-    to="/signup"
-    className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300"
-  >
-    <Play
-      className={`w-6 h-6 mr-3 transition-all duration-300 ${
-        isHovered === "primary" ? "animate-bounce" : ""
-      }`}
-    />
-    GET STARTED
-    <Rocket
-      className={`w-6 h-6 ml-3 transition-all duration-300 ${
-        isHovered === "primary" ? "animate-spin" : ""
-      }`}
-    />
-  </Link>
-</span>
+            <span className="relative z-10 flex items-center justify-center">
+              <Link
+                to="/signup"
+                className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300"
+              >
+                <Play
+                  className={`w-6 h-6 mr-3 transition-all duration-300 ${
+                    isHovered === "primary" ? "animate-bounce" : ""
+                  }`}
+                />
+                GET STARTED
+                <Rocket
+                  className={`w-6 h-6 ml-3 transition-all duration-300 ${
+                    isHovered === "primary" ? "animate-spin" : ""
+                  }`}
+                />
+              </Link>
+            </span>
 
             {/* Button Glow */}
             <div

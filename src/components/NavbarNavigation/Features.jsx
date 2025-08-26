@@ -202,31 +202,29 @@ const Features = () => {
                 FitForge
               </span>
             </div>
-          
-<nav className="hidden md:flex space-x-8">
-  {["Home", "Features", "Pricing", "Contact"].map((item) => (
-    <Link
-      key={item}
-      to={item === "Home" ? "/home" : `/${item.toLowerCase()}`}
-      className={`text-lg font-semibold transition-all duration-300 hover:text-orange-400 hover:scale-110 ${
-        item === "Features" ? "text-orange-400 scale-110" : "text-slate-300"
-      }`}
-    >
-      {item}
-    </Link>
-  ))}
-</nav>
-<Link
-  to="/signup"
-  className="relative group inline-block"
->
-  <span className="relative z-10 flex items-center bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-400 hover:to-yellow-400 text-white px-8 py-3 rounded-full text-lg font-bold transition-all duration-300 transform hover:scale-110 hover:rotate-1">
-    <Rocket className="w-5 h-5 mr-2 group-hover:animate-bounce" />
-    Launch
-  </span>
-  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity pointer-events-none" />
-</Link>
 
+            <nav className="hidden md:flex space-x-8">
+              {["Home", "Features", "Pricing", "Contact"].map((item) => (
+                <Link
+                  key={item}
+                  to={item === "Home" ? "/home" : `/${item.toLowerCase()}`}
+                  className={`text-lg font-semibold transition-all duration-300 hover:text-orange-400 hover:scale-110 ${
+                    item === "Features"
+                      ? "text-orange-400 scale-110"
+                      : "text-slate-300"
+                  }`}
+                >
+                  {item}
+                </Link>
+              ))}
+            </nav>
+            <Link to="/signup" className="relative group inline-block">
+              <span className="relative z-10 flex items-center bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-400 hover:to-yellow-400 text-white px-8 py-3 rounded-full text-lg font-bold transition-all duration-300 transform hover:scale-110 hover:rotate-1">
+                <Rocket className="w-5 h-5 mr-2 group-hover:animate-bounce" />
+                Launch
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity pointer-events-none" />
+            </Link>
           </div>
         </div>
       </header>
@@ -478,15 +476,14 @@ const Features = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              
-<Link to="/signup" className="relative inline-block group">
-  <span className="group relative flex items-center justify-center bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 hover:from-orange-400 hover:via-yellow-400 hover:to-orange-400 text-white px-12 py-6 rounded-full text-xl font-black transition-all duration-500 transform hover:scale-110 hover:rotate-1 shadow-2xl hover:shadow-orange-500/50">
-    <Target className="w-6 h-6 mr-3 group-hover:animate-spin" />
-    LAUNCH NOW
-    <Sparkles className="w-6 h-6 ml-3 group-hover:animate-bounce" />
-  </span>
-  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 via-yellow-600 to-orange-600 rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity animate-pulse pointer-events-none" />
-</Link>
+                <Link to="/signup" className="relative inline-block group">
+                  <span className="group relative flex items-center justify-center bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 hover:from-orange-400 hover:via-yellow-400 hover:to-orange-400 text-white px-12 py-6 rounded-full text-xl font-black transition-all duration-500 transform hover:scale-110 hover:rotate-1 shadow-2xl hover:shadow-orange-500/50">
+                    <Target className="w-6 h-6 mr-3 group-hover:animate-spin" />
+                    LAUNCH NOW
+                    <Sparkles className="w-6 h-6 ml-3 group-hover:animate-bounce" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 via-yellow-600 to-orange-600 rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity animate-pulse pointer-events-none" />
+                </Link>
 
                 <button className="group relative border-2 border-purple-500 text-purple-400 hover:text-white hover:border-purple-400 px-12 py-6 rounded-full text-xl font-black transition-all duration-500 transform hover:scale-110 hover:-rotate-1 hover:bg-purple-500/20">
                   <span className="flex items-center justify-center">
