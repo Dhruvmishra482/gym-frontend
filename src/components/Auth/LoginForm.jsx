@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Lock, Dumbbell, Shield, Eye, EyeOff, Zap, Crown, Flame } from 'lucide-react';
 
 export default function LoginForm({ formData, errors, showPassword, isSubmitting, focusedField, 
   handleInputChange, handleSubmit, togglePassword, setFocusedField }) {
   
+  const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-red-900 flex items-center justify-center p-4 relative overflow-hidden">
@@ -202,6 +203,22 @@ export default function LoginForm({ formData, errors, showPassword, isSubmitting
                 </div>
               )}
             </button>
+
+            {/* Forgot Password Link */}
+            <div className="text-center pt-4">
+              <button
+                type="button"
+                onClick={() => navigate('/forgot-password')}
+                className="text-sm font-bold text-gray-400 hover:text-yellow-400 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 mx-auto group"
+              >
+                <Shield className="w-4 h-4 group-hover:animate-pulse" />
+                <span className="tracking-wider">FORGOT SECRET CODE?</span>
+                <Zap className="w-3 h-3 group-hover:animate-bounce" />
+              </button>
+              <p className="text-xs text-gray-600 mt-2 animate-pulse">
+                ⚡ RESTORE THRONE ACCESS ⚡
+              </p>
+            </div>
           </div>
 
           {/* Enhanced Footer */}

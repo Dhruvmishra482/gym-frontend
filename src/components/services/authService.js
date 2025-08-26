@@ -50,3 +50,37 @@ export const logoutService = async () => {
     throw err.response?.data?.message || "Logout failed!";
   }
 };
+
+
+
+
+// Forgot Password API
+export const forgotPasswordAPI = async (email) => {
+  try {
+    const response = await axiosInstance.post('/auth/forgot-password', {
+      email
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { 
+      success: false, 
+      message: 'Network error occurred' 
+    };
+  }
+};
+
+// Reset Password API
+export const resetPasswordAPI = async (token, newPassword, confirmPassword) => {
+  try {
+    const response = await axiosInstance.post(`/auth/reset-password/${token}`, {
+      newPassword,
+      confirmPassword
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { 
+      success: false, 
+      message: 'Network error occurred' 
+    };
+  }
+};
