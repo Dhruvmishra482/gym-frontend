@@ -134,7 +134,7 @@ const Home = () => {
           }`}
         >
           <span className="bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent animate-pulse relative">
-            FitForge
+            FitTracker
             {/* Title Glow Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 blur-3xl opacity-30 animate-pulse" />
           </span>
