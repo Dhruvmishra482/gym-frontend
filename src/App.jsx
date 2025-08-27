@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ForgotPasswordPage from "./components/pages/ForgotPasswordPage";
-
+import VerifyEmailPage from "./components/pages/VerifyEmailPage";
 import ResetPasswordPage from "./components/pages/ResetPasswordPage";
 
 const App = () => {
@@ -66,10 +66,13 @@ const App = () => {
           path="/signup"
           element={user ? <Navigate to="/dashboard" replace /> : <SignUpPage />}
         />
+
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route
           path="/login"
           element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />}
         />
+       
 
         <Route
           path="/dashboard"

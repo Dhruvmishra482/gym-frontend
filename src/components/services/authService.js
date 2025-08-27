@@ -1,3 +1,5 @@
+
+
 import axiosInstance from "../../axiosConfig";
 
 export const signUpService = async (userData) => {
@@ -9,9 +11,9 @@ export const signUpService = async (userData) => {
       mobileNumber: userData.mobileNumber.trim(),
       email: userData.email.trim().toLowerCase(),
       password: userData.password,
-      confirmPassword: userData.confirmPassword,  
+      confirmPassword: userData.confirmPassword,
     };
-    
+
     const res = await axiosInstance.post("/auth/signup", cleanedData, {
       headers: { 'Content-Type': 'application/json' }
     });
@@ -22,6 +24,32 @@ export const signUpService = async (userData) => {
   }
 };
 
+export const verifyOTPService = async (otpData) => {
+  try {
+    const res = await axiosInstance.post("/auth/verify-otp", otpData, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return res.data;
+  } catch (err) {
+    console.error("OTP verification error:", err.response?.data);
+    throw new Error(err.response?.data?.message || "OTP verification failed");
+  }
+};
+
+export const resendOTPService = async (email, firstName) => {
+  try {
+    const res = await axiosInstance.post("/auth/resend-otp", {
+      email: email.trim().toLowerCase(),
+      firstName: firstName?.trim()
+    }, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Resend OTP error:", err.response?.data);
+    throw new Error(err.response?.data?.message || "Failed to resend OTP");
+  }
+};
 
 export const loginService = async (email, password) => {
   try {

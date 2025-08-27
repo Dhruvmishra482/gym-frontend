@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -17,6 +17,10 @@ import {
   MapPin,
   Search,
   Edit,
+  ChevronDown,
+  LogOut,
+  Users,
+  Settings,
 } from "lucide-react";
 
 const MemberList = ({
@@ -29,8 +33,35 @@ const MemberList = ({
   setSelectedMember,
   isModalOpen,
   setIsModalOpen,
+  profileProps,
 }) => {
   const navigate = useNavigate();
+  const profileRef = useRef(null);
+  
+  // Destructure profile props
+  const {
+    user,
+    isProfileOpen,
+    setIsProfileOpen,
+    getOwnerDisplayName,
+    getOwnerInitials,
+    handleLogout,
+    handleProfileClick,
+    handleMembersClick,
+  } = profileProps;
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [setIsProfileOpen]);
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-IN", {
@@ -52,16 +83,15 @@ const MemberList = ({
     )}&background=f97316&color=fff&size=80&rounded=true`;
   };
 
-
   const handleEditMember = (member) => {
     console.log("Edit member:", member);
     setIsModalOpen(false);
-    navigate(`/edit-member/${member.id}`); // <- navigate to edit page
+    navigate(`/edit-member/${member.id}`);
   };
 
   const handleAddMember = () => {
     console.log("Add new member");
-    navigate("/add-member"); // <- navigate to add member route
+    navigate("/add-member");
   };
 
   return (
@@ -101,7 +131,7 @@ const MemberList = ({
             <h1 className="text-2xl font-bold tracking-wider">IRON THRONE</h1>
           </div>
 
-          {/* Search */}
+          {/* Center Section - Search */}
           <div className="relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -113,25 +143,137 @@ const MemberList = ({
             />
           </div>
 
-          {/* Stats */}
-          <div className="flex gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-orange-500">
-                {stats.totalMembers}
+          {/* Right Section - Stats and Profile */}
+          <div className="flex items-center gap-6">
+            {/* Stats */}
+            <div className="flex gap-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-orange-500">
+                  {stats.totalMembers}
+                </div>
+                <div className="text-sm text-gray-400">Warriors</div>
               </div>
-              <div className="text-sm text-gray-400">Warriors</div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-red-400">
+                  {stats.dueToday}
+                </div>
+                <div className="text-sm text-gray-400">Due Today</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-400">
+                  {stats.monthlyRevenue}
+                </div>
+                <div className="text-sm text-gray-400">Revenue</div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-red-400">
-                {stats.dueToday}
-              </div>
-              <div className="text-sm text-gray-400">Due Today</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-400">
-                {stats.monthlyRevenue}
-              </div>
-              <div className="text-sm text-gray-400">Revenue</div>
+
+            {/* Profile Dropdown */}
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center gap-3 p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-orange-500/50 transition-all duration-300 group"
+              >
+                {/* Profile Image/Avatar */}
+                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-orange-500/30 group-hover:border-orange-500/50 transition-all">
+                  {user?.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt={getOwnerDisplayName()}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className={`w-full h-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-sm ${user?.profileImage ? 'hidden' : 'flex'}`}
+                  >
+                    {getOwnerInitials()}
+                  </div>
+                </div>
+
+                {/* Name and Chevron */}
+                <div className="flex items-center gap-2">
+                  <div className="text-left">
+                    <div className="text-sm font-medium text-white">
+                      {getOwnerDisplayName()}
+                    </div>
+                    <div className="text-xs text-gray-400">Owner</div>
+                  </div>
+                  <ChevronDown 
+                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+                      isProfileOpen ? 'rotate-180' : ''
+                    }`} 
+                  />
+                </div>
+              </button>
+
+              {/* Dropdown Menu */}
+              {isProfileOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 bg-black/90 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200">
+                  {/* User Info Header */}
+                  <div className="p-4 border-b border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-orange-500/30">
+                        {user?.profileImage ? (
+                          <img
+                            src={user.profileImage}
+                            alt={getOwnerDisplayName()}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className={`w-full h-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold ${user?.profileImage ? 'hidden' : 'flex'}`}
+                        >
+                          {getOwnerInitials()}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-medium text-white">
+                          {getOwnerDisplayName()}
+                        </div>
+                        <div className="text-sm text-gray-400">
+                          {user?.email || 'owner@gym.com'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-2">
+                    <button
+                      onClick={handleProfileClick}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
+                    >
+                      <User className="w-5 h-5 text-orange-400 group-hover:text-orange-300" />
+                      <span className="text-gray-300 group-hover:text-white">My Profile</span>
+                    </button>
+
+                    <button
+                      onClick={handleMembersClick}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
+                    >
+                      <Users className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
+                      <span className="text-gray-300 group-hover:text-white">My Members</span>
+                    </button>
+
+                    <div className="border-t border-white/10 my-2"></div>
+
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-red-500/10 transition-colors duration-200 group"
+                    >
+                      <LogOut className="w-5 h-5 text-red-400 group-hover:text-red-300" />
+                      <span className="text-gray-300 group-hover:text-red-300">Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -367,4 +509,5 @@ const MemberList = ({
     </div>
   );
 };
+
 export default MemberList;

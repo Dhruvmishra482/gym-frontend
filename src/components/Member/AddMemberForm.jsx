@@ -7,6 +7,8 @@ import {
   MapPin,
   Users,
   Dumbbell,
+  CreditCard,
+  Camera,
 } from "lucide-react";
 
 const AddMemberForm = ({
@@ -94,7 +96,189 @@ const AddMemberForm = ({
                 />
               </div>
 
-              {/* ... keep the rest of your fields exactly the same ... */}
+              {/* Email */}
+              <div className="group">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <Mail className="w-5 h-5 mr-2" />
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email address"
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                />
+              </div>
+
+              {/* Age */}
+              <div className="group">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Age
+                </label>
+                <input
+                  type="number"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleChange}
+                  placeholder="Age"
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                />
+              </div>
+
+              {/* Gender */}
+              <div className="group">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <Users className="w-5 h-5 mr-2" />
+                  Gender
+                </label>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+
+              {/* Joining Date */}
+              <div className="group">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Joining Date
+                </label>
+                <input
+                  type="date"
+                  name="joiningDate"
+                  value={formData.joiningDate}
+                  onChange={handleChange}
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                />
+              </div>
+
+              {/* Plan Duration */}
+              <div className="group">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <CreditCard className="w-5 h-5 mr-2" />
+                  Plan Duration
+                </label>
+                <select
+                  name="planDuration"
+                  value={formData.planDuration}
+                  onChange={handleChange}
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                >
+                  <option value="">Select Plan</option>
+                  <option value="1 month">1 month</option>
+                  <option value="3 month">3 months</option>
+                  <option value="6 month">6 months</option>
+                  <option value="1 year">1 year</option>
+                </select>
+              </div>
+
+              {/* Fees Amount */}
+              <div className="group">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <DollarSign className="w-5 h-5 mr-2" />
+                  Fees Amount *
+                </label>
+                <input
+                  type="number"
+                  name="feesAmount"
+                  value={formData.feesAmount}
+                  onChange={handleChange}
+                  required
+                  placeholder="Amount"
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                />
+              </div>
+
+              {/* Next Due Date */}
+              <div className="group">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Next Due Date *
+                </label>
+                <input
+                  type="date"
+                  name="nextDueDate"
+                  value={formData.nextDueDate}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                />
+              </div>
+
+              {/* Payment Status */}
+              <div className="group">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <CreditCard className="w-5 h-5 mr-2" />
+                  Payment Status
+                </label>
+                <select
+                  name="paymentStatus"
+                  value={formData.paymentStatus}
+                  onChange={handleChange}
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Paid">Paid</option>
+                </select>
+              </div>
+
+              {/* Last Paid On */}
+              <div className="group">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Last Paid On
+                </label>
+                <input
+                  type="date"
+                  name="lastPaidOn"
+                  value={formData.lastPaidOn}
+                  onChange={handleChange}
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                />
+              </div>
+
+              {/* Address */}
+              <div className="group md:col-span-2">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <MapPin className="w-5 h-5 mr-2" />
+                  Address *
+                </label>
+                <textarea
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                  placeholder="Full address"
+                  rows="3"
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105 resize-none"
+                />
+              </div>
+
+              {/* Photo URL */}
+              <div className="group md:col-span-2">
+                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
+                  <Camera className="w-5 h-5 mr-2" />
+                  Photo URL
+                </label>
+                <input
+                  type="url"
+                  name="photoUrl"
+                  value={formData.photoUrl}
+                  onChange={handleChange}
+                  placeholder="Photo URL (optional)"
+                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                />
+              </div>
 
               {/* Submit */}
               <div className="md:col-span-2 mt-8">
