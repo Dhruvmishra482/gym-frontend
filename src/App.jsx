@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ForgotPasswordPage from "./components/pages/ForgotPasswordPage";
 import VerifyEmailPage from "./components/pages/VerifyEmailPage";
 import ResetPasswordPage from "./components/pages/ResetPasswordPage";
+import EditMemberForm from "./components/Member/EditMemberForm";
 
 const App = () => {
   const { user, loading, checkAuth, isInitialized } = useAuthStore();
@@ -72,7 +73,6 @@ const App = () => {
           path="/login"
           element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />}
         />
-       
 
         <Route
           path="/dashboard"
