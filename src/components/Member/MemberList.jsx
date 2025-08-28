@@ -73,7 +73,8 @@ const MemberList = ({
 
   const isDateToday = (dateString) => {
     const today = new Date().toISOString().split("T")[0];
-    return dateString === today;
+    const memberDate = new Date(dateString).toISOString().split("T")[0];
+    return memberDate === today;
   };
 
   // Fallback image generator for error cases
@@ -86,7 +87,7 @@ const MemberList = ({
   const handleEditMember = (member) => {
     console.log("Edit member:", member);
     setIsModalOpen(false);
-    navigate(`/edit-member/${member.id}`);
+    navigate(`/edit-member/${member._id || member.id}`);
   };
 
   const handleAddMember = () => {
@@ -285,10 +286,10 @@ const MemberList = ({
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 perspective-1000">
           {members.map((member, index) => {
             const isDueToday = isDateToday(member.nextDueDate);
-            const isPending = member.paymentStatus.toLowerCase() === "pending";
+            const isPending = member.paymentStatus?.toLowerCase() === "pending";
             return (
               <div
-                key={member.id}
+                key={member._id || member.id || index}
                 onClick={() => {
                   setSelectedMember(member);
                   setIsModalOpen(true);
@@ -331,12 +332,12 @@ const MemberList = ({
 
                           <div className="flex items-center gap-2 text-gray-300">
                             <Phone className="w-4 h-4 text-orange-400" />
-                            <span className="truncate">{member.phone}</span>
+                            <span className="truncate">{member.phoneNo}</span>
                           </div>
 
                           <div className="flex items-center gap-2 text-gray-300">
                             <CreditCard className="w-4 h-4 text-orange-400" />
-                            <span>{member.feesAmount}</span>
+                            <span>₹{member.feesAmount}</span>
                           </div>
                         </div>
                       </div>
@@ -437,6 +438,10 @@ const MemberList = ({
                     <Mail className="w-4 h-4 text-orange-400" />
                     {selectedMember.email}
                   </p>
+                  <p className="flex items-center gap-2 mb-1">
+                    <Phone className="w-4 h-4 text-orange-400" />
+                    {selectedMember.phoneNo}
+                  </p>
                   <p className="flex items-center gap-2">
                     <User className="w-4 h-4 text-orange-400" />
                     {selectedMember.gender}, {selectedMember.age} years
@@ -460,7 +465,7 @@ const MemberList = ({
                 <div>
                   <label className="text-sm text-gray-400">Fees Amount</label>
                   <p className="font-medium text-green-400">
-                    {selectedMember.feesAmount}
+                    ₹{selectedMember.feesAmount}
                   </p>
                 </div>
               </div>
@@ -471,7 +476,7 @@ const MemberList = ({
                   </label>
                   <p
                     className={`font-medium ${
-                      selectedMember.paymentStatus.toLowerCase() === "pending"
+                      selectedMember.paymentStatus?.toLowerCase() === "pending"
                         ? "text-red-400"
                         : "text-green-400"
                     }`}

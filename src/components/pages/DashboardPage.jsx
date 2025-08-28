@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/AuthStore";
-import MemberList from "../Member/MemberList";
+import { getAllMembers } from '../services/memberService'
 
+import MemberList from "../Member/MemberList";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -16,40 +17,38 @@ const DashboardPage = () => {
   // Profile dropdown state
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
-  const [membersData] = useState([
-    {
-      id: 1,
-      name: "Arya Stark",
-      phone: "+91 98765 43210",
-      joiningDate: "2024-01-15",
-      planDuration: "12 months",
-      feesAmount: "₹15,000",
-      nextDueDate: "2025-08-22",
-      paymentStatus: "Pending",
-      gender: "Female",
-      age: 22,
-      email: "arya.stark@winterfell.com",
-      address: "House Stark, Winterfell, The North",
-      photoUrl:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCANOsVOxAUJSKmcmOvcGhgnCBXY-STyBATw&s",
-    },
-    {
-      id: 4,
-      name: "Tyrion Lannister",
-      phone: "+91 62390 38301",
-      joiningDate: "2024-03-10",
-      planDuration: "6 months",
-      feesAmount: "₹8,500",
-      nextDueDate: "2025-09-10",
-      paymentStatus: "Paid",
-      gender: "Male",
-      age: 32,
-      email: "tyrion.lannister@casterlyrock.com",
-      address: "Casterly Rock, Westerlands",
-      photoUrl:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCANOsVOxAUJSKmcmOvcGhgnCBXY-STyBATw&s",
-    },
-  ]);
+  // Real data states
+  const [membersData, setMembersData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch members data on component mount
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await getAllMembers();
+        
+        if (response.success) {
+          setMembersData(response.data);
+        } else {
+          setError(response.message || "Failed to fetch members");
+          // If authentication failed, redirect to login
+          if (response.message && response.message.includes("Authentication failed")) {
+            navigate("/login");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching members:", error);
+        setError("An unexpected error occurred while fetching members");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMembers();
+  }, [navigate]);
 
   // Track mouse movement for 3D effects
   useEffect(() => {
@@ -64,23 +63,29 @@ const DashboardPage = () => {
   }, []);
 
   // Normalize phone numbers to remove spaces, +91, etc.
-  const normalizePhone = (phone) => phone.replace(/\D/g, "");
+  const normalizePhone = (phone) => phone?.replace(/\D/g, "") || "";
 
   const filteredMembers = membersData.filter((member) => {
-    const normalizedPhone = normalizePhone(member.phone);
+    const normalizedPhone = normalizePhone(member.phoneNo || member.phone);
     const normalizedSearch = normalizePhone(searchTerm);
     return (
-      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       normalizedPhone.includes(normalizedSearch)
     );
   });
 
+  // Calculate stats from real data
   const stats = {
     totalMembers: membersData.length,
-    dueToday: membersData.filter(
-      (m) => m.nextDueDate === new Date().toISOString().split("T")[0]
-    ).length,
-    monthlyRevenue: "₹1.2L",
+    dueToday: membersData.filter((member) => {
+      const today = new Date().toISOString().split("T")[0];
+      const dueDate = member.nextDueDate ? new Date(member.nextDueDate).toISOString().split("T")[0] : null;
+      return dueDate === today;
+    }).length,
+    monthlyRevenue: `₹${membersData.reduce((total, member) => {
+      const amount = parseFloat(member.feesAmount?.toString().replace(/[^\d.]/g, "") || 0);
+      return total + amount;
+    }, 0).toLocaleString("en-IN")}`,
   };
 
   // Profile functionality
@@ -127,6 +132,31 @@ const DashboardPage = () => {
     handleProfileClick,
     handleMembersClick,
   };
+
+  // Handle loading and error states
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading members...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-red-400 text-xl text-center">
+          <p>Error: {error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <MemberList
