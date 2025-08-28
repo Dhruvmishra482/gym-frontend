@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Navigation from "./components/Hero/Navigation";
 import LoginPage from "./components/pages/LoginPage";
 import SignUpPage from "./components/pages/SignUpPage";
@@ -17,27 +17,25 @@ import ForgotPasswordPage from "./components/pages/ForgotPasswordPage";
 import VerifyEmailPage from "./components/pages/VerifyEmailPage";
 import ResetPasswordPage from "./components/pages/ResetPasswordPage";
 import EditMemberForm from "./components/Member/EditMemberForm";
+import EditMemberBySearch from "./components/pages/EditMemberBySearch";
+
 const App = () => {
   const { user, loading, checkAuth, isInitialized } = useAuthStore();
+  const location = useLocation();
 
   useEffect(() => {
-    // Initialize auth from cookies first
     if (!isInitialized) {
       const { initializeAuth } = useAuthStore.getState();
       initializeAuth();
     }
-
-    // Then check with server if we have cookies
     const timeout = setTimeout(() => {
       if (!isInitialized) {
         checkAuth();
       }
     }, 100);
-
     return () => clearTimeout(timeout);
   }, [checkAuth, isInitialized]);
 
-  // Show loading only during initial authentication check
   if (loading && !isInitialized) {
     return (
       <div className="flex items-center justify-center h-screen text-xl">
@@ -46,12 +44,18 @@ const App = () => {
     );
   }
 
+  // Paths where Navigation should be hidden
+  const hideNavPaths = ["/dashboard", "/search-member"];
+  const isEditMemberPath = location.pathname.startsWith("/edit-member");
+
+  const shouldHideNav =
+    hideNavPaths.includes(location.pathname) || isEditMemberPath;
+
   return (
     <>
-      <Navigation />
+      {!shouldHideNav && <Navigation />}
       <ToastContainer />
       <Routes>
-        {/* If user is authenticated, redirect to dashboard, otherwise show home */}
         <Route
           path="/"
           element={user ? <Navigate to="/dashboard" replace /> : <HeroMain />}
@@ -60,21 +64,19 @@ const App = () => {
         <Route path="/features" element={<Features />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/contact" element={<ContactUs />} />
+
         <Route path="/edit-member/:phoneNumber" element={<EditMemberForm />} />
+        <Route path="/search-member" element={<EditMemberBySearch />} />
 
-
-        {/* Redirect authenticated users away from auth pages */}
         <Route
           path="/signup"
           element={user ? <Navigate to="/dashboard" replace /> : <SignUpPage />}
         />
-
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route
           path="/login"
           element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />}
         />
-
         <Route
           path="/dashboard"
           element={
@@ -83,7 +85,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        {/* Forgot Password Route */}
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         <Route
@@ -95,8 +96,6 @@ const App = () => {
           }
         />
         <Route path="/unauthorized" element={<div>Unauthorized Access</div>} />
-
-        {/* Catch all route - redirect to home if not found */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

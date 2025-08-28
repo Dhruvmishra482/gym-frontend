@@ -84,11 +84,11 @@ const MemberList = ({
     )}&background=f97316&color=fff&size=80&rounded=true`;
   };
 
-const handleEditMember = (member) => {
-  console.log("Edit member:", member);
-  setIsModalOpen(false);
-  navigate(`/edit-member/${member.phoneNumber}`);
-};
+  const handleEditMember = (member) => {
+    console.log("Edit member:", member);
+    setIsModalOpen(false);
+    navigate(`/edit-member/${member.phoneNo}`); // Use phoneNo instead of phoneNumber
+  };
 
   const handleAddMember = () => {
     console.log("Add new member");
@@ -271,7 +271,7 @@ const handleEditMember = (member) => {
                       </span>
                     </button>
                     <button
-                      onClick={handleMembersClick}
+                      onClick={() => navigate("/search-member")}
                       className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
                     >
                       <Edit className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />

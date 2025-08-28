@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   User,
   Calendar,
@@ -6,18 +7,33 @@ import {
   Clock,
   CreditCard,
   CheckCircle,
+  ArrowLeft,
+  Loader2,
 } from "lucide-react";
+import { getMemberByPhone, editMember } from "../services/memberService"; // Adjust path as needed
 
 const EditMemberForm = () => {
+  const { phoneNumber } = useParams();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phoneNo: "",
     age: "",
+    gender: "",
+    address: "",
     planDuration: "",
     feesAmount: "",
     nextDueDate: "",
     lastPaidOn: "",
     paymentStatus: "",
+    joiningDate: "",
   });
 
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
   const [particles, setParticles] = useState([]);
 
   useEffect(() => {
@@ -30,7 +46,52 @@ const EditMemberForm = () => {
       duration: 3 + Math.random() * 2,
     }));
     setParticles(newParticles);
-  }, []);
+
+    // Fetch member data when component mounts
+    fetchMemberData();
+  }, [phoneNumber]);
+
+  const fetchMemberData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const result = await getMemberByPhone(phoneNumber);
+
+      if (result.success) {
+        const member = result.data;
+
+        // Format dates for input fields
+        const formatDate = (dateString) => {
+          if (!dateString) return "";
+          const date = new Date(dateString);
+          return date.toISOString().split("T")[0];
+        };
+
+        setFormData({
+          name: member.name || "",
+          email: member.email || "",
+          phoneNo: member.phoneNo || phoneNumber,
+          age: member.age ? member.age.toString() : "",
+          gender: member.gender || "",
+          address: member.address || "",
+          planDuration: member.planDuration || "",
+          feesAmount: member.feesAmount ? member.feesAmount.toString() : "",
+          nextDueDate: formatDate(member.nextDueDate),
+          lastPaidOn: formatDate(member.lastPaidOn),
+          paymentStatus: member.paymentStatus || "",
+          joiningDate: formatDate(member.joiningDate),
+        });
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      setError("Failed to load member data");
+      console.error("Error fetching member:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,10 +101,56 @@ const EditMemberForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
-    // Add your form submission logic here
+
+    try {
+      setSaving(true);
+      setError(null);
+
+      // Prepare update data (only fields allowed by backend)
+      const updateData = {};
+
+      // Only include fields that are allowed to be updated by your backend
+      if (formData.age && formData.age.trim() !== "") {
+        updateData.age = parseInt(formData.age);
+      }
+
+      if (formData.planDuration && formData.planDuration.trim() !== "") {
+        updateData.planDuration = formData.planDuration;
+      }
+
+      if (formData.feesAmount && formData.feesAmount.trim() !== "") {
+        updateData.feesAmount = parseFloat(formData.feesAmount);
+      }
+
+      if (formData.nextDueDate && formData.nextDueDate.trim() !== "") {
+        updateData.nextDueDate = formData.nextDueDate;
+      }
+
+      if (formData.lastPaidOn && formData.lastPaidOn.trim() !== "") {
+        updateData.lastPaidOn = formData.lastPaidOn;
+      }
+
+      if (formData.paymentStatus && formData.paymentStatus.trim() !== "") {
+        updateData.paymentStatus = formData.paymentStatus;
+      }
+
+      const result = await editMember(phoneNumber, updateData);
+
+      if (result.success) {
+        // Show success message (you could use a toast here)
+        alert("Member updated successfully!");
+        navigate(-1); // Go back to previous page
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      setError("Failed to update member");
+      console.error("Error updating member:", err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const FloatingParticles = () => (
@@ -73,9 +180,48 @@ const EditMemberForm = () => {
     </div>
   );
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-pink-400 animate-spin mx-auto mb-4" />
+          <p className="text-gray-300 text-lg">Loading warrior data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="text-red-400 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Error Loading Member
+          </h2>
+          <p className="text-gray-300 mb-6">{error}</p>
+          <button
+            onClick={() => navigate(-1)}
+            className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full font-medium hover:scale-105 transition-transform"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
       <FloatingParticles />
+
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="fixed top-6 left-6 z-20 p-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white hover:bg-white/20 transition-all"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </button>
 
       {/* Animated geometric shapes */}
       <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-pink-500 to-orange-500 opacity-20 transform rotate-45 animate-spin-slow"></div>
@@ -93,7 +239,7 @@ const EditMemberForm = () => {
               EVOLUTION
             </h2>
             <p className="text-gray-300 mt-4 text-lg">
-              Transform • Upgrade • Dominate
+              Editing: {formData.name || "Unknown Warrior"}
             </p>
           </div>
 
@@ -239,15 +385,17 @@ const EditMemberForm = () => {
                 <div className="flex justify-center mt-12">
                   <button
                     type="submit"
-                    className="group relative px-12 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-white font-bold text-xl rounded-full transform hover:scale-110 transition-all duration-500 hover:shadow-2xl hover:shadow-pink-500/50 active:scale-95"
+                    disabled={saving}
+                    className="group relative px-12 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-white font-bold text-xl rounded-full transform hover:scale-110 transition-all duration-500 hover:shadow-2xl hover:shadow-pink-500/50 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       textShadow: "0 0 20px rgba(255, 255, 255, 0.5)",
                       boxShadow:
                         "0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
                     }}
                   >
-                    <span className="relative z-10 tracking-wider">
-                      EVOLVE WARRIOR
+                    <span className="relative z-10 tracking-wider flex items-center gap-3">
+                      {saving && <Loader2 className="w-5 h-5 animate-spin" />}
+                      {saving ? "EVOLVING..." : "EVOLVE WARRIOR"}
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
                     <div className="absolute inset-0 bg-white/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-ping"></div>

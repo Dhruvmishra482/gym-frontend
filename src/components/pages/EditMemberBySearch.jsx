@@ -12,13 +12,19 @@ import {
   Crown,
   Shield,
   Sword,
+  AlertCircle,
+  X,
 } from "lucide-react";
+import { searchMember, editMember } from "../services/memberService";
 
 const EditMemberBySearch = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const [formData, setFormData] = useState({
     age: "",
@@ -27,78 +33,11 @@ const EditMemberBySearch = () => {
     nextDueDate: "",
     lastPaidOn: "",
     paymentStatus: "",
+    address: "",
   });
 
   const [particles, setParticles] = useState([]);
   const [flames, setFlames] = useState([]);
-
-  // Mock database for demonstration
-  const mockUsers = [
-    {
-      id: 1,
-      name: "Jon Snow",
-      phone: "9876543210",
-      email: "jon.snow@nightswatch.com",
-      avatar: "🗡️",
-      gender: "Male",
-      age: "25",
-      joinedDate: "01 Dec 2023",
-      planDuration: "6months",
-      feesAmount: "8500",
-      nextDueDate: "2025-09-15",
-      lastPaidOn: "2025-08-15",
-      paymentStatus: "paid",
-      address: "Castle Black, The Wall",
-    },
-    {
-      id: 2,
-      name: "Daenerys Targaryen",
-      phone: "9123456789",
-      email: "daenerys@dragonstone.com",
-      avatar: "🐉",
-      gender: "Female",
-      age: "24",
-      joinedDate: "15 Jan 2024",
-      planDuration: "12months",
-      feesAmount: "15000",
-      nextDueDate: "2025-12-01",
-      lastPaidOn: "2025-07-01",
-      paymentStatus: "pending",
-      address: "Dragonstone Castle",
-    },
-    {
-      id: 3,
-      name: "Tyrion Lannister",
-      phone: "9988776655",
-      email: "tyrion@casterly.rock",
-      avatar: "🍷",
-      gender: "Male",
-      age: "35",
-      joinedDate: "10 Mar 2024",
-      planDuration: "3months",
-      feesAmount: "6000",
-      nextDueDate: "2025-10-20",
-      lastPaidOn: "2025-07-20",
-      paymentStatus: "overdue",
-      address: "Casterly Rock, Westerlands",
-    },
-    {
-      id: 4,
-      name: "Arya Stark",
-      phone: "9876543211",
-      email: "arya@winterfell.north",
-      avatar: "⚔️",
-      gender: "Female",
-      age: "22",
-      joinedDate: "05 Feb 2024",
-      planDuration: "6months",
-      feesAmount: "7000",
-      nextDueDate: "2025-11-10",
-      lastPaidOn: "2025-08-10",
-      paymentStatus: "paid",
-      address: "Winterfell, The North",
-    },
-  ];
 
   useEffect(() => {
     // Generate random particles for background animation
@@ -133,30 +72,35 @@ const EditMemberBySearch = () => {
     if (!searchQuery.trim()) return;
 
     setIsSearching(true);
+    setError(null);
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const result = await searchMember(searchQuery);
 
-    // Search in mock database by name or phone
-    const foundUser = mockUsers.find(
-      (user) =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.phone.includes(searchQuery.replace(/\D/g, ""))
-    );
-
-    if (foundUser) {
-      setSearchResults(foundUser);
-      setFormData({
-        age: foundUser.age,
-        planDuration: foundUser.planDuration,
-        feesAmount: foundUser.feesAmount,
-        nextDueDate: foundUser.nextDueDate,
-        lastPaidOn: foundUser.lastPaidOn,
-        paymentStatus: foundUser.paymentStatus,
-      });
-      // Don't show form immediately, let user click "Edit" button
-      setShowForm(false);
-    } else {
+      if (result.success) {
+        setSearchResults(result.data);
+        setFormData({
+          age: result.data.age || "",
+          planDuration: result.data.planDuration || "",
+          feesAmount: result.data.feesAmount || "",
+          nextDueDate: result.data.nextDueDate
+            ? new Date(result.data.nextDueDate).toISOString().split("T")[0]
+            : "",
+          lastPaidOn: result.data.lastPaidOn
+            ? new Date(result.data.lastPaidOn).toISOString().split("T")[0]
+            : "",
+          paymentStatus: result.data.paymentStatus || "",
+          address: result.data.address || "",
+        });
+        setShowForm(false);
+      } else {
+        setSearchResults(null);
+        setShowForm(false);
+        setError(result.message);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      setError("An unexpected error occurred while searching");
       setSearchResults(null);
       setShowForm(false);
     }
@@ -174,6 +118,8 @@ const EditMemberBySearch = () => {
     setSearchQuery("");
     setSearchResults(null);
     setShowForm(false);
+    setError(null);
+    setSuccessMessage(null);
     setFormData({
       age: "",
       planDuration: "",
@@ -181,12 +127,51 @@ const EditMemberBySearch = () => {
       nextDueDate: "",
       lastPaidOn: "",
       paymentStatus: "",
+      address: "",
     });
   };
 
-  const handleSubmit = () => {
-    console.log("Form Data:", formData);
-    // Add your form submission logic here
+  const handleSubmit = async () => {
+    if (!searchResults) return;
+
+    setIsUpdating(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      // Prepare update data - only include fields that have values
+      const updateData = {};
+
+      if (formData.age) updateData.age = parseInt(formData.age);
+      if (formData.planDuration)
+        updateData.planDuration = formData.planDuration;
+      if (formData.feesAmount)
+        updateData.feesAmount = parseFloat(formData.feesAmount);
+      if (formData.nextDueDate) updateData.nextDueDate = formData.nextDueDate;
+      if (formData.lastPaidOn) updateData.lastPaidOn = formData.lastPaidOn;
+      if (formData.paymentStatus)
+        updateData.paymentStatus = formData.paymentStatus;
+      if (formData.address) updateData.address = formData.address;
+
+      const result = await editMember(searchResults.phoneNo, updateData);
+
+      if (result.success) {
+        setSuccessMessage("Warrior profile updated successfully!");
+        setShowForm(false);
+        // Update the search results with new data
+        setSearchResults((prev) => ({
+          ...prev,
+          ...updateData,
+        }));
+      } else {
+        setError(result.message || "Failed to update warrior profile");
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      setError("An unexpected error occurred while updating the profile");
+    }
+
+    setIsUpdating(false);
   };
 
   const FloatingParticles = () => (
@@ -217,7 +202,7 @@ const EditMemberBySearch = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-black relative overflow-hidden">
+    <div className="min-h-screen pt-14 bg-gradient-to-b from-gray-900 via-gray-800 to-black relative overflow-hidden">
       <FloatingParticles />
 
       {/* Iron throne inspired geometric shapes */}
@@ -239,7 +224,7 @@ const EditMemberBySearch = () => {
                 WARRIOR REGISTRY
               </h2>
               <p className="text-amber-300 mt-4 text-lg italic">
-                ⚔️ Honor • Strength • Glory ⚔️
+                Honor • Strength • Glory
               </p>
               <div className="flex justify-center gap-4 mt-6">
                 <Shield className="w-8 h-8 text-gray-400 animate-pulse" />
@@ -248,6 +233,44 @@ const EditMemberBySearch = () => {
               </div>
             </div>
           </div>
+
+          {/* Error/Success Messages */}
+          {error && (
+            <div className="mb-8 max-w-3xl mx-auto">
+              <div className="bg-gradient-to-r from-red-900/30 to-red-800/30 backdrop-blur-xl border-2 border-red-500/40 rounded-3xl p-6 flex items-center gap-4">
+                <AlertCircle className="w-8 h-8 text-red-400 flex-shrink-0" />
+                <div>
+                  <h3 className="text-xl font-bold text-red-400 mb-2 font-serif">
+                    Battle Failed
+                  </h3>
+                  <p className="text-gray-300">{error}</p>
+                </div>
+                <button onClick={() => setError(null)} className="ml-auto">
+                  <X className="w-6 h-6 text-red-400 hover:text-red-300" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="mb-8 max-w-3xl mx-auto">
+              <div className="bg-gradient-to-r from-green-900/30 to-emerald-800/30 backdrop-blur-xl border-2 border-green-500/40 rounded-3xl p-6 flex items-center gap-4">
+                <CheckCircle className="w-8 h-8 text-green-400 flex-shrink-0" />
+                <div>
+                  <h3 className="text-xl font-bold text-green-400 mb-2 font-serif">
+                    Victory Achieved
+                  </h3>
+                  <p className="text-gray-300">{successMessage}</p>
+                </div>
+                <button
+                  onClick={() => setSuccessMessage(null)}
+                  className="ml-auto"
+                >
+                  <X className="w-6 h-6 text-green-400 hover:text-green-300" />
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Search Bar - Throne Design */}
           <div className="mb-16">
@@ -310,7 +333,11 @@ const EditMemberBySearch = () => {
                     {/* Avatar */}
                     <div className="relative">
                       <div className="w-32 h-32 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center text-6xl border-4 border-amber-400/50 shadow-lg">
-                        {searchResults.avatar}
+                        {searchResults.gender === "Male"
+                          ? "🗡️"
+                          : searchResults.gender === "Female"
+                          ? "⚔️"
+                          : "🛡️"}
                       </div>
                       <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full border-4 border-gray-800"></div>
                     </div>
@@ -323,12 +350,17 @@ const EditMemberBySearch = () => {
                       <div className="space-y-2 text-lg">
                         <div className="flex items-center gap-3 text-amber-300">
                           <span className="text-amber-400">📧</span>
-                          <span>{searchResults.email}</span>
+                          <span>{searchResults.email || "Not provided"}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-amber-300">
+                          <span className="text-amber-400">📱</span>
+                          <span>{searchResults.phoneNo}</span>
                         </div>
                         <div className="flex items-center gap-3 text-amber-300">
                           <span className="text-amber-400">👤</span>
                           <span>
-                            {searchResults.gender}, {searchResults.age} years
+                            {searchResults.gender || "Not specified"},{" "}
+                            {searchResults.age || "N/A"} years
                           </span>
                         </div>
                       </div>
@@ -343,7 +375,15 @@ const EditMemberBySearch = () => {
                         Joined Date
                       </div>
                       <div className="text-white text-2xl font-bold">
-                        {searchResults.joinedDate}
+                        {searchResults.joiningDate
+                          ? new Date(
+                              searchResults.joiningDate
+                            ).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : "Not recorded"}
                       </div>
                     </div>
 
@@ -383,7 +423,7 @@ const EditMemberBySearch = () => {
                           ? "6 Months"
                           : searchResults.planDuration === "12months"
                           ? "12 Months"
-                          : searchResults.planDuration}
+                          : searchResults.planDuration || "Not set"}
                       </div>
                     </div>
 
@@ -393,14 +433,15 @@ const EditMemberBySearch = () => {
                         Next Due Date
                       </div>
                       <div className="text-white text-2xl font-bold">
-                        {new Date(searchResults.nextDueDate).toLocaleDateString(
-                          "en-GB",
-                          {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )}
+                        {searchResults.nextDueDate
+                          ? new Date(
+                              searchResults.nextDueDate
+                            ).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : "Not set"}
                       </div>
                     </div>
 
@@ -410,7 +451,7 @@ const EditMemberBySearch = () => {
                         Fees Amount
                       </div>
                       <div className="text-green-400 text-2xl font-bold">
-                        ₹{searchResults.feesAmount}
+                        ₹{searchResults.feesAmount || "0"}
                       </div>
                     </div>
 
@@ -421,7 +462,7 @@ const EditMemberBySearch = () => {
                       </div>
                       <div className="text-amber-300 text-xl font-medium flex items-center gap-2">
                         <span className="text-amber-400">📍</span>
-                        {searchResults.address}
+                        {searchResults.address || "Not provided"}
                       </div>
                     </div>
                   </div>
@@ -442,19 +483,6 @@ const EditMemberBySearch = () => {
                       Search Another
                     </button>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {searchQuery && !searchResults && !isSearching && (
-              <div className="mt-10 max-w-3xl mx-auto">
-                <div className="bg-gradient-to-r from-red-900/30 to-red-800/30 backdrop-blur-xl border-2 border-red-500/40 rounded-3xl p-8 text-center">
-                  <h3 className="text-2xl font-bold text-red-400 mb-3 font-serif">
-                    Warrior Not Found in the Realm
-                  </h3>
-                  <p className="text-gray-300 text-lg">
-                    No warrior exists with that name or contact in our registry.
-                  </p>
                 </div>
               </div>
             )}
@@ -483,7 +511,7 @@ const EditMemberBySearch = () => {
                 <div className="relative z-10 space-y-10">
                   <div className="text-center mb-8">
                     <h3 className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent font-serif mb-2">
-                      Warrior's Profile
+                      Edit Warrior's Profile
                     </h3>
                     <div className="w-24 h-1 bg-gradient-to-r from-amber-500 to-yellow-500 mx-auto rounded-full"></div>
                   </div>
@@ -503,9 +531,6 @@ const EditMemberBySearch = () => {
                           onChange={handleInputChange}
                           placeholder="Years of Experience"
                           className="w-full pl-16 pr-6 py-5 bg-black/20 border-2 border-amber-500/30 rounded-2xl text-white placeholder-amber-200/60 focus:outline-none focus:border-amber-400 focus:shadow-lg focus:shadow-amber-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-black/30 text-lg font-serif"
-                          style={{
-                            textShadow: "0 0 10px rgba(255, 255, 255, 0.3)",
-                          }}
                         />
                         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400/10 to-yellow-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                       </div>
@@ -628,26 +653,55 @@ const EditMemberBySearch = () => {
                         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400/10 to-yellow-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                       </div>
                     </div>
+
+                    {/* Address Field - Spans full width */}
+                    <div className="lg:col-span-2 group transform hover:scale-105 transition-all duration-500">
+                      <label className="block text-amber-300 font-bold mb-3 text-lg font-serif">
+                        📍 Stronghold Address
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          name="address"
+                          value={formData.address}
+                          onChange={handleInputChange}
+                          placeholder="Enter warrior's fortress location..."
+                          className="w-full px-6 py-5 bg-black/20 border-2 border-amber-500/30 rounded-2xl text-white placeholder-amber-200/60 focus:outline-none focus:border-amber-400 focus:shadow-lg focus:shadow-amber-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-black/30 text-lg font-serif"
+                        />
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400/10 to-yellow-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Submit Button - Iron Throne Style */}
                   <div className="flex justify-center mt-16">
                     <button
                       onClick={handleSubmit}
-                      className="group relative px-16 py-6 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black font-bold text-2xl rounded-2xl transform hover:scale-110 transition-all duration-700 hover:shadow-2xl hover:shadow-amber-500/60 active:scale-95 font-serif"
+                      disabled={isUpdating}
+                      className="group relative px-16 py-6 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black font-bold text-2xl rounded-2xl transform hover:scale-110 transition-all duration-700 hover:shadow-2xl hover:shadow-amber-500/60 active:scale-95 font-serif disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{
                         textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
                         boxShadow:
                           "0 15px 40px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3), 0 0 30px rgba(255, 193, 7, 0.3)",
                       }}
                     >
-                      <Crown className="inline w-8 h-8 mr-4" />
-                      <span className="relative z-10 tracking-wider">
-                        CLAIM THE THRONE
-                      </span>
-                      <Sword className="inline w-8 h-8 ml-4" />
+                      {isUpdating ? (
+                        <>
+                          <div className="inline-block w-8 h-8 mr-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                          <span className="relative z-10 tracking-wider">
+                            UPDATING THRONE...
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Crown className="inline w-8 h-8 mr-4" />
+                          <span className="relative z-10 tracking-wider">
+                            CLAIM THE THRONE
+                          </span>
+                          <Sword className="inline w-8 h-8 ml-4" />
+                        </>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-400 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-pulse-slow"></div>
-                      <div className="absolute inset-0 bg-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-ping"></div>
                     </button>
                   </div>
                 </div>
@@ -768,385 +822,3 @@ const EditMemberBySearch = () => {
 };
 
 export default EditMemberBySearch;
-
-// import React, { useState, useEffect } from "react";
-// import {
-//   User,
-//   Calendar,
-//   DollarSign,
-//   Clock,
-//   CreditCard,
-//   CheckCircle,
-//   Search,
-//   Zap,
-//   UserCheck,
-// } from "lucide-react";
-
-// const EditMemberBySearch = () => {
-//   const [searchQuery, setSearchQuery] = useState("");
-//   const [isSearching, setIsSearching] = useState(false);
-//   const [searchResults, setSearchResults] = useState(null);
-//   const [showForm, setShowForm] = useState(false);
-
-//   const [formData, setFormData] = useState({
-//     age: "",
-//     planDuration: "",
-//     feesAmount: "",
-//     nextDueDate: "",
-//     lastPaidOn: "",
-//     paymentStatus: "",
-//   });
-
-//   const [particles, setParticles] = useState([]);
-
-//   // Mock database
-//   const mockUsers = [
-//     {
-//       id: 1,
-//       name: "Alex Thunder",
-//       phone: "9876543210",
-//       age: "25",
-//       planDuration: "6months",
-//       feesAmount: "5000",
-//       nextDueDate: "2025-09-15",
-//       lastPaidOn: "2025-08-15",
-//       paymentStatus: "paid",
-//     },
-//     {
-//       id: 2,
-//       name: "Sarah Storm",
-//       phone: "9123456789",
-//       age: "28",
-//       planDuration: "12months",
-//       feesAmount: "8000",
-//       nextDueDate: "2025-12-01",
-//       lastPaidOn: "2025-07-01",
-//       paymentStatus: "pending",
-//     },
-//     {
-//       id: 3,
-//       name: "Mike Warrior",
-//       phone: "9988776655",
-//       age: "32",
-//       planDuration: "3months",
-//       feesAmount: "3000",
-//       nextDueDate: "2025-10-20",
-//       lastPaidOn: "2025-07-20",
-//       paymentStatus: "overdue",
-//     },
-//   ];
-
-//   useEffect(() => {
-//     // Generate random particles
-//     const newParticles = Array.from({ length: 20 }, (_, i) => ({
-//       id: i,
-//       left: Math.random() * 100,
-//       top: Math.random() * 100,
-//       delay: Math.random() * 4,
-//       duration: 3 + Math.random() * 2,
-//     }));
-//     setParticles(newParticles);
-//   }, []);
-
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData((prev) => ({
-//       ...prev,
-//       [name]: value,
-//     }));
-//   };
-
-//   const handleSearch = async () => {
-//     if (!searchQuery.trim()) return;
-
-//     setIsSearching(true);
-
-//     await new Promise((resolve) => setTimeout(resolve, 1500));
-
-//     const foundUser = mockUsers.find(
-//       (user) =>
-//         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-//         user.phone.includes(searchQuery)
-//     );
-
-//     if (foundUser) {
-//       setSearchResults(foundUser);
-//       setFormData({
-//         age: foundUser.age,
-//         planDuration: foundUser.planDuration,
-//         feesAmount: foundUser.feesAmount,
-//         nextDueDate: foundUser.nextDueDate,
-//         lastPaidOn: foundUser.lastPaidOn,
-//         paymentStatus: foundUser.paymentStatus,
-//       });
-//       setShowForm(true);
-//     } else {
-//       setSearchResults(null);
-//       setShowForm(false);
-//     }
-
-//     setIsSearching(false);
-//   };
-
-//   const handleKeyDown = (e) => {
-//     if (e.key === "Enter") {
-//       handleSearch();
-//     }
-//   };
-
-//   const resetSearch = () => {
-//     setSearchQuery("");
-//     setSearchResults(null);
-//     setShowForm(false);
-//     setFormData({
-//       age: "",
-//       planDuration: "",
-//       feesAmount: "",
-//       nextDueDate: "",
-//       lastPaidOn: "",
-//       paymentStatus: "",
-//     });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Form Data:", formData);
-//   };
-
-//   const FloatingParticles = () => (
-//     <div className="fixed inset-0 pointer-events-none overflow-hidden">
-//       {particles.map((particle) => (
-//         <div
-//           key={particle.id}
-//           className="absolute w-2 h-2 bg-gradient-to-r from-pink-400 to-orange-400 rounded-full opacity-30 animate-float"
-//           style={{
-//             left: `${particle.left}%`,
-//             top: `${particle.top}%`,
-//             animationDelay: `${particle.delay}s`,
-//             animationDuration: `${particle.duration}s`,
-//           }}
-//         />
-//       ))}
-//     </div>
-//   );
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
-//       <FloatingParticles />
-
-//       {/* Animated Shapes */}
-//       <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-pink-500 to-orange-500 opacity-20 transform rotate-45 animate-spin-slow"></div>
-//       <div className="absolute bottom-20 right-20 w-24 h-24 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-20 transform rotate-12 animate-bounce"></div>
-//       <div className="absolute top-1/2 left-5 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 opacity-30 transform -rotate-12 animate-pulse"></div>
-
-//       <div className="relative z-10 flex items-center justify-center min-h-screen p-6">
-//         <div className="w-full max-w-2xl">
-//           <div className="text-center mb-12 transform hover:scale-105 transition-transform duration-500">
-//             <h1 className="text-6xl font-bold bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent mb-4 animate-pulse">
-//               WARRIOR
-//             </h1>
-//             <h2 className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-//               EVOLUTION
-//             </h2>
-//             <p className="text-gray-300 mt-4 text-lg">
-//               Transform • Upgrade • Dominate
-//             </p>
-//           </div>
-
-//           {/* Search */}
-//           <div className="mb-12">
-//             <div className="relative max-w-2xl mx-auto">
-//               <div className="relative group">
-//                 <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-3xl opacity-20 blur-xl animate-pulse"></div>
-//                 <div className="relative bg-black/20 backdrop-blur-xl border border-white/20 rounded-3xl p-2 shadow-2xl">
-//                   <div className="flex items-center">
-//                     <Search className="ml-6 text-cyan-400 w-6 h-6" />
-//                     <input
-//                       type="text"
-//                       value={searchQuery}
-//                       onChange={(e) => setSearchQuery(e.target.value)}
-//                       onKeyDown={handleKeyDown}
-//                       placeholder="Search warrior by name or phone..."
-//                       className="flex-1 px-6 py-4 bg-transparent text-white placeholder-gray-400 focus:outline-none text-lg"
-//                       disabled={isSearching}
-//                     />
-//                     <button
-//                       onClick={handleSearch}
-//                       disabled={isSearching || !searchQuery.trim()}
-//                       className="mr-2 px-8 py-3 bg-gradient-to-r from-pink-500 to-orange-500 text-white font-bold rounded-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-//                     >
-//                       {isSearching ? (
-//                         <>
-//                           <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-//                           LOCATING
-//                         </>
-//                       ) : (
-//                         <>
-//                           <Zap className="w-5 h-5" />
-//                           LOCATE
-//                         </>
-//                       )}
-//                     </button>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-
-//             {/* Found User */}
-//             {searchResults && (
-//               <div className="mt-8 max-w-2xl mx-auto">
-//                 <div className="bg-gradient-to-r from-green-500/20 to-cyan-500/20 backdrop-blur-xl border border-green-500/30 rounded-2xl p-6 transform animate-fade-in">
-//                   <div className="flex items-center gap-3 mb-4">
-//                     <UserCheck className="w-8 h-8 text-green-400" />
-//                     <h3 className="text-2xl font-bold text-green-400">
-//                       Warrior Located!
-//                     </h3>
-//                   </div>
-//                   <div className="text-white">
-//                     <p className="text-xl font-semibold">
-//                       {searchResults.name}
-//                     </p>
-//                     <p className="text-gray-300">
-//                       Phone: {searchResults.phone}
-//                     </p>
-//                     <div className="mt-4 flex gap-4">
-//                       <button
-//                         onClick={resetSearch}
-//                         className="px-6 py-2 bg-gray-600/50 text-white rounded-lg hover:bg-gray-600/70 transition-all duration-300"
-//                       >
-//                         Search Another
-//                       </button>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             )}
-
-//             {/* Not Found */}
-//             {searchQuery && !searchResults && !isSearching && (
-//               <div className="mt-8 max-w-2xl mx-auto">
-//                 <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6 text-center">
-//                   <h3 className="text-xl font-bold text-red-400 mb-2">
-//                     Warrior Not Found
-//                   </h3>
-//                   <p className="text-gray-300">
-//                     No warrior found with that name or phone number.
-//                   </p>
-//                 </div>
-//               </div>
-//             )}
-//           </div>
-
-//           {/* Form */}
-//           {showForm && (
-//             <form
-//               onSubmit={handleSubmit}
-//               className="relative animate-fade-in bg-black/20 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl transform-gpu transition-all duration-700"
-//             >
-//               <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-3xl opacity-20 blur-xl animate-pulse"></div>
-
-//               <div className="relative z-10 space-y-8">
-//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-//                   {/* Age */}
-//                   <div className="group relative">
-//                     <User className="absolute left-4 top-4 text-pink-400 w-6 h-6" />
-//                     <input
-//                       type="number"
-//                       name="age"
-//                       value={formData.age}
-//                       onChange={handleInputChange}
-//                       placeholder="Warrior Age"
-//                       className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-pink-400"
-//                     />
-//                   </div>
-
-//                   {/* Plan Duration */}
-//                   <div className="group relative">
-//                     <Calendar className="absolute left-4 top-4 text-orange-400 w-6 h-6" />
-//                     <select
-//                       name="planDuration"
-//                       value={formData.planDuration}
-//                       onChange={handleInputChange}
-//                       className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-orange-400 appearance-none"
-//                     >
-//                       <option value="">Select Battle Duration</option>
-//                       <option value="1month">1 Month - Rookie</option>
-//                       <option value="3months">3 Months - Fighter</option>
-//                       <option value="6months">6 Months - Champion</option>
-//                       <option value="12months">12 Months - Legend</option>
-//                     </select>
-//                   </div>
-
-//                   {/* Fees */}
-//                   <div className="group relative">
-//                     <DollarSign className="absolute left-4 top-4 text-green-400 w-6 h-6" />
-//                     <input
-//                       type="number"
-//                       name="feesAmount"
-//                       value={formData.feesAmount}
-//                       onChange={handleInputChange}
-//                       placeholder="Training Investment"
-//                       className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-green-400"
-//                     />
-//                   </div>
-
-//                   {/* Next Due Date */}
-//                   <div className="group relative">
-//                     <Clock className="absolute left-4 top-4 text-cyan-400 w-6 h-6" />
-//                     <input
-//                       type="date"
-//                       name="nextDueDate"
-//                       value={formData.nextDueDate}
-//                       onChange={handleInputChange}
-//                       className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-cyan-400"
-//                     />
-//                   </div>
-
-//                   {/* Last Paid */}
-//                   <div className="group relative">
-//                     <CreditCard className="absolute left-4 top-4 text-purple-400 w-6 h-6" />
-//                     <input
-//                       type="date"
-//                       name="lastPaidOn"
-//                       value={formData.lastPaidOn}
-//                       onChange={handleInputChange}
-//                       className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-purple-400"
-//                     />
-//                   </div>
-
-//                   {/* Payment Status */}
-//                   <div className="group relative">
-//                     <CheckCircle className="absolute left-4 top-4 text-red-400 w-6 h-6" />
-//                     <select
-//                       name="paymentStatus"
-//                       value={formData.paymentStatus}
-//                       onChange={handleInputChange}
-//                       className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-red-400 appearance-none"
-//                     >
-//                       <option value="">Battle Status</option>
-//                       <option value="paid">✅ Victory Secured</option>
-//                       <option value="pending">⏳ Battle Pending</option>
-//                       <option value="overdue">⚠️ Mission Failed</option>
-//                     </select>
-//                   </div>
-//                 </div>
-
-//                 {/* Submit */}
-//                 <div className="flex justify-center mt-12">
-//                   <button
-//                     type="submit"
-//                     className="px-12 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-white font-bold text-xl rounded-full transform hover:scale-110 transition-all duration-500 hover:shadow-2xl"
-//                   >
-//                     EVOLVE WARRIOR
-//                   </button>
-//                 </div>
-//               </div>
-//             </form>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EditMemberBySearch;
