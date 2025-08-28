@@ -17,7 +17,6 @@ import ForgotPasswordPage from "./components/pages/ForgotPasswordPage";
 import VerifyEmailPage from "./components/pages/VerifyEmailPage";
 import ResetPasswordPage from "./components/pages/ResetPasswordPage";
 import EditMemberForm from "./components/Member/EditMemberForm";
-
 const App = () => {
   const { user, loading, checkAuth, isInitialized } = useAuthStore();
 
@@ -61,6 +60,8 @@ const App = () => {
         <Route path="/features" element={<Features />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path="/edit-member/:phoneNumber" element={<EditMemberForm />} />
+
 
         {/* Redirect authenticated users away from auth pages */}
         <Route

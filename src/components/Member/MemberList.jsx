@@ -84,11 +84,11 @@ const MemberList = ({
     )}&background=f97316&color=fff&size=80&rounded=true`;
   };
 
-  const handleEditMember = (member) => {
-    console.log("Edit member:", member);
-    setIsModalOpen(false);
-    navigate(`/edit-member/${member._id || member.id}`);
-  };
+const handleEditMember = (member) => {
+  console.log("Edit member:", member);
+  setIsModalOpen(false);
+  navigate(`/edit-member/${member.phoneNumber}`);
+};
 
   const handleAddMember = () => {
     console.log("Add new member");
