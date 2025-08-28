@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -37,7 +37,7 @@ const MemberList = ({
 }) => {
   const navigate = useNavigate();
   const profileRef = useRef(null);
-  
+
   // Destructure profile props
   const {
     user,
@@ -49,7 +49,7 @@ const MemberList = ({
     handleProfileClick,
     handleMembersClick,
   } = profileProps;
-  
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -57,9 +57,9 @@ const MemberList = ({
         setIsProfileOpen(false);
       }
     };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setIsProfileOpen]);
 
   const formatDate = (dateString) => {
@@ -172,7 +172,7 @@ const MemberList = ({
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-3 p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-orange-500/50 transition-all duration-300 group"
+                className="flex items-center gap-3 p-2 rounded-xl  hover:bg-white/10  border-white/10 hover:border-orange-500/50 transition-all duration-300 group"
               >
                 {/* Profile Image/Avatar */}
                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-orange-500/30 group-hover:border-orange-500/50 transition-all">
@@ -182,35 +182,37 @@ const MemberList = ({
                       alt={getOwnerDisplayName()}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
                       }}
                     />
                   ) : null}
                   <div
-                    className={`w-full h-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-sm ${user?.profileImage ? 'hidden' : 'flex'}`}
+                    className={`w-full h-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-sm ${
+                      user?.profileImage ? "hidden" : "flex"
+                    }`}
                   >
                     {getOwnerInitials()}
                   </div>
                 </div>
 
                 {/* Name and Chevron */}
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <div className="text-left">
                     <div className="text-sm font-medium text-white">
                       {getOwnerDisplayName()}
                     </div>
                     <div className="text-xs text-gray-400">Owner</div>
                   </div>
-                  <ChevronDown 
+                  <ChevronDown
                     className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
-                      isProfileOpen ? 'rotate-180' : ''
-                    }`} 
+                      isProfileOpen ? "rotate-180" : ""
+                    }`}
                   />
-                </div>
+                </div> */}
               </button>
-
               {/* Dropdown Menu */}
+
               {isProfileOpen && (
                 <div className="absolute right-0 top-full mt-2 w-56 bg-black/90 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200">
                   {/* User Info Header */}
@@ -223,13 +225,15 @@ const MemberList = ({
                             alt={getOwnerDisplayName()}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextSibling.style.display = 'flex';
+                              e.target.style.display = "none";
+                              e.target.nextSibling.style.display = "flex";
                             }}
                           />
                         ) : null}
                         <div
-                          className={`w-full h-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold ${user?.profileImage ? 'hidden' : 'flex'}`}
+                          className={`w-full h-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold ${
+                            user?.profileImage ? "hidden" : "flex"
+                          }`}
                         >
                           {getOwnerInitials()}
                         </div>
@@ -238,9 +242,9 @@ const MemberList = ({
                         <div className="font-medium text-white">
                           {getOwnerDisplayName()}
                         </div>
-                        <div className="text-sm text-gray-400">
-                          {user?.email || 'owner@gym.com'}
-                        </div>
+                        {/* <div className="text-sm text-gray-400">
+                          {user?.email || "owner@gym.com"}
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -252,7 +256,9 @@ const MemberList = ({
                       className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
                     >
                       <User className="w-5 h-5 text-orange-400 group-hover:text-orange-300" />
-                      <span className="text-gray-300 group-hover:text-white">My Profile</span>
+                      <span className="text-gray-300 group-hover:text-white">
+                        My Profile
+                      </span>
                     </button>
 
                     <button
@@ -260,7 +266,18 @@ const MemberList = ({
                       className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
                     >
                       <Users className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
-                      <span className="text-gray-300 group-hover:text-white">My Members</span>
+                      <span className="text-gray-300 group-hover:text-white">
+                        Non-Active Members
+                      </span>
+                    </button>
+                    <button
+                      onClick={handleMembersClick}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
+                    >
+                      <Edit className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
+                      <span className="text-gray-300 group-hover:text-white">
+                        Edit Member
+                      </span>
                     </button>
 
                     <div className="border-t border-white/10 my-2"></div>
@@ -270,7 +287,9 @@ const MemberList = ({
                       className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-red-500/10 transition-colors duration-200 group"
                     >
                       <LogOut className="w-5 h-5 text-red-400 group-hover:text-red-300" />
-                      <span className="text-gray-300 group-hover:text-red-300">Logout</span>
+                      <span className="text-gray-300 group-hover:text-red-300">
+                        Logout
+                      </span>
                     </button>
                   </div>
                 </div>
