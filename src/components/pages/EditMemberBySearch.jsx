@@ -13,9 +13,11 @@ import {
   Shield,
   Sword,
   AlertCircle,
+  ArrowLeft,
   X,
 } from "lucide-react";
 import { searchMember, editMember } from "../services/memberService";
+import { useNavigate } from "react-router-dom";
 
 const EditMemberBySearch = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,6 +27,7 @@ const EditMemberBySearch = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     age: "",
@@ -204,6 +207,14 @@ const EditMemberBySearch = () => {
   return (
     <div className="min-h-screen pt-14 bg-gradient-to-b from-gray-900 via-gray-800 to-black relative overflow-hidden">
       <FloatingParticles />
+
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="fixed top-6 left-6 z-20 p-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white hover:bg-white/20 transition-all"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </button>
 
       {/* Iron throne inspired geometric shapes */}
       <div className="absolute top-16 left-16 w-24 h-24 bg-gradient-to-br from-amber-600 to-yellow-700 opacity-20 transform rotate-45 animate-pulse"></div>

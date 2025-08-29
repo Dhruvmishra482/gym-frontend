@@ -87,31 +87,74 @@ export const validateMemberData = (formData) =>
   };
 };
 
-// Search member by name or phone - NEW FUNCTION
+// Search member by name or phone - FIXED VERSION
 export const searchMember = async (query) =>
 {
   try
   {
-    // First, get all members and search locally since backend doesn't have search endpoint
+    console.log("Starting search for:",query);
+
+    // Get all members first
     const allMembersResponse = await getAllMembers();
 
     if (!allMembersResponse.success)
     {
+      console.log("Failed to get all members:",allMembersResponse);
       return allMembersResponse;
     }
 
     const members = allMembersResponse.data;
-    const cleanQuery = query.trim().toLowerCase();
-    const phoneQuery = query.replace(/\D/g,'');
+    console.log("Total members found:",members.length);
 
-    // Search by name or phone
-    const foundMember = members.find(member =>
-      member.name.toLowerCase().includes(cleanQuery) ||
-      member.phoneNo.includes(phoneQuery)
-    );
+    // Clean and prepare search terms
+    const cleanQuery = query.trim();
+
+    if (!cleanQuery)
+    {
+      return {
+        success: false,
+        message: "Search query cannot be empty"
+      };
+    }
+
+    // Check if query is purely numeric (phone number)
+    const isPhoneQuery = /^\d+$/.test(cleanQuery);
+    console.log("Is phone query:",isPhoneQuery,"Query:",cleanQuery);
+
+    // Search logic
+    let foundMember = null;
+
+    if (isPhoneQuery)
+    {
+      // Phone number search - exact match
+      foundMember = members.find(member =>
+        member.phoneNo === cleanQuery
+      );
+      console.log("Phone search result:",foundMember ? foundMember.name : "Not found");
+    } else
+    {
+      // Name search - case insensitive, with trimming
+      const searchLower = cleanQuery.toLowerCase();
+
+      // Try exact match first
+      foundMember = members.find(member =>
+        member.name && member.name.trim().toLowerCase() === searchLower
+      );
+
+      // If no exact match, try partial match
+      if (!foundMember)
+      {
+        foundMember = members.find(member =>
+          member.name && member.name.trim().toLowerCase().includes(searchLower)
+        );
+      }
+
+      console.log("Name search result:",foundMember ? foundMember.name : "Not found");
+    }
 
     if (foundMember)
     {
+      console.log("Member found:",foundMember.name);
       return {
         success: true,
         message: "Member found successfully",
@@ -119,9 +162,12 @@ export const searchMember = async (query) =>
       };
     } else
     {
+      console.log("No member found with query:",cleanQuery);
       return {
         success: false,
-        message: "No member found with that name or phone number"
+        message: isPhoneQuery
+          ? `No member found with phone number: ${cleanQuery}`
+          : `No member found with name: ${cleanQuery}`
       };
     }
   } catch (error)
@@ -349,7 +395,7 @@ export const deleteMember = async (phoneNo) =>
   }
 };
 
-// Get all members (if needed for listing)
+// Get all members
 export const getAllMembers = async () =>
 {
   try
@@ -396,7 +442,7 @@ export const getAllMembers = async () =>
   }
 };
 
-// Get member by phone number (if needed)
+// Get member by phone number
 export const getMemberByPhone = async (phoneNo) =>
 {
   try
