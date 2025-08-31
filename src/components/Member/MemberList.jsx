@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -47,7 +48,6 @@ const MemberList = ({
     getOwnerInitials,
     handleLogout,
     handleProfileClick,
-    handleMembersClick,
   } = profileProps;
 
   // Close dropdown when clicking outside
@@ -251,24 +251,26 @@ const MemberList = ({
 
                   {/* Menu Items */}
                   <div className="py-2">
-                    <button
-                      onClick={handleProfileClick}
+                    <Link
+                      to="/my-profile"
                       className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
                     >
                       <User className="w-5 h-5 text-orange-400 group-hover:text-orange-300" />
                       <span className="text-gray-300 group-hover:text-white">
                         My Profile
                       </span>
-                    </button>
+                    </Link>
 
-                    <button
-                      onClick={handleMembersClick}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
-                    >
-                      <Users className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
-                      <span className="text-gray-300 group-hover:text-white">
-                        Non-Active Members
-                      </span>
+                    <button className="w-full">
+                      <Link
+                        to="/due-members"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
+                      >
+                        <Users className="w-5 h-5 text-red-400 group-hover:text-red-300" />
+                        <span className="text-gray-300 group-hover:text-white">
+                          Due Members
+                        </span>
+                      </Link>
                     </button>
                     <button
                       onClick={() => navigate("/search-member")}

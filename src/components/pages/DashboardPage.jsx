@@ -1,22 +1,23 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/AuthStore";
-import { getAllMembers } from '../services/memberService'
-
+import { getAllMembers } from "../services/memberService";
 import MemberList from "../Member/MemberList";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
-  
+
+  // 2. Add this state to your DashboardPage component (after existing useState declarations)
+
   const [selectedMember, setSelectedMember] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  
+
   // Profile dropdown state
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  
+
   // Real data states
   const [membersData, setMembersData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,13 +30,16 @@ const DashboardPage = () => {
         setIsLoading(true);
         setError(null);
         const response = await getAllMembers();
-        
+
         if (response.success) {
           setMembersData(response.data);
         } else {
           setError(response.message || "Failed to fetch members");
           // If authentication failed, redirect to login
-          if (response.message && response.message.includes("Authentication failed")) {
+          if (
+            response.message &&
+            response.message.includes("Authentication failed")
+          ) {
             navigate("/login");
           }
         }
@@ -79,24 +83,39 @@ const DashboardPage = () => {
     totalMembers: membersData.length,
     dueToday: membersData.filter((member) => {
       const today = new Date().toISOString().split("T")[0];
-      const dueDate = member.nextDueDate ? new Date(member.nextDueDate).toISOString().split("T")[0] : null;
+      const dueDate = member.nextDueDate
+        ? new Date(member.nextDueDate).toISOString().split("T")[0]
+        : null;
       return dueDate === today;
     }).length,
-    monthlyRevenue: `₹${membersData.reduce((total, member) => {
-      const amount = parseFloat(member.feesAmount?.toString().replace(/[^\d.]/g, "") || 0);
-      return total + amount;
-    }, 0).toLocaleString("en-IN")}`,
+    monthlyRevenue: `₹${membersData
+      .reduce((total, member) => {
+        const amount = parseFloat(
+          member.feesAmount?.toString().replace(/[^\d.]/g, "") || 0
+        );
+        return total + amount;
+      }, 0)
+      .toLocaleString("en-IN")}`,
   };
 
   // Profile functionality
   const getOwnerDisplayName = () => {
     if (!user) return "Owner";
-    return `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || "Owner";
+    return (
+      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+      user.email ||
+      "Owner"
+    );
   };
 
   const getOwnerInitials = () => {
     const name = getOwnerDisplayName();
-    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   const handleLogout = async () => {
@@ -116,7 +135,7 @@ const DashboardPage = () => {
   };
 
   const handleMembersClick = () => {
-    // Static view - just close dropdown for now  
+    // Static view - just close dropdown for now
     setIsProfileOpen(false);
     console.log("My Members clicked - Static view");
   };
@@ -147,8 +166,8 @@ const DashboardPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-red-400 text-xl text-center">
           <p>Error: {error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
           >
             Retry

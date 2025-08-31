@@ -18,7 +18,8 @@ import VerifyEmailPage from "./components/pages/VerifyEmailPage";
 import ResetPasswordPage from "./components/pages/ResetPasswordPage";
 import EditMemberForm from "./components/Member/EditMemberForm";
 import EditMemberBySearch from "./components/pages/EditMemberBySearch";
-
+import DueMembersPage from "./components/pages/DueMembersPage";
+import MyProfile from "./components/pages/MyProfilePage";
 const App = () => {
   const { user, loading, checkAuth, isInitialized } = useAuthStore();
   const location = useLocation();
@@ -64,10 +65,40 @@ const App = () => {
         <Route path="/features" element={<Features />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route
+          path="/edit-member/:phoneNumber"
+          element={
+            <ProtectedRoute allowedRoles={["owner"]}>
+              <EditMemberForm />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/edit-member/:phoneNumber" element={<EditMemberForm />} />
-        <Route path="/search-member" element={<EditMemberBySearch />} />
+        <Route
+          path="/search-member"
+          element={
+            <ProtectedRoute allowedRoles={["owner"]}>
+              <EditMemberBySearch />
+            </ProtectedRoute>
+          }
+        />
 
+        <Route
+          path="/due-members"
+          element={
+            <ProtectedRoute allowedRoles={["owner"]}>
+              <DueMembersPage dueMembersData={location.state?.dueMembersData} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+  path="/my-profile"
+  element={
+    <ProtectedRoute allowedRoles={["owner"]}>
+      <MyProfile />
+    </ProtectedRoute>
+  }
+/>
         <Route
           path="/signup"
           element={user ? <Navigate to="/dashboard" replace /> : <SignUpPage />}
@@ -95,6 +126,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
         <Route path="/unauthorized" element={<div>Unauthorized Access</div>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
