@@ -45,7 +45,7 @@ const App = () => {
   }
 
   // Paths where Navigation should be hidden
-  const hideNavPaths = ["/dashboard", "/search-member"];
+  const hideNavPaths = ["/dashboard", "/search-member", "/add-member"];
   const isEditMemberPath = location.pathname.startsWith("/edit-member");
 
   const shouldHideNav =

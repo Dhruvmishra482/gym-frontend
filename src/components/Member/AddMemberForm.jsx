@@ -9,7 +9,9 @@ import {
   Dumbbell,
   CreditCard,
   Camera,
+  ArrowLeft,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AddMemberForm = ({
   formData,
@@ -17,6 +19,7 @@ const AddMemberForm = ({
   handleSubmit,
   isSubmitting,
 }) => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-red-900 p-4 overflow-hidden relative">
       {/* Animated Background */}
@@ -41,6 +44,13 @@ const AddMemberForm = ({
           ></div>
         ))}
       </div>
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="fixed top-6 left-6 z-20 p-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white hover:bg-white/20 transition-all"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </button>
 
       <div className="relative z-10 max-w-6xl mx-auto">
         {/* Header */}
