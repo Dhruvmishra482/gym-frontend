@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -21,6 +22,7 @@ import {
   LogOut,
   Users,
   Settings,
+  Loader2,
 } from "lucide-react";
 
 const MemberList = ({
@@ -34,6 +36,7 @@ const MemberList = ({
   isModalOpen,
   setIsModalOpen,
   profileProps,
+  isSearching = false,
 }) => {
   const navigate = useNavigate();
   const profileRef = useRef(null);
@@ -47,7 +50,6 @@ const MemberList = ({
     getOwnerInitials,
     handleLogout,
     handleProfileClick,
-    handleMembersClick,
   } = profileProps;
 
   // Close dropdown when clicking outside
@@ -87,13 +89,26 @@ const MemberList = ({
   const handleEditMember = (member) => {
     console.log("Edit member:", member);
     setIsModalOpen(false);
-    navigate(`/edit-member/${member.phoneNo}`); // Use phoneNo instead of phoneNumber
+    navigate(`/edit-member/${member.phoneNo}`);
   };
 
   const handleAddMember = () => {
     console.log("Add new member");
     navigate("/add-member");
   };
+
+  // Get search results text with loading state - removed as we're using inline display now
+  // const getSearchResultsText = () => {
+  //   if (!searchTerm.trim()) {
+  //     return `${stats.totalMembers} Total Warriors`;
+  //   }
+
+  //   if (isSearching) {
+  //     return "Searching...";
+  //   }
+
+  //   return `${members.length} of ${stats.totalMembers} warriors found`;
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
@@ -132,16 +147,30 @@ const MemberList = ({
             <h1 className="text-2xl font-bold tracking-wider">IRON THRONE</h1>
           </div>
 
-          {/* Center Section - Search */}
+          {/* Center Section - Search with Debouncing */}
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search warriors..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 pr-6 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition-all w-80"
-            />
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              {isSearching && (
+                <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 text-orange-500 w-5 h-5 animate-spin" />
+              )}
+              <input
+                type="text"
+                placeholder="Search by name or phone number..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 pr-12 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 transition-all w-96"
+              />
+            </div>
+
+            {/* Search Results Counter */}
+            {searchTerm.trim() && (
+              <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 text-sm text-gray-400 whitespace-nowrap">
+                {isSearching
+                  ? "Searching..."
+                  : `${members.length} results found`}
+              </div>
+            )}
           </div>
 
           {/* Right Section - Stats and Profile */}
@@ -172,7 +201,7 @@ const MemberList = ({
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-3 p-2 rounded-xl  hover:bg-white/10  border-white/10 hover:border-orange-500/50 transition-all duration-300 group"
+                className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/10 border-white/10 hover:border-orange-500/50 transition-all duration-300 group"
               >
                 {/* Profile Image/Avatar */}
                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-orange-500/30 group-hover:border-orange-500/50 transition-all">
@@ -195,24 +224,9 @@ const MemberList = ({
                     {getOwnerInitials()}
                   </div>
                 </div>
-
-                {/* Name and Chevron */}
-                {/* <div className="flex items-center gap-2">
-                  <div className="text-left">
-                    <div className="text-sm font-medium text-white">
-                      {getOwnerDisplayName()}
-                    </div>
-                    <div className="text-xs text-gray-400">Owner</div>
-                  </div>
-                  <ChevronDown
-                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
-                      isProfileOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </div> */}
               </button>
-              {/* Dropdown Menu */}
 
+              {/* Dropdown Menu */}
               {isProfileOpen && (
                 <div className="absolute right-0 top-full mt-2 w-56 bg-black/90 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200">
                   {/* User Info Header */}
@@ -242,34 +256,32 @@ const MemberList = ({
                         <div className="font-medium text-white">
                           {getOwnerDisplayName()}
                         </div>
-                        {/* <div className="text-sm text-gray-400">
-                          {user?.email || "owner@gym.com"}
-                        </div> */}
                       </div>
                     </div>
                   </div>
 
                   {/* Menu Items */}
                   <div className="py-2">
-                    <button
-                      onClick={handleProfileClick}
+                    <Link
+                      to="/my-profile"
                       className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
                     >
                       <User className="w-5 h-5 text-orange-400 group-hover:text-orange-300" />
                       <span className="text-gray-300 group-hover:text-white">
                         My Profile
                       </span>
-                    </button>
+                    </Link>
 
-                    <button
-                      onClick={handleMembersClick}
+                    <Link
+                      to="/due-members"
                       className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
                     >
-                      <Users className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
+                      <Users className="w-5 h-5 text-red-400 group-hover:text-red-300" />
                       <span className="text-gray-300 group-hover:text-white">
-                        Non-Active Members
+                        Due Members
                       </span>
-                    </button>
+                    </Link>
+
                     <button
                       onClick={() => navigate("/search-member")}
                       className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors duration-200 group"
@@ -301,11 +313,54 @@ const MemberList = ({
 
       {/* Members Grid */}
       <main className="max-w-7xl mx-auto p-6">
-        <h2 className="text-4xl font-bold text-center mb-12">Elite Warriors</h2>
+        <div className="flex items-center justify-between mb-12">
+          <h2 className="text-4xl font-bold">Elite Warriors</h2>
+
+          {/* Search Results Info - Only show when searching */}
+          {searchTerm.trim() && (
+            <div className="flex items-center gap-2 text-gray-400">
+              {isSearching ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Searching...</span>
+                </>
+              ) : (
+                <>
+                  <Search className="w-5 h-5" />
+                  <span>
+                    {members.length} results for "{searchTerm}"
+                  </span>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* No Results State */}
+        {!isSearching && searchTerm.trim() && members.length === 0 && (
+          <div className="text-center py-16">
+            <Search className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-2xl font-semibold text-gray-400 mb-2">
+              No warriors found
+            </h3>
+            <p className="text-gray-500">
+              Try searching with a different name or phone number
+            </p>
+            <button
+              onClick={() => setSearchTerm("")}
+              className="mt-4 px-4 py-2 bg-orange-500/20 text-orange-400 rounded-lg hover:bg-orange-500/30 transition-colors"
+            >
+              Clear Search
+            </button>
+          </div>
+        )}
+
+        {/* Members Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 perspective-1000">
           {members.map((member, index) => {
             const isDueToday = isDateToday(member.nextDueDate);
             const isPending = member.paymentStatus?.toLowerCase() === "pending";
+
             return (
               <div
                 key={member._id || member.id || index}

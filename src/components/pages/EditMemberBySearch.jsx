@@ -37,6 +37,8 @@ const EditMemberBySearch = () => {
     lastPaidOn: "",
     paymentStatus: "",
     address: "",
+    paymentMethod: "",
+    paymentNotes: "",
   });
 
   const [particles, setParticles] = useState([]);
@@ -94,6 +96,8 @@ const EditMemberBySearch = () => {
             : "",
           paymentStatus: result.data.paymentStatus || "",
           address: result.data.address || "",
+          paymentMethod: result.data.paymentMethod || "",
+          paymentNotes: result.data.paymentNotes || "",
         });
         setShowForm(false);
       } else {
@@ -131,6 +135,8 @@ const EditMemberBySearch = () => {
       lastPaidOn: "",
       paymentStatus: "",
       address: "",
+      paymentMethod: "",
+      paymentNotes: "",
     });
   };
 
@@ -155,6 +161,10 @@ const EditMemberBySearch = () => {
       if (formData.paymentStatus)
         updateData.paymentStatus = formData.paymentStatus;
       if (formData.address) updateData.address = formData.address;
+      if (formData.paymentMethod)
+        updateData.paymentMethod = formData.paymentMethod;
+      if (formData.paymentNotes)
+        updateData.paymentNotes = formData.paymentNotes;
 
       const result = await editMember(searchResults.phoneNo, updateData);
 
@@ -405,18 +415,14 @@ const EditMemberBySearch = () => {
                       </div>
                       <div
                         className={`text-2xl font-bold ${
-                          searchResults.paymentStatus === "paid"
+                          searchResults.paymentStatus === "Paid"
                             ? "text-green-400"
-                            : searchResults.paymentStatus === "pending"
-                            ? "text-yellow-400"
                             : "text-red-400"
                         }`}
                       >
-                        {searchResults.paymentStatus === "paid"
+                        {searchResults.paymentStatus === "Paid"
                           ? "✅ Paid"
-                          : searchResults.paymentStatus === "pending"
-                          ? "⏳ Pending"
-                          : "❌ Overdue"}
+                          : "❌ Pending"}
                       </div>
                     </div>
 
@@ -426,15 +432,7 @@ const EditMemberBySearch = () => {
                         Plan Duration
                       </div>
                       <div className="text-white text-2xl font-bold">
-                        {searchResults.planDuration === "1month"
-                          ? "1 Month"
-                          : searchResults.planDuration === "3months"
-                          ? "3 Months"
-                          : searchResults.planDuration === "6months"
-                          ? "6 Months"
-                          : searchResults.planDuration === "12months"
-                          ? "12 Months"
-                          : searchResults.planDuration || "Not set"}
+                        {searchResults.planDuration || "Not set"}
                       </div>
                     </div>
 
@@ -563,17 +561,17 @@ const EditMemberBySearch = () => {
                           <option value="" className="bg-gray-900">
                             Choose Your Path
                           </option>
-                          <option value="1month" className="bg-gray-900">
+                          <option value="1 month" className="bg-gray-900">
                             1 Month - Squire
                           </option>
-                          <option value="3months" className="bg-gray-900">
+                          <option value="3 month" className="bg-gray-900">
                             3 Months - Knight
                           </option>
-                          <option value="6months" className="bg-gray-900">
+                          <option value="6 month" className="bg-gray-900">
                             6 Months - Lord Commander
                           </option>
-                          <option value="12months" className="bg-gray-900">
-                            12 Months - Hand of the King
+                          <option value="1 year" className="bg-gray-900">
+                            1 Year - Hand of the King
                           </option>
                         </select>
                         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400/10 to-yellow-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
@@ -651,14 +649,47 @@ const EditMemberBySearch = () => {
                           <option value="" className="bg-gray-900">
                             Choose Status
                           </option>
-                          <option value="paid" className="bg-gray-900">
+                          <option value="Paid" className="bg-gray-900">
                             👑 Honored - Tribute Paid
                           </option>
-                          <option value="pending" className="bg-gray-900">
+                          <option value="Pending" className="bg-gray-900">
                             ⏳ Awaiting - Tribute Pending
                           </option>
-                          <option value="overdue" className="bg-gray-900">
-                            ⚠️ Dishonored - Tribute Overdue
+                        </select>
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400/10 to-yellow-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                      </div>
+                    </div>
+
+                    {/* Payment Method Field */}
+                    <div className="group transform hover:scale-105 transition-all duration-500 hover:rotate-1">
+                      <label className="block text-amber-300 font-bold mb-3 text-lg font-serif">
+                        💳 Payment Method
+                      </label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-5 top-5 text-amber-400 w-7 h-7 group-hover:animate-bounce" />
+                        <select
+                          name="paymentMethod"
+                          value={formData.paymentMethod}
+                          onChange={handleInputChange}
+                          className="w-full pl-16 pr-6 py-5 bg-black/20 border-2 border-amber-500/30 rounded-2xl text-white focus:outline-none focus:border-amber-400 focus:shadow-lg focus:shadow-amber-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-black/30 appearance-none text-lg font-serif"
+                        >
+                          <option value="" className="bg-gray-900">
+                            Choose Method
+                          </option>
+                          <option value="Cash" className="bg-gray-900">
+                            💵 Cash
+                          </option>
+                          <option value="Card" className="bg-gray-900">
+                            💳 Card
+                          </option>
+                          <option value="UPI" className="bg-gray-900">
+                            📱 UPI
+                          </option>
+                          <option value="Bank Transfer" className="bg-gray-900">
+                            🏦 Bank Transfer
+                          </option>
+                          <option value="Other" className="bg-gray-900">
+                            🔄 Other
                           </option>
                         </select>
                         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400/10 to-yellow-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
@@ -678,6 +709,24 @@ const EditMemberBySearch = () => {
                           onChange={handleInputChange}
                           placeholder="Enter warrior's fortress location..."
                           className="w-full px-6 py-5 bg-black/20 border-2 border-amber-500/30 rounded-2xl text-white placeholder-amber-200/60 focus:outline-none focus:border-amber-400 focus:shadow-lg focus:shadow-amber-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-black/30 text-lg font-serif"
+                        />
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400/10 to-yellow-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                      </div>
+                    </div>
+
+                    {/* Payment Notes Field - Spans full width */}
+                    <div className="lg:col-span-2 group transform hover:scale-105 transition-all duration-500">
+                      <label className="block text-amber-300 font-bold mb-3 text-lg font-serif">
+                        📝 Payment Notes
+                      </label>
+                      <div className="relative">
+                        <textarea
+                          name="paymentNotes"
+                          value={formData.paymentNotes}
+                          onChange={handleInputChange}
+                          placeholder="Additional payment information or notes..."
+                          rows="4"
+                          className="w-full px-6 py-5 bg-black/20 border-2 border-amber-500/30 rounded-2xl text-white placeholder-amber-200/60 focus:outline-none focus:border-amber-400 focus:shadow-lg focus:shadow-amber-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-black/30 text-lg font-serif resize-none"
                         />
                         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400/10 to-yellow-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                       </div>
