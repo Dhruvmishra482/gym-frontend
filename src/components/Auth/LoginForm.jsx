@@ -9,7 +9,7 @@ import {
   EyeOff,
   Zap,
   Crown,
-  Flame,
+  ChevronRight,
 } from "lucide-react";
 
 export default function LoginForm({
@@ -24,299 +24,226 @@ export default function LoginForm({
   setFocusedField,
 }) {
   const navigate = useNavigate();
-
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 100);
-    return () => clearTimeout(timer);
+    setMounted(true);
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-red-900 flex items-center justify-center p-4 relative overflow-hidden py-24">
-      {/* Animated Background Effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_80%,rgba(255,0,0,0.3),transparent_50%)] animate-pulse"></div>
-        <div
-          className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_20%,rgba(255,215,0,0.2),transparent_50%)] animate-pulse"
-          style={{ animationDelay: "1s" }}
-        ></div>
-        <div
-          className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(circle_at_40%_90%,rgba(255,69,0,0.2),transparent_50%)] animate-pulse"
-          style={{ animationDelay: "2s" }}
-        ></div>
-      </div>
-
-      {/* Floating Animated Elements */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Animated Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute top-10 left-10 opacity-20 animate-bounce"
-          style={{ animationDelay: "0.5s" }}
-        >
-          <Dumbbell className="w-16 h-16 text-red-500" />
-        </div>
-        <div
-          className="absolute top-20 right-20 opacity-30 animate-pulse"
-          style={{ animationDelay: "1.5s" }}
-        >
-          <Shield className="w-14 h-14 text-yellow-500" />
-        </div>
-        <div
-          className="absolute bottom-20 left-20 opacity-25 animate-spin"
-          style={{ animationDuration: "8s" }}
-        >
-          <Zap className="w-12 h-12 text-orange-500" />
-        </div>
-        <div
-          className="absolute bottom-32 right-32 opacity-30 animate-bounce"
-          style={{ animationDelay: "2.5s" }}
-        >
-          <Crown className="w-10 h-10 text-yellow-400" />
-        </div>
-        <div
-          className="absolute top-1/2 left-8 opacity-20 animate-pulse"
-          style={{ animationDelay: "3s" }}
-        >
-          <Flame className="w-8 h-8 text-red-600" />
-        </div>
-        <div
-          className="absolute top-1/3 right-8 opacity-25 animate-bounce"
-          style={{ animationDelay: "4s" }}
-        >
-          <Flame className="w-6 h-6 text-orange-500" />
-        </div>
+        <div className="absolute top-20 left-20 w-32 h-32 bg-blue-200/30 rounded-full animate-pulse"></div>
+        <div className="absolute top-40 right-32 w-24 h-24 bg-purple-200/40 rounded-full animate-bounce animation-delay-1000"></div>
+        <div className="absolute bottom-32 left-40 w-40 h-40 bg-indigo-200/20 rounded-full animate-pulse animation-delay-2000"></div>
+        <div className="absolute bottom-20 right-20 w-28 h-28 bg-blue-300/30 rounded-full animate-bounce animation-delay-3000"></div>
       </div>
 
-      {/* Moving Grid Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px] animate-pulse"></div>
-      </div>
+      {/* Main Container */}
+      <div className={`
+        w-full max-w-md transform transition-all duration-1000 
+        ${mounted ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-95'}
+      `}>
+        
+        {/* Welcome Card */}
+        <div className="bg-gradient-to-r from-white to-blue-50 rounded-xl shadow-md border border-blue-100 p-6 mb-6 text-center hover:shadow-lg transition-all duration-300">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg hover:scale-110 transition-transform duration-300">
+            <Crown className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            Welcome Back, Owner
+          </h1>
+          <p className="text-gray-600">Access your gym management dashboard</p>
+        </div>
 
-      {/* Main Form Container with Dramatic Entrance */}
-      <div
-        className={`relative z-10 w-full max-w-md transform transition-all duration-1000 ${
-          isLoaded
-            ? "translate-y-0 opacity-100 scale-100"
-            : "translate-y-full opacity-0 scale-75"
-        }`}
-      >
-        <div className="bg-black/90 backdrop-blur-xl border-2 border-red-500/40 rounded-3xl p-8 shadow-2xl relative overflow-hidden group hover:border-red-400/60 transition-all duration-500">
-          {/* Animated Border Glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 via-yellow-500/20 to-red-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
-
-          {/* Inner Glow Effect */}
-          <div className="absolute inset-2 bg-gradient-to-br from-red-500/10 to-transparent rounded-2xl opacity-50"></div>
-
-          {/* Header with Enhanced Animations */}
-          <div
-            className={`text-center mb-8 transform transition-all duration-700 delay-300 ${
-              isLoaded
-                ? "translate-y-0 opacity-100"
-                : "-translate-y-10 opacity-0"
-            }`}
-          >
-            <div className="relative inline-flex items-center justify-center w-20 h-20 mb-4 group">
-              <div
-                className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-500 to-yellow-500 rounded-full shadow-lg animate-spin"
-                style={{ animationDuration: "3s" }}
-              ></div>
-              <div className="relative bg-black rounded-full p-4 transform group-hover:scale-110 transition-transform duration-300">
-                <Dumbbell className="w-8 h-8 text-white animate-pulse" />
+        {/* Login Form */}
+        <div className="bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                <Shield className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h2 className="font-semibold">Owner Login</h2>
+                <p className="text-blue-100 text-sm">Secure access to your business</p>
               </div>
             </div>
-            <h1 className="text-4xl font-black bg-gradient-to-r from-red-500 via-yellow-500 to-red-500 bg-clip-text text-transparent mb-2 tracking-wider animate-pulse">
-              IRON THRONE
-            </h1>
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Flame className="w-4 h-4 text-orange-500 animate-bounce" />
-              <p className="text-gray-300 text-sm font-bold tracking-widest">
-                ELITE GYM DOMINION
-              </p>
-              <Flame
-                className="w-4 h-4 text-orange-500 animate-bounce"
-                style={{ animationDelay: "0.5s" }}
-              />
-            </div>
-            <p className="text-xs text-red-400 font-medium animate-pulse">
-              ⚡ MEMBERS ONLY ACCESS ⚡
-            </p>
           </div>
 
-          {/* Enhanced Form */}
-          <div
-            className={`space-y-6 transform transition-all duration-700 delay-500 ${
-              isLoaded
-                ? "translate-y-0 opacity-100"
-                : "translate-y-10 opacity-0"
-            }`}
-          >
-            {/* Email Field with Enhanced Effects */}
-            <div className="relative group">
-              <label className="block text-sm font-black text-gray-200 mb-3 tracking-widest flex items-center space-x-2">
-                <Crown className="w-4 h-4 text-yellow-500" />
-                <span>BOSS EMAIL</span>
-              </label>
-              <div className="relative">
-                <div
-                  className={`absolute inset-0 bg-gradient-to-r from-red-500/30 to-yellow-500/30 rounded-xl blur-sm transition-opacity duration-300 ${
-                    focusedField === "email" ? "opacity-100" : "opacity-0"
-                  }`}
-                ></div>
-                <User
-                  className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 transition-all duration-300 ${
-                    focusedField === "email"
-                      ? "text-yellow-400 scale-110"
-                      : "text-red-500"
-                  }`}
-                />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField("email")}
-                  onBlur={() => setFocusedField("")}
-                  className={`relative w-full pl-12 pr-4 py-4 bg-gray-900/70 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none transition-all duration-500 font-medium ${
-                    errors.email
-                      ? "border-red-500 focus:border-red-400 shadow-red-500/50 shadow-lg"
-                      : focusedField === "email"
-                      ? "border-yellow-400 shadow-yellow-500/50 shadow-lg transform scale-105"
-                      : "border-gray-600 hover:border-red-500"
-                  }`}
-                  placeholder="kingpin@ironthrone.com"
-                />
+          <div className="p-6">
+            <div className="space-y-6">
+              {/* Email Field */}
+              <div className="group">
+                <label className={`flex items-center gap-2 text-sm font-medium mb-2 transition-colors ${
+                  focusedField === "email" ? 'text-blue-600' : 'text-gray-700'
+                }`}>
+                  <User className={`w-4 h-4 transition-all duration-200 ${
+                    focusedField === "email" ? 'text-blue-500 scale-110' : 'text-gray-400'
+                  }`} />
+                  Email Address
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField("email")}
+                    onBlur={() => setFocusedField("")}
+                    className={`
+                      w-full px-4 py-3 border rounded-lg transition-all duration-300
+                      ${errors.email 
+                        ? 'border-red-500 ring-2 ring-red-500 ring-opacity-20 bg-red-50' 
+                        : focusedField === "email"
+                        ? 'border-blue-500 ring-2 ring-blue-500 ring-opacity-20 shadow-md transform scale-105'
+                        : 'border-gray-300 hover:border-blue-400 hover:shadow-sm'
+                      }
+                      focus:outline-none
+                    `}
+                    placeholder="Enter your email address"
+                  />
+                  {formData.email && !errors.email && (
+                    <div className="absolute -top-2 right-2 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center animate-in zoom-in-50 duration-300">
+                      <Shield className="w-3 h-3 text-white" />
+                    </div>
+                  )}
+                </div>
+                {errors.email && (
+                  <div className="mt-2 flex items-center gap-2 text-red-600 animate-in slide-in-from-top-1 duration-300">
+                    <Zap className="h-4 w-4" />
+                    <span className="text-sm">{errors.email}</span>
+                  </div>
+                )}
               </div>
-              {errors.email && (
-                <p className="text-red-400 text-xs mt-2 font-bold animate-bounce flex items-center space-x-1">
-                  <Zap className="w-3 h-3" />
-                  <span>{errors.email}</span>
-                </p>
-              )}
-            </div>
 
-            {/* Password Field with Enhanced Effects */}
-            <div className="relative group">
-              <label className="block text-sm font-black text-gray-200 mb-3 tracking-widest flex items-center space-x-2">
-                <Shield className="w-4 h-4 text-red-500" />
-                <span>SECRET CODE</span>
-              </label>
-              <div className="relative">
-                <div
-                  className={`absolute inset-0 bg-gradient-to-r from-red-500/30 to-yellow-500/30 rounded-xl blur-sm transition-opacity duration-300 ${
-                    focusedField === "password" ? "opacity-100" : "opacity-0"
-                  }`}
-                ></div>
-                <Lock
-                  className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 z-10 transition-all duration-300 ${
-                    focusedField === "password"
-                      ? "text-yellow-400 scale-110"
-                      : "text-red-500"
-                  }`}
-                />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField("password")}
-                  onBlur={() => setFocusedField("")}
-                  className={`relative w-full pl-12 pr-12 py-4 bg-gray-900/70 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none transition-all duration-500 font-medium ${
-                    errors.password
-                      ? "border-red-500 focus:border-red-400 shadow-red-500/50 shadow-lg"
-                      : focusedField === "password"
-                      ? "border-yellow-400 shadow-yellow-500/50 shadow-lg transform scale-105"
-                      : "border-gray-600 hover:border-red-500"
-                  }`}
-                  placeholder="••••••••"
-                />
+              {/* Password Field */}
+              <div className="group">
+                <label className={`flex items-center gap-2 text-sm font-medium mb-2 transition-colors ${
+                  focusedField === "password" ? 'text-purple-600' : 'text-gray-700'
+                }`}>
+                  <Lock className={`w-4 h-4 transition-all duration-200 ${
+                    focusedField === "password" ? 'text-purple-500 scale-110' : 'text-gray-400'
+                  }`} />
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField("password")}
+                    onBlur={() => setFocusedField("")}
+                    className={`
+                      w-full px-4 py-3 pr-12 border rounded-lg transition-all duration-300
+                      ${errors.password 
+                        ? 'border-red-500 ring-2 ring-red-500 ring-opacity-20 bg-red-50' 
+                        : focusedField === "password"
+                        ? 'border-purple-500 ring-2 ring-purple-500 ring-opacity-20 shadow-md transform scale-105'
+                        : 'border-gray-300 hover:border-purple-400 hover:shadow-sm'
+                      }
+                      focus:outline-none
+                    `}
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePassword}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-500 transition-all duration-200 hover:scale-110"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                  {formData.password && !errors.password && (
+                    <div className="absolute -top-2 right-10 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center animate-in zoom-in-50 duration-300">
+                      <Shield className="w-3 h-3 text-white" />
+                    </div>
+                  )}
+                </div>
+                {errors.password && (
+                  <div className="mt-2 flex items-center gap-2 text-red-600 animate-in slide-in-from-top-1 duration-300">
+                    <Zap className="h-4 w-4" />
+                    <span className="text-sm">{errors.password}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Forgot Password */}
+              <div className="text-right">
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-yellow-400 transition-all duration-300 hover:scale-125"
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors hover:underline"
                 >
-                  {showPassword ? <EyeOff /> : <Eye />}
+                  Forgot your password?
                 </button>
               </div>
-              {errors.password && (
-                <p className="text-red-400 text-xs mt-2 font-bold animate-bounce flex items-center space-x-1">
-                  <Zap className="w-3 h-3" />
-                  <span>{errors.password}</span>
-                </p>
-              )}
-            </div>
 
-            {/* Epic Submit Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className={`w-full py-5 px-6 rounded-xl font-black text-white text-lg tracking-widest transition-all duration-500 transform relative overflow-hidden group ${
-                isSubmitting
-                  ? "bg-gray-700 cursor-not-allowed"
-                  : "bg-gradient-to-r from-red-600 via-red-700 to-red-800 hover:from-red-500 hover:via-red-600 hover:to-red-700 shadow-lg hover:shadow-red-500/70 hover:scale-105 hover:-translate-y-1"
-              }`}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-              {isSubmitting ? (
-                <div className="flex items-center justify-center space-x-3">
-                  <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span className="animate-pulse">ACCESSING THRONE...</span>
-                  <div className="flex space-x-1">
-                    <div className="w-1 h-1 bg-white rounded-full animate-bounce"></div>
-                    <div
-                      className="w-1 h-1 bg-white rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
-                    ></div>
-                    <div
-                      className="w-1 h-1 bg-white rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center space-x-2">
-                  <Crown className="w-5 h-5 animate-pulse" />
-                  <span>CLAIM THE THRONE</span>
-                  <Crown className="w-5 h-5 animate-pulse" />
-                </div>
-              )}
-            </button>
-
-            {/* Forgot Password Link */}
-            <div className="text-center pt-4">
+              {/* Submit Button */}
               <button
-                type="button"
-                onClick={() => navigate("/forgot-password")}
-                className="text-sm font-bold text-gray-400 hover:text-yellow-400 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 mx-auto group"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className={`
+                  w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3
+                  ${isSubmitting
+                    ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-lg hover:scale-105 active:scale-95'
+                  }
+                `}
               >
-                <Shield className="w-4 h-4 group-hover:animate-pulse" />
-                <span className="tracking-wider">FORGOT SECRET CODE?</span>
-                <Zap className="w-3 h-3 group-hover:animate-bounce" />
+                {isSubmitting ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    <Dumbbell className="w-5 h-5" />
+                    Access Dashboard
+                  </>
+                )}
               </button>
-              <p className="text-xs text-gray-600 mt-2 animate-pulse">
-                ⚡ RESTORE THRONE ACCESS ⚡
-              </p>
+
+              {/* Sign Up Link */}
+              <div className="text-center pt-4 border-t border-gray-200">
+                <p className="text-gray-600 text-sm mb-2">New gym owner?</p>
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors group"
+                >
+                  <span>Create your account</span>
+                  <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200" />
+                </button>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Enhanced Footer */}
-          <div
-            className={`mt-8 text-center transform transition-all duration-700 delay-700 ${
-              isLoaded ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
-            }`}
-          >
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Flame className="w-3 h-3 text-orange-500 animate-pulse" />
-              <p className="text-gray-400 text-xs font-bold tracking-wider">
-                FORGED IN IRON • BUILT FOR LEGENDS
-              </p>
-              <Flame className="w-3 h-3 text-orange-500 animate-pulse" />
-            </div>
-            <p className="text-gray-600 text-xs">
-              © 2025 Iron Throne Gym Empire • Elite Access Protocol
-            </p>
+        {/* Benefits Card */}
+        <div className="mt-6 bg-gradient-to-r from-white to-green-50 rounded-lg p-4 border border-green-100 hover:shadow-md transition-all duration-300">
+          <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+            <Crown className="w-4 h-4 text-green-600" />
+            Owner Dashboard
+          </h3>
+          <div className="text-sm text-gray-600 space-y-1">
+            <p>• Complete member management system</p>
+            <p>• Revenue tracking and analytics</p>
+            <p>• Payment reminders and notifications</p>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .animation-delay-1000 {
+          animation-delay: 1s;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-3000 {
+          animation-delay: 3s;
+        }
+      `}</style>
     </div>
   );
 }

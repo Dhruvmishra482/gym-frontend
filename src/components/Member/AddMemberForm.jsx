@@ -9,6 +9,7 @@ import {
   Dumbbell,
   CreditCard,
   Camera,
+  ArrowLeft,
 } from "lucide-react";
 
 const AddMemberForm = ({
@@ -18,54 +19,56 @@ const AddMemberForm = ({
   isSubmitting,
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-red-900 p-4 overflow-hidden relative">
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-600 rounded-full opacity-10 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-orange-600 rounded-full opacity-10 animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-yellow-600 rounded-full opacity-5 animate-spin duration-20000"></div>
-      </div>
-
-      {/* Floating Particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-red-500 rounded-full opacity-30 animate-ping"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 3}s`,
-            }}
-          ></div>
-        ))}
-      </div>
-
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12 transform hover:scale-105 transition-transform duration-500">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-red-600 to-orange-600 rounded-full mb-6 shadow-2xl transform hover:rotate-12 transition-transform duration-500">
-            <Dumbbell className="w-10 h-10 text-white animate-bounce" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Header with Gradient */}
+      <div className="bg-gradient-to-r from-white via-blue-50 to-white shadow-md border-b border-blue-100 sticky top-0 z-40">
+        <div className="max-w-4xl mx-auto px-6 py-5">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => window.history.back()}
+              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:scale-105"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div>
+              <h1 className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Add New Member
+              </h1>
+              <p className="text-sm text-gray-600">Register a new gym member</p>
+            </div>
           </div>
-          <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 mb-4 tracking-wider">
-            BEAST MODE
-          </h1>
-          <p className="text-xl text-gray-300 font-light tracking-wide">
-            Register New Warrior
-          </p>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        {/* Welcome Card */}
+        <div className="bg-gradient-to-r from-white to-blue-50 rounded-lg shadow-md border border-blue-100 p-6 mb-8 hover:shadow-lg transition-all duration-300">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
+              <Dumbbell className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold bg-gradient-to-r from-gray-800 to-blue-600 bg-clip-text text-transparent">
+                Welcome New Member
+              </h2>
+              <p className="text-gray-600">Fill in the details below to register a new gym member</p>
+            </div>
+          </div>
         </div>
 
         {/* Main Form */}
-        <div className="bg-black/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-red-900/30 overflow-hidden transform hover:scale-105 transition-all duration-700 hover:shadow-red-900/50">
-          <div className="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 h-2 animate-pulse"></div>
+        <div className="bg-white rounded-lg shadow-md border border-blue-100 overflow-hidden hover:shadow-lg transition-all duration-300">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+            <h3 className="text-lg font-medium">Member Information</h3>
+            <p className="text-blue-100 mt-1">Please provide accurate information for the new member</p>
+          </div>
 
-          <div className="p-8 md:p-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <form onSubmit={handleSubmit} className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Name */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <User className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <User className="w-4 h-4 mr-2 text-blue-500" />
                   Full Name *
                 </label>
                 <input
@@ -74,15 +77,15 @@ const AddMemberForm = ({
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  placeholder="Enter warrior name"
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  placeholder="Enter full name"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-blue-400 hover:shadow-sm"
                 />
               </div>
 
               {/* Phone */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <Phone className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <Phone className="w-4 h-4 mr-2 text-green-500" />
                   Phone Number *
                 </label>
                 <input
@@ -91,15 +94,15 @@ const AddMemberForm = ({
                   value={formData.phoneNo}
                   onChange={handleChange}
                   required
-                  placeholder="Contact number"
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  placeholder="Enter phone number"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-green-400 hover:shadow-sm"
                 />
               </div>
 
               {/* Email */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <Mail className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <Mail className="w-4 h-4 mr-2 text-purple-500" />
                   Email Address
                 </label>
                 <input
@@ -107,15 +110,15 @@ const AddMemberForm = ({
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Email address"
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  placeholder="Enter email address"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-purple-400 hover:shadow-sm"
                 />
               </div>
 
               {/* Age */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <Calendar className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <Calendar className="w-4 h-4 mr-2 text-orange-500" />
                   Age
                 </label>
                 <input
@@ -123,22 +126,22 @@ const AddMemberForm = ({
                   name="age"
                   value={formData.age}
                   onChange={handleChange}
-                  placeholder="Age"
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  placeholder="Enter age"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 hover:border-orange-400 hover:shadow-sm"
                 />
               </div>
 
               {/* Gender */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <Users className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <Users className="w-4 h-4 mr-2 text-indigo-500" />
                   Gender
                 </label>
                 <select
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-indigo-400 hover:shadow-sm bg-white"
                 >
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
@@ -149,8 +152,8 @@ const AddMemberForm = ({
 
               {/* Joining Date */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <Calendar className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <Calendar className="w-4 h-4 mr-2 text-teal-500" />
                   Joining Date
                 </label>
                 <input
@@ -158,21 +161,21 @@ const AddMemberForm = ({
                   name="joiningDate"
                   value={formData.joiningDate}
                   onChange={handleChange}
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 hover:border-teal-400 hover:shadow-sm"
                 />
               </div>
 
               {/* Plan Duration */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <CreditCard className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <CreditCard className="w-4 h-4 mr-2 text-pink-500" />
                   Plan Duration
                 </label>
                 <select
                   name="planDuration"
                   value={formData.planDuration}
                   onChange={handleChange}
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-200 hover:border-pink-400 hover:shadow-sm bg-white"
                 >
                   <option value="">Select Plan</option>
                   <option value="1 month">1 month</option>
@@ -184,8 +187,8 @@ const AddMemberForm = ({
 
               {/* Fees Amount */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <DollarSign className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <DollarSign className="w-4 h-4 mr-2 text-emerald-500" />
                   Fees Amount *
                 </label>
                 <input
@@ -194,15 +197,15 @@ const AddMemberForm = ({
                   value={formData.feesAmount}
                   onChange={handleChange}
                   required
-                  placeholder="Amount"
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  placeholder="Enter amount"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 hover:border-emerald-400 hover:shadow-sm"
                 />
               </div>
 
               {/* Next Due Date */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <Calendar className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <Calendar className="w-4 h-4 mr-2 text-red-500" />
                   Next Due Date *
                 </label>
                 <input
@@ -211,21 +214,21 @@ const AddMemberForm = ({
                   value={formData.nextDueDate}
                   onChange={handleChange}
                   required
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 hover:border-red-400 hover:shadow-sm"
                 />
               </div>
 
               {/* Payment Status */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <CreditCard className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <CreditCard className="w-4 h-4 mr-2 text-cyan-500" />
                   Payment Status
                 </label>
                 <select
                   name="paymentStatus"
                   value={formData.paymentStatus}
                   onChange={handleChange}
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200 hover:border-cyan-400 hover:shadow-sm bg-white"
                 >
                   <option value="Pending">Pending</option>
                   <option value="Paid">Paid</option>
@@ -234,8 +237,8 @@ const AddMemberForm = ({
 
               {/* Last Paid On */}
               <div className="group">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <Calendar className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <Calendar className="w-4 h-4 mr-2 text-amber-500" />
                   Last Paid On
                 </label>
                 <input
@@ -243,14 +246,14 @@ const AddMemberForm = ({
                   name="lastPaidOn"
                   value={formData.lastPaidOn}
                   onChange={handleChange}
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 hover:border-amber-400 hover:shadow-sm"
                 />
               </div>
 
               {/* Address */}
               <div className="group md:col-span-2">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <MapPin className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <MapPin className="w-4 h-4 mr-2 text-rose-500" />
                   Address *
                 </label>
                 <textarea
@@ -258,16 +261,16 @@ const AddMemberForm = ({
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  placeholder="Full address"
+                  placeholder="Enter full address"
                   rows="3"
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105 resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-200 hover:border-rose-400 hover:shadow-sm resize-none"
                 />
               </div>
 
               {/* Photo URL */}
               <div className="group md:col-span-2">
-                <label className="flex items-center text-gray-300 font-semibold mb-3 group-hover:text-red-400 transition-colors">
-                  <Camera className="w-5 h-5 mr-2" />
+                <label className="flex items-center text-gray-700 font-medium mb-2">
+                  <Camera className="w-4 h-4 mr-2 text-violet-500" />
                   Photo URL
                 </label>
                 <input
@@ -275,37 +278,64 @@ const AddMemberForm = ({
                   name="photoUrl"
                   value={formData.photoUrl}
                   onChange={handleChange}
-                  placeholder="Photo URL (optional)"
-                  className="w-full px-6 py-4 bg-gray-900/70 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-300 transform hover:scale-105 focus:scale-105"
+                  placeholder="Enter photo URL (optional)"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all duration-200 hover:border-violet-400 hover:shadow-sm"
                 />
               </div>
-
-              {/* Submit */}
-              <div className="md:col-span-2 mt-8">
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className={`w-full py-6 px-8 text-xl font-bold text-white rounded-xl transition-all duration-500 transform hover:scale-105 active:scale-95 ${
-                    isSubmitting
-                      ? "bg-gray-600 cursor-not-allowed"
-                      : "bg-gradient-to-r from-red-600 via-orange-600 to-red-600 hover:from-red-700 hover:via-orange-700 hover:to-red-700 shadow-2xl hover:shadow-red-900/50"
-                  }`}
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center justify-center">
-                      <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
-                      REGISTERING WARRIOR...
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <Dumbbell className="w-6 h-6 mr-3 animate-pulse" />
-                      FORGE THE WARRIOR
-                    </div>
-                  )}
-                </button>
-              </div>
             </div>
+
+            {/* Submit Button */}
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className={`w-full py-4 px-6 text-lg font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-3 ${
+                  isSubmitting
+                    ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                    : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-lg hover:scale-105"
+                }`}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+                    Adding Member...
+                  </>
+                ) : (
+                  <>
+                    <Dumbbell className="w-5 h-5" />
+                    Add Member
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Info Cards */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-white to-blue-50 rounded-lg p-4 border border-blue-100 text-center hover:shadow-md transition-all duration-300">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <User className="w-6 h-6 text-white" />
+            </div>
+            <h4 className="font-medium text-gray-900 mb-1">Personal Info</h4>
+            <p className="text-sm text-gray-600">Basic member details and contact information</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-white to-green-50 rounded-lg p-4 border border-green-100 text-center hover:shadow-md transition-all duration-300">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <CreditCard className="w-6 h-6 text-white" />
+            </div>
+            <h4 className="font-medium text-gray-900 mb-1">Plan & Payment</h4>
+            <p className="text-sm text-gray-600">Membership plan and payment details</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-white to-purple-50 rounded-lg p-4 border border-purple-100 text-center hover:shadow-md transition-all duration-300">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Dumbbell className="w-6 h-6 text-white" />
+            </div>
+            <h4 className="font-medium text-gray-900 mb-1">Gym Access</h4>
+            <p className="text-sm text-gray-600">Ready to start their fitness journey</p>
           </div>
         </div>
       </div>

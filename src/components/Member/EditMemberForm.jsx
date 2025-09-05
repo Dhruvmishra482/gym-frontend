@@ -9,8 +9,10 @@ import {
   CheckCircle,
   ArrowLeft,
   Loader2,
+  Save,
+  AlertCircle,
 } from "lucide-react";
-import { getMemberByPhone, editMember } from "../services/memberService"; // Adjust path as needed
+import { getMemberByPhone, editMember } from "../services/memberService";
 
 const EditMemberForm = () => {
   const { phoneNumber } = useParams();
@@ -34,20 +36,8 @@ const EditMemberForm = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
-  const [particles, setParticles] = useState([]);
 
   useEffect(() => {
-    // Generate random particles for background animation
-    const newParticles = Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      delay: Math.random() * 4,
-      duration: 3 + Math.random() * 2,
-    }));
-    setParticles(newParticles);
-
-    // Fetch member data when component mounts
     fetchMemberData();
   }, [phoneNumber]);
 
@@ -61,7 +51,6 @@ const EditMemberForm = () => {
       if (result.success) {
         const member = result.data;
 
-        // Format dates for input fields
         const formatDate = (dateString) => {
           if (!dateString) return "";
           const date = new Date(dateString);
@@ -108,10 +97,8 @@ const EditMemberForm = () => {
       setSaving(true);
       setError(null);
 
-      // Prepare update data (only fields allowed by backend)
       const updateData = {};
 
-      // Only include fields that are allowed to be updated by your backend
       if (formData.age && formData.age.trim() !== "") {
         updateData.age = parseInt(formData.age);
       }
@@ -139,9 +126,8 @@ const EditMemberForm = () => {
       const result = await editMember(phoneNumber, updateData);
 
       if (result.success) {
-        // Show success message (you could use a toast here)
         alert("Member updated successfully!");
-        navigate(-1); // Go back to previous page
+        navigate(-1);
       } else {
         setError(result.message);
       }
@@ -153,39 +139,12 @@ const EditMemberForm = () => {
     }
   };
 
-  const FloatingParticles = () => (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden">
-      {particles.map((particle) => (
-        <div
-          key={particle.id}
-          className="absolute w-2 h-2 bg-gradient-to-r from-pink-400 to-orange-400 rounded-full opacity-30"
-          style={{
-            left: `${particle.left}%`,
-            top: `${particle.top}%`,
-            animation: `float ${particle.duration}s ease-in-out infinite ${particle.delay}s`,
-          }}
-        />
-      ))}
-      <style jsx>{`
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg) scale(1);
-          }
-          50% {
-            transform: translateY(-30px) rotate(180deg) scale(1.2);
-          }
-        }
-      `}</style>
-    </div>
-  );
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-pink-400 animate-spin mx-auto mb-4" />
-          <p className="text-gray-300 text-lg">Loading warrior data...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading member data...</p>
         </div>
       </div>
     );
@@ -193,16 +152,16 @@ const EditMemberForm = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-8">
-          <div className="text-red-400 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-white mb-4">
-            Error Loading Member
-          </h2>
-          <p className="text-gray-300 mb-6">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-lg shadow-sm border p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-red-600" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Member</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full font-medium hover:scale-105 transition-transform"
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-2 rounded-lg transition-all duration-200"
           >
             Go Back
           </button>
@@ -212,235 +171,261 @@ const EditMemberForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
-      <FloatingParticles />
-
-      {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        className="fixed top-6 left-6 z-20 p-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white hover:bg-white/20 transition-all"
-      >
-        <ArrowLeft className="w-6 h-6" />
-      </button>
-
-      {/* Animated geometric shapes */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-pink-500 to-orange-500 opacity-20 transform rotate-45 animate-spin-slow"></div>
-      <div className="absolute bottom-20 right-20 w-24 h-24 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-20 transform rotate-12 animate-bounce"></div>
-      <div className="absolute top-1/2 left-5 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 opacity-30 transform -rotate-12 animate-pulse"></div>
-
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-6">
-        <div className="w-full max-w-2xl">
-          {/* Header */}
-          <div className="text-center mb-12 transform hover:scale-105 transition-transform duration-500">
-            <h1 className="text-6xl font-bold bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent mb-4 animate-pulse">
-              WARRIOR
-            </h1>
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-              EVOLUTION
-            </h2>
-            <p className="text-gray-300 mt-4 text-lg">
-              Editing: {formData.name || "Unknown Warrior"}
-            </p>
-          </div>
-
-          {/* 3D Form Container */}
-          <div className="relative">
-            <div
-              className="bg-black/20 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl transform-gpu hover:rotate-y-2 transition-all duration-700 hover:shadow-pink-500/25"
-              style={{
-                transformStyle: "preserve-3d",
-                boxShadow:
-                  "0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-              }}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Header with Gradient */}
+      <div className="bg-gradient-to-r from-white via-blue-50 to-white shadow-md border-b border-blue-100">
+        <div className="max-w-4xl mx-auto px-6 py-5">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:scale-105"
             >
-              {/* Glowing border effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-3xl opacity-20 blur-xl animate-pulse"></div>
-
-              <form onSubmit={handleSubmit} className="relative z-10 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Age Field */}
-                  <div className="group">
-                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:rotate-1">
-                      <User className="absolute left-4 top-4 text-pink-400 w-6 h-6 group-hover:animate-bounce" />
-                      <input
-                        type="number"
-                        name="age"
-                        value={formData.age}
-                        onChange={handleInputChange}
-                        placeholder="Warrior Age"
-                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-pink-400 focus:shadow-lg focus:shadow-pink-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
-                        style={{
-                          textShadow: "0 0 10px rgba(255, 255, 255, 0.3)",
-                        }}
-                      />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-pink-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    </div>
-                  </div>
-
-                  {/* Plan Duration Field */}
-                  <div className="group">
-                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:-rotate-1">
-                      <Calendar className="absolute left-4 top-4 text-orange-400 w-6 h-6 group-hover:animate-bounce" />
-                      <select
-                        name="planDuration"
-                        value={formData.planDuration}
-                        onChange={handleInputChange}
-                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-orange-400 focus:shadow-lg focus:shadow-orange-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10 appearance-none"
-                      >
-                        <option value="" className="bg-gray-800">
-                          Select Battle Duration
-                        </option>
-                        <option value="1month" className="bg-gray-800">
-                          1 Month - Rookie
-                        </option>
-                        <option value="3months" className="bg-gray-800">
-                          3 Months - Fighter
-                        </option>
-                        <option value="6months" className="bg-gray-800">
-                          6 Months - Champion
-                        </option>
-                        <option value="12months" className="bg-gray-800">
-                          12 Months - Legend
-                        </option>
-                      </select>
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-400/20 to-yellow-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    </div>
-                  </div>
-
-                  {/* Fees Amount Field */}
-                  <div className="group">
-                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:rotate-1">
-                      <DollarSign className="absolute left-4 top-4 text-green-400 w-6 h-6 group-hover:animate-bounce" />
-                      <input
-                        type="number"
-                        name="feesAmount"
-                        value={formData.feesAmount}
-                        onChange={handleInputChange}
-                        placeholder="Training Investment"
-                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-green-400 focus:shadow-lg focus:shadow-green-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
-                      />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    </div>
-                  </div>
-
-                  {/* Next Due Date Field */}
-                  <div className="group">
-                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:-rotate-1">
-                      <Clock className="absolute left-4 top-4 text-cyan-400 w-6 h-6 group-hover:animate-bounce" />
-                      <input
-                        type="date"
-                        name="nextDueDate"
-                        value={formData.nextDueDate}
-                        onChange={handleInputChange}
-                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-cyan-400 focus:shadow-lg focus:shadow-cyan-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
-                      />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    </div>
-                  </div>
-
-                  {/* Last Paid On Field */}
-                  <div className="group">
-                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:rotate-1">
-                      <CreditCard className="absolute left-4 top-4 text-purple-400 w-6 h-6 group-hover:animate-bounce" />
-                      <input
-                        type="date"
-                        name="lastPaidOn"
-                        value={formData.lastPaidOn}
-                        onChange={handleInputChange}
-                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-purple-400 focus:shadow-lg focus:shadow-purple-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
-                      />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    </div>
-                  </div>
-
-                  {/* Payment Status Field */}
-                  <div className="group">
-                    <div className="relative transform hover:scale-105 transition-all duration-300 hover:-rotate-1">
-                      <CheckCircle className="absolute left-4 top-4 text-red-400 w-6 h-6 group-hover:animate-bounce" />
-                      <select
-                        name="paymentStatus"
-                        value={formData.paymentStatus}
-                        onChange={handleInputChange}
-                        className="w-full pl-14 pr-4 py-4 bg-white/5 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-red-400 focus:shadow-lg focus:shadow-red-400/25 transition-all duration-300 backdrop-blur-sm hover:bg-white/10 appearance-none"
-                      >
-                        <option value="" className="bg-gray-800">
-                          Battle Status
-                        </option>
-                        <option value="paid" className="bg-gray-800">
-                          ✅ Victory Secured
-                        </option>
-                        <option value="pending" className="bg-gray-800">
-                          ⏳ Battle Pending
-                        </option>
-                        <option value="overdue" className="bg-gray-800">
-                          ⚠️ Mission Failed
-                        </option>
-                      </select>
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-400/20 to-orange-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Submit Button */}
-                <div className="flex justify-center mt-12">
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="group relative px-12 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-white font-bold text-xl rounded-full transform hover:scale-110 transition-all duration-500 hover:shadow-2xl hover:shadow-pink-500/50 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      textShadow: "0 0 20px rgba(255, 255, 255, 0.5)",
-                      boxShadow:
-                        "0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
-                    }}
-                  >
-                    <span className="relative z-10 tracking-wider flex items-center gap-3">
-                      {saving && <Loader2 className="w-5 h-5 animate-spin" />}
-                      {saving ? "EVOLVING..." : "EVOLVE WARRIOR"}
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
-                    <div className="absolute inset-0 bg-white/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-ping"></div>
-                  </button>
-                </div>
-              </form>
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div>
+              <h1 className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Edit Member
+              </h1>
+              <p className="text-sm text-gray-600">Update member information</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Custom CSS for additional animations */}
-      <style jsx>{`
-        @keyframes spin-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        .animate-spin-slow {
-          animation: spin-slow 10s linear infinite;
-        }
+      {/* Form Content */}
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        {/* Member Info Card with Gradient */}
+        <div className="bg-gradient-to-r from-white to-blue-50 rounded-lg shadow-md border border-blue-100 p-6 mb-6 hover:shadow-lg transition-all duration-300">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+              <User className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">{formData.name || "Member"}</h2>
+              <p className="text-sm text-blue-600 font-medium">{formData.phoneNo}</p>
+              <p className="text-sm text-gray-500">{formData.email}</p>
+            </div>
+          </div>
+        </div>
 
-        .transform-gpu {
-          transform: translateZ(0);
-        }
+        {/* Error Message */}
+        {error && (
+          <div className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-lg p-4 mb-6 shadow-sm">
+            <div className="flex items-center">
+              <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
+              <p className="text-red-700">{error}</p>
+            </div>
+          </div>
+        )}
 
-        .hover\\:rotate-y-2:hover {
-          transform: perspective(1000px) rotateY(2deg) translateZ(20px);
-        }
+        {/* Edit Form with Gradient Header */}
+        <div className="bg-white rounded-lg shadow-md border border-blue-100 overflow-hidden hover:shadow-lg transition-all duration-300">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+            <h3 className="text-lg font-medium">Editable Information</h3>
+            <p className="text-blue-100 mt-1">Update the fields below to modify member details</p>
+          </div>
 
-        input[type="date"]::-webkit-calendar-picker-indicator {
-          filter: invert(1);
-          cursor: pointer;
-        }
+          <form onSubmit={handleSubmit} className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Age Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Age
+                </label>
+                <div className="relative group">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-hover:text-blue-500 transition-colors" />
+                  <input
+                    type="number"
+                    name="age"
+                    value={formData.age}
+                    onChange={handleInputChange}
+                    placeholder="Enter age"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-blue-400 hover:shadow-sm"
+                  />
+                </div>
+              </div>
 
-        select {
-          background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-          background-repeat: no-repeat;
-          background-position: right 1rem center;
-          background-size: 1em;
-        }
-      `}</style>
+              {/* Plan Duration Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Plan Duration
+                </label>
+                <div className="relative group">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-hover:text-purple-500 transition-colors" />
+                  <select
+                    name="planDuration"
+                    value={formData.planDuration}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-purple-400 hover:shadow-sm appearance-none bg-white"
+                  >
+                    <option value="">Select plan duration</option>
+                    <option value="1month">1 Month</option>
+                    <option value="3months">3 Months</option>
+                    <option value="6months">6 Months</option>
+                    <option value="12months">12 Months</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400 group-hover:text-purple-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Fees Amount Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Fees Amount
+                </label>
+                <div className="relative group">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-hover:text-green-500 transition-colors" />
+                  <input
+                    type="number"
+                    name="feesAmount"
+                    value={formData.feesAmount}
+                    onChange={handleInputChange}
+                    placeholder="Enter fees amount"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-green-400 hover:shadow-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Next Due Date Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Next Due Date
+                </label>
+                <div className="relative group">
+                  <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-hover:text-orange-500 transition-colors" />
+                  <input
+                    type="date"
+                    name="nextDueDate"
+                    value={formData.nextDueDate}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 hover:border-orange-400 hover:shadow-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Last Paid On Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Last Paid On
+                </label>
+                <div className="relative group">
+                  <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-hover:text-indigo-500 transition-colors" />
+                  <input
+                    type="date"
+                    name="lastPaidOn"
+                    value={formData.lastPaidOn}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-indigo-400 hover:shadow-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Payment Status Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Payment Status
+                </label>
+                <div className="relative group">
+                  <CheckCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-hover:text-emerald-500 transition-colors" />
+                  <select
+                    name="paymentStatus"
+                    value={formData.paymentStatus}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 hover:border-emerald-400 hover:shadow-sm appearance-none bg-white"
+                  >
+                    <option value="">Select payment status</option>
+                    <option value="paid">Paid</option>
+                    <option value="pending">Pending</option>
+                    <option value="overdue">Overdue</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Read-only Information */}
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <h4 className="text-md font-medium bg-gradient-to-r from-gray-700 to-blue-700 bg-clip-text text-transparent mb-4">
+                Read-only Information
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Name</label>
+                  <p className="text-sm text-gray-900 bg-gradient-to-r from-gray-50 to-blue-50 px-3 py-2 rounded-lg border border-gray-100">
+                    {formData.name || "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Email</label>
+                  <p className="text-sm text-gray-900 bg-gradient-to-r from-gray-50 to-purple-50 px-3 py-2 rounded-lg border border-gray-100">
+                    {formData.email || "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
+                  <p className="text-sm text-gray-900 bg-gradient-to-r from-gray-50 to-green-50 px-3 py-2 rounded-lg border border-gray-100">
+                    {formData.phoneNo || "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Joining Date</label>
+                  <p className="text-sm text-gray-900 bg-gradient-to-r from-gray-50 to-orange-50 px-3 py-2 rounded-lg border border-gray-100">
+                    {formData.joiningDate ? new Date(formData.joiningDate).toLocaleDateString() : "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Gender</label>
+                  <p className="text-sm text-gray-900 bg-gradient-to-r from-gray-50 to-indigo-50 px-3 py-2 rounded-lg border border-gray-100">
+                    {formData.gender || "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Address</label>
+                  <p className="text-sm text-gray-900 bg-gradient-to-r from-gray-50 to-pink-50 px-3 py-2 rounded-lg border border-gray-100">
+                    {formData.address || "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-end mt-8 pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50 hover:border-blue-300 transition-all duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-400 text-white rounded-lg transition-all duration-200 flex items-center justify-center gap-2 min-w-[140px] hover:shadow-md"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    Save Changes
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
