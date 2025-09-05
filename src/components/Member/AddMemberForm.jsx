@@ -10,7 +10,9 @@ import {
   CreditCard,
   Camera,
   ArrowLeft,
+  ArrowLeft,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AddMemberForm = ({
   formData,
@@ -18,6 +20,7 @@ const AddMemberForm = ({
   handleSubmit,
   isSubmitting,
 }) => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header with Gradient */}

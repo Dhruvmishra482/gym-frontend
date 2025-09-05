@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Users,
   Shield,
@@ -24,6 +24,10 @@ const Features = () => {
   const [scrollY, setScrollY] = useState(0);
   const containerRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Get current location
+  const location = useLocation();
+  const showCTA = location.pathname === "/features";
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -188,46 +192,6 @@ const Features = () => {
           />
         ))}
       </div>
-
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-orange-500/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3 group">
-              <div className="relative">
-                <Dumbbell className="w-10 h-10 text-orange-500 transform group-hover:rotate-12 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-orange-500 blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
-              </div>
-              <span className="text-3xl font-black bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 bg-clip-text text-transparent animate-pulse">
-                FitForge
-              </span>
-            </div>
-
-            <nav className="hidden md:flex space-x-8">
-              {["Home", "Features", "Pricing", "Contact"].map((item) => (
-                <Link
-                  key={item}
-                  to={item === "Home" ? "/home" : `/${item.toLowerCase()}`}
-                  className={`text-lg font-semibold transition-all duration-300 hover:text-orange-400 hover:scale-110 ${
-                    item === "Features"
-                      ? "text-orange-400 scale-110"
-                      : "text-slate-300"
-                  }`}
-                >
-                  {item}
-                </Link>
-              ))}
-            </nav>
-            <Link to="/signup" className="relative group inline-block">
-              <span className="relative z-10 flex items-center bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-400 hover:to-yellow-400 text-white px-8 py-3 rounded-full text-lg font-bold transition-all duration-300 transform hover:scale-110 hover:rotate-1">
-                <Rocket className="w-5 h-5 mr-2 group-hover:animate-bounce" />
-                Launch
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity pointer-events-none" />
-            </Link>
-          </div>
-        </div>
-      </header>
 
       {/* Mind-blowing Hero */}
       <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 z-10">
@@ -444,58 +408,60 @@ const Features = () => {
       </section>
 
       {/* Epic CTA */}
-      <section className="relative py-32 px-4 sm:px-6 lg:px-8 z-10">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="relative">
-            {/* Background Effects */}
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-purple-500/10 to-cyan-500/10 blur-3xl rounded-full animate-pulse" />
+      {showCTA && (
+        <section className="relative py-32 px-4 sm:px-6 lg:px-8 z-10">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="relative">
+              {/* Background Effects */}
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-purple-500/10 to-cyan-500/10 blur-3xl rounded-full animate-pulse" />
 
-            <div className="relative z-10">
-              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500/20 to-purple-500/20 backdrop-blur-sm border border-orange-500/30 rounded-full px-6 py-3 mb-8">
-                <Rocket className="w-5 h-5 text-orange-400 animate-bounce" />
-                <span className="text-orange-300 font-semibold">
-                  Ready for Takeoff?
-                </span>
-              </div>
-
-              <h2 className="text-5xl md:text-7xl font-black mb-8">
-                <span className="bg-gradient-to-r from-orange-400 via-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-                  EXPERIENCE THE FUTURE
-                </span>
-              </h2>
-
-              <p className="text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-                Join the{" "}
-                <span className="text-orange-400 font-bold">
-                  fitness revolution
-                </span>{" "}
-                and witness how AI transforms your gym into a{" "}
-                <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-bold">
-                  next-generation powerhouse
-                </span>
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <Link to="/signup" className="relative inline-block group">
-                  <span className="group relative flex items-center justify-center bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 hover:from-orange-400 hover:via-yellow-400 hover:to-orange-400 text-white px-12 py-6 rounded-full text-xl font-black transition-all duration-500 transform hover:scale-110 hover:rotate-1 shadow-2xl hover:shadow-orange-500/50">
-                    <Target className="w-6 h-6 mr-3 group-hover:animate-spin" />
-                    LAUNCH NOW
-                    <Sparkles className="w-6 h-6 ml-3 group-hover:animate-bounce" />
+              <div className="relative z-10">
+                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500/20 to-purple-500/20 backdrop-blur-sm border border-orange-500/30 rounded-full px-6 py-3 mb-8">
+                  <Rocket className="w-5 h-5 text-orange-400 animate-bounce" />
+                  <span className="text-orange-300 font-semibold">
+                    Ready for Takeoff?
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 via-yellow-600 to-orange-600 rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity animate-pulse pointer-events-none" />
-                </Link>
+                </div>
 
-                <button className="group relative border-2 border-purple-500 text-purple-400 hover:text-white hover:border-purple-400 px-12 py-6 rounded-full text-xl font-black transition-all duration-500 transform hover:scale-110 hover:-rotate-1 hover:bg-purple-500/20">
-                  <span className="flex items-center justify-center">
-                    <Zap className="w-6 h-6 mr-3 group-hover:animate-pulse" />
-                    WATCH MAGIC
+                <h2 className="text-5xl md:text-7xl font-black mb-8">
+                  <span className="bg-gradient-to-r from-orange-400 via-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                    EXPERIENCE THE FUTURE
                   </span>
-                </button>
+                </h2>
+
+                <p className="text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+                  Join the{" "}
+                  <span className="text-orange-400 font-bold">
+                    fitness revolution
+                  </span>{" "}
+                  and witness how AI transforms your gym into a{" "}
+                  <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-bold">
+                    next-generation powerhouse
+                  </span>
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                  <Link to="/signup" className="relative inline-block group">
+                    <span className="group relative flex items-center justify-center bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 hover:from-orange-400 hover:via-yellow-400 hover:to-orange-400 text-white px-12 py-6 rounded-full text-xl font-black transition-all duration-500 transform hover:scale-110 hover:rotate-1 shadow-2xl hover:shadow-orange-500/50">
+                      <Target className="w-6 h-6 mr-3 group-hover:animate-spin" />
+                      LAUNCH NOW
+                      <Sparkles className="w-6 h-6 ml-3 group-hover:animate-bounce" />
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-600 via-yellow-600 to-orange-600 rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity animate-pulse pointer-events-none" />
+                  </Link>
+
+                  <button className="group relative border-2 border-purple-500 text-purple-400 hover:text-white hover:border-purple-400 px-12 py-6 rounded-full text-xl font-black transition-all duration-500 transform hover:scale-110 hover:-rotate-1 hover:bg-purple-500/20">
+                    <span className="flex items-center justify-center">
+                      <Zap className="w-6 h-6 mr-3 group-hover:animate-pulse" />
+                      WATCH MAGIC
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 };

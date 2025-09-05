@@ -10,6 +10,7 @@ import {
   Sparkles,
   Zap,
 } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,10 @@ export default function ContactUs() {
     inquiry: "general",
     message: "",
   });
+
+  // Get current location
+  const location = useLocation();
+  const showCTA = location.pathname === "/contact";
 
   const handleInputChange = (e) => {
     setFormData({
@@ -121,7 +126,7 @@ export default function ContactUs() {
   ];
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden py-14">
+    <div className="min-h-screen bg-black relative overflow-hidden py-10">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-orange-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -354,31 +359,33 @@ export default function ContactUs() {
         </div>
 
         {/* Call to Action */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-purple-500/20 to-cyan-500/20 rounded-3xl blur-2xl"></div>
-          <div className="relative bg-gray-900/40 backdrop-blur-xl rounded-3xl p-12 border border-gray-700/30 text-center">
-            <h3 className="text-3xl font-black mb-6">
-              <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-                Ready to Get Started?
-              </span>
-            </h3>
-            <p className="text-gray-300 text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-              Join thousands of gyms worldwide who trust FitForge to manage
-              their operations efficiently. Schedule a personalized demo today
-              and see the difference.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="group relative px-10 py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-full font-bold text-lg transition-all transform hover:scale-105">
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-pink-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
-                <span className="relative">Schedule Demo</span>
-              </button>
+        {showCTA && (
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-purple-500/20 to-cyan-500/20 rounded-3xl blur-2xl"></div>
+            <div className="relative bg-gray-900/40 backdrop-blur-xl rounded-3xl p-12 border border-gray-700/30 text-center">
+              <h3 className="text-3xl font-black mb-6">
+                <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                  Ready to Get Started?
+                </span>
+              </h3>
+              <p className="text-gray-300 text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
+                Join thousands of gyms worldwide who trust FitForge to manage
+                their operations efficiently. Schedule a personalized demo today
+                and see the difference.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <button className="group relative px-10 py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-full font-bold text-lg transition-all transform hover:scale-105">
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-pink-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
+                  <span className="relative">Schedule Demo</span>
+                </button>
 
-              <button className="group relative px-10 py-4 bg-transparent border-2 border-gray-600 text-gray-300 rounded-full font-bold text-lg hover:border-purple-400 hover:text-purple-300 transition-all">
-                <span className="relative">View Pricing</span>
-              </button>
+                <button className="group relative px-10 py-4 bg-transparent border-2 border-gray-600 text-gray-300 rounded-full font-bold text-lg hover:border-purple-400 hover:text-purple-300 transition-all">
+                  <span className="relative">View Pricing</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

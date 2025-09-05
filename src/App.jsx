@@ -46,7 +46,13 @@ const App = () => {
   }
 
   // Paths where Navigation should be hidden
-  const hideNavPaths = ["/dashboard", "/search-member"];
+  const hideNavPaths = [
+    "/dashboard",
+    "/search-member",
+    "/add-member",
+    "/due-members",
+    "/my-profile",
+  ];
   const isEditMemberPath = location.pathname.startsWith("/edit-member");
 
   const shouldHideNav =
@@ -92,13 +98,13 @@ const App = () => {
           }
         />
         <Route
-  path="/my-profile"
-  element={
-    <ProtectedRoute allowedRoles={["owner"]}>
-      <MyProfile />
-    </ProtectedRoute>
-  }
-/>
+          path="/my-profile"
+          element={
+            <ProtectedRoute allowedRoles={["owner"]}>
+              <MyProfile />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/signup"
           element={user ? <Navigate to="/dashboard" replace /> : <SignUpPage />}

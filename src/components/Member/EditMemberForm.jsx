@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { getMemberByPhone, editMember } from "../services/memberService";
+import { getMemberByPhone, editMember } from "../services/memberService";
 
 const EditMemberForm = () => {
   const { phoneNumber } = useParams();
@@ -31,6 +32,8 @@ const EditMemberForm = () => {
     lastPaidOn: "",
     paymentStatus: "",
     joiningDate: "",
+    paymentMethod: "",
+    paymentNotes: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -70,6 +73,8 @@ const EditMemberForm = () => {
           lastPaidOn: formatDate(member.lastPaidOn),
           paymentStatus: member.paymentStatus || "",
           joiningDate: formatDate(member.joiningDate),
+          paymentMethod: member.paymentMethod || "",
+          paymentNotes: member.paymentNotes || "",
         });
       } else {
         setError(result.message);
@@ -103,6 +108,14 @@ const EditMemberForm = () => {
         updateData.age = parseInt(formData.age);
       }
 
+      if (formData.gender && formData.gender.trim() !== "") {
+        updateData.gender = formData.gender;
+      }
+
+      if (formData.address && formData.address.trim() !== "") {
+        updateData.address = formData.address.trim();
+      }
+
       if (formData.planDuration && formData.planDuration.trim() !== "") {
         updateData.planDuration = formData.planDuration;
       }
@@ -123,6 +136,14 @@ const EditMemberForm = () => {
         updateData.paymentStatus = formData.paymentStatus;
       }
 
+      if (formData.paymentMethod && formData.paymentMethod.trim() !== "") {
+        updateData.paymentMethod = formData.paymentMethod;
+      }
+
+      if (formData.paymentNotes && formData.paymentNotes.trim() !== "") {
+        updateData.paymentNotes = formData.paymentNotes.trim();
+      }
+
       const result = await editMember(phoneNumber, updateData);
 
       if (result.success) {
@@ -132,7 +153,7 @@ const EditMemberForm = () => {
         setError(result.message);
       }
     } catch (err) {
-      setError("Failed to update member");
+      setError("Failed to update warrior");
       console.error("Error updating member:", err);
     } finally {
       setSaving(false);

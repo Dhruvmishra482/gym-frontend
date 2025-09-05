@@ -38,6 +38,7 @@ const MemberList = ({
   isModalOpen,
   setIsModalOpen,
   profileProps,
+  isSearching = false,
 }) => {
   const navigate = useNavigate();
   const profileRef = useRef(null);
@@ -129,6 +130,7 @@ const MemberList = ({
   const handleEditMember = (member) => {
     console.log("Edit member:", member);
     setIsModalOpen(false);
+    navigate(`/edit-member/${member.phoneNo}`);
     navigate(`/edit-member/${member.phoneNo}`);
   };
 

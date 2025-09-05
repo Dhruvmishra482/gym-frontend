@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/AuthStore";
 import { getAllMembers } from "../services/memberService";
@@ -8,11 +8,11 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
 
-  // 2. Add this state to your DashboardPage component (after existing useState declarations)
-
+  // Modal and UI states
   const [selectedMember, setSelectedMember] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   // Profile dropdown state
@@ -22,6 +22,23 @@ const DashboardPage = () => {
   const [membersData, setMembersData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Search states
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Debounce effect for search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setIsSearching(false);
+    }, 300);
+
+    if (searchTerm.trim() !== debouncedSearchTerm) {
+      setIsSearching(true);
+    }
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, debouncedSearchTerm]);
 
   // Fetch members data on component mount
   useEffect(() => {
@@ -35,7 +52,6 @@ const DashboardPage = () => {
           setMembersData(response.data);
         } else {
           setError(response.message || "Failed to fetch members");
-          // If authentication failed, redirect to login
           if (
             response.message &&
             response.message.includes("Authentication failed")
@@ -69,18 +85,37 @@ const DashboardPage = () => {
   // Normalize phone numbers to remove spaces, +91, etc.
   const normalizePhone = (phone) => phone?.replace(/\D/g, "") || "";
 
-  const filteredMembers = membersData.filter((member) => {
-    const normalizedPhone = normalizePhone(member.phoneNo || member.phone);
-    const normalizedSearch = normalizePhone(searchTerm);
-    return (
-      member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      normalizedPhone.includes(normalizedSearch)
-    );
-  });
+  // Filter members based on debounced search term with useMemo
+  const filteredMembers = useMemo(() => {
+    if (!debouncedSearchTerm.trim()) {
+      return membersData;
+    }
+
+    return membersData.filter((member) => {
+      const normalizedPhone = normalizePhone(member.phoneNo || member.phone);
+      const normalizedSearch = normalizePhone(debouncedSearchTerm);
+
+      // Search by name (case-insensitive)
+      const nameMatch = member.name
+        ?.toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase());
+
+      // Search by phone number
+      const phoneMatch = normalizedPhone.includes(normalizedSearch);
+
+      return nameMatch || phoneMatch;
+    });
+  }, [debouncedSearchTerm, membersData]);
+
+  // Handle search input change
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+  };
 
   // Calculate stats from real data
   const stats = {
     totalMembers: membersData.length,
+    filteredCount: filteredMembers.length,
     dueToday: membersData.filter((member) => {
       const today = new Date().toISOString().split("T")[0];
       const dueDate = member.nextDueDate
@@ -129,13 +164,11 @@ const DashboardPage = () => {
   };
 
   const handleProfileClick = () => {
-    // Static view - just close dropdown for now
     setIsProfileOpen(false);
     console.log("My Profile clicked - Static view");
   };
 
   const handleMembersClick = () => {
-    // Static view - just close dropdown for now
     setIsProfileOpen(false);
     console.log("My Members clicked - Static view");
   };
@@ -182,13 +215,14 @@ const DashboardPage = () => {
       members={filteredMembers}
       stats={stats}
       searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
+      setSearchTerm={handleSearchChange}
       mousePosition={mousePosition}
       selectedMember={selectedMember}
       setSelectedMember={setSelectedMember}
       isModalOpen={isModalOpen}
       setIsModalOpen={setIsModalOpen}
       profileProps={profileProps}
+      isSearching={isSearching}
     />
   );
 };

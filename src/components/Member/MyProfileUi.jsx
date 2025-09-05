@@ -1,14 +1,14 @@
-import React from 'react';
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  Edit3, 
-  Save, 
-  X, 
-  CheckCircle, 
-  AlertCircle, 
-  RefreshCw, 
+import React from "react";
+import {
+  User,
+  Phone,
+  Mail,
+  Edit3,
+  Save,
+  X,
+  CheckCircle,
+  AlertCircle,
+  RefreshCw,
   UserCheck,
   Calendar,
   Crown,
@@ -23,19 +23,19 @@ const MyProfileUI = ({
   profile,
   formData,
   errors,
-  
-  // States  
+
+  // States
   isLoading,
   isEditing,
   isSaving,
   error,
   success,
-  
+
   // Computed values
   fullName,
   profileCompletion,
   hasChanges,
-  
+
   // Event handlers
   onEditClick,
   onCancel,
@@ -43,7 +43,7 @@ const MyProfileUI = ({
   onInputChange,
   onRefresh,
   clearError,
-  clearSuccess
+  clearSuccess,
 }) => {
   
   // Loading state
@@ -415,7 +415,7 @@ const MyProfileUI = ({
                     <Save className={`h-4 w-4 ${isSaving ? 'animate-spin' : ''}`} />
                     {isSaving ? 'Saving...' : 'Save Changes'}
                   </button>
-                  
+
                   <button
                     onClick={onCancel}
                     disabled={isSaving}
@@ -425,7 +425,7 @@ const MyProfileUI = ({
                     Cancel
                   </button>
                 </div>
-                
+
                 {hasChanges && (
                   <div className="flex items-center gap-2 bg-gradient-to-r from-orange-50 to-amber-50 px-4 py-2 rounded-lg border border-orange-200">
                     <AlertCircle className="h-4 w-4 text-orange-500" />
@@ -466,7 +466,7 @@ const MyProfileUI = ({
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="flex items-center text-gray-700 font-medium mb-2">
                     <Calendar className="h-4 w-4 mr-2 text-indigo-500" />
