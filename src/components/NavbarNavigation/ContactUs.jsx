@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Mail,
   Phone,
@@ -9,10 +9,22 @@ import {
   Headphones,
   Sparkles,
   Zap,
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+  User,
+  Building2
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuthStore } from "../../store/AuthStore";
+import { contactFormService } from "../services/contactFormService";
 
 export default function ContactUs() {
+  // Get user info from auth store
+  const { user, isInitialized } = useAuthStore();
+  const isLoggedIn = !!user;
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,31 +32,119 @@ export default function ContactUs() {
     subject: "",
     inquiry: "general",
     message: "",
+    gymName: "",
+    ownerName: ""
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', null
+  const [errors, setErrors] = useState({});
 
   // Get current location
   const location = useLocation();
   const showCTA = location.pathname === "/contact";
 
+  // Auto-fill form if user is logged in
+  useEffect(() => {
+    if (isLoggedIn && user && isInitialized) {
+      setFormData(prevData => ({
+        ...prevData,
+        name: prevData.name || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+        email: prevData.email || user.email || '',
+        phone: prevData.phone || user.mobileNumber || '',
+        gymName: prevData.gymName || user.gymName || user.businessName || '',
+        ownerName: prevData.ownerName || `${user.firstName || ''} ${user.lastName || ''}`.trim()
+      }));
+    }
+  }, [isLoggedIn, user, isInitialized]);
+
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const validation = contactFormService.validateFormData(formData);
+    setErrors(validation.errors);
+    return validation.isValid;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Thank you for your message! We'll get back to you soon.");
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      inquiry: "general",
-      message: "",
-    });
+    
+    // Reset status
+    setSubmitStatus(null);
+    
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Prepare data for submission
+      const submissionData = {
+        ...formData,
+        // Add user context if logged in
+        ...(isLoggedIn && user && {
+          userContext: {
+            isLoggedIn: true,
+            userId: user._id || user.id,
+            userEmail: user.email,
+            userType: user.accountType || 'owner'
+          }
+        })
+      };
+
+      const result = await contactFormService.submitContactForm(submissionData);
+      
+      setSubmitStatus('success');
+      toast.success('Contact form submitted successfully! We\'ll get back to you within 24 hours.');
+      
+      // Reset form only if user is not logged in (to avoid clearing pre-filled data)
+      if (!isLoggedIn) {
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          inquiry: "general",
+          message: "",
+          gymName: "",
+          ownerName: ""
+        });
+      } else {
+        // For logged-in users, only clear the message fields
+        setFormData(prev => ({
+          ...prev,
+          subject: "",
+          message: "",
+          inquiry: "general"
+        }));
+      }
+
+      console.log("Contact form submitted successfully:", result);
+
+    } catch (err) {
+      console.error("Contact form submission error:", err);
+      setSubmitStatus('error');
+      setErrors({ submit: err.message });
+      toast.error(err.message || 'Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -170,6 +270,27 @@ export default function ContactUs() {
               <span className="text-gray-300">that seems like magic</span>
             </p>
           </div>
+
+          {/* User Status Indicator */}
+          {isInitialized && (
+            <div className="mb-8">
+              {isLoggedIn ? (
+                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 backdrop-blur-sm border border-green-500/30 rounded-full px-4 py-2">
+                  <User className="w-4 h-4 text-green-400" />
+                  <span className="text-green-300 text-sm">
+                    Logged in as {user.firstName} {user.lastName}
+                  </span>
+                </div>
+              ) : (
+                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 backdrop-blur-sm border border-blue-500/30 rounded-full px-4 py-2">
+                  <Users className="w-4 h-4 text-blue-400" />
+                  <span className="text-blue-300 text-sm">
+                    Contact us - No account required
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Contact Information Grid */}
@@ -205,120 +326,240 @@ export default function ContactUs() {
               <p className="text-gray-400">
                 Let's discuss how we can revolutionize your gym management
               </p>
+              {isLoggedIn && (
+                <div className="mt-4 inline-flex items-center space-x-2 bg-green-900/30 border border-green-500/30 rounded-lg px-4 py-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span className="text-green-300 text-sm">
+                    Form pre-filled with your account details
+                  </span>
+                </div>
+              )}
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-3">
-                <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
-                  placeholder="Enter your full name"
-                />
+            {/* Success/Error Messages */}
+            {submitStatus === 'success' && (
+              <div className="mb-8 bg-green-900/30 border border-green-500/30 rounded-lg p-4 flex items-center space-x-3">
+                <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <div>
+                  <p className="text-green-300 font-medium">Message sent successfully!</p>
+                  <p className="text-green-400 text-sm">We'll get back to you within 24 hours.</p>
+                </div>
               </div>
+            )}
 
-              <div className="space-y-3">
-                <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
-                  placeholder="Enter your email address"
-                />
+            {submitStatus === 'error' && (
+              <div className="mb-8 bg-red-900/30 border border-red-500/30 rounded-lg p-4 flex items-center space-x-3">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                <div>
+                  <p className="text-red-300 font-medium">Failed to send message</p>
+                  <p className="text-red-400 text-sm">{errors.submit || "Please try again later."}</p>
+                </div>
               </div>
+            )}
 
-              <div className="space-y-3">
-                <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
-                  placeholder="Enter your phone number"
-                />
-              </div>
+            <form onSubmit={handleSubmit}>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className={`w-full bg-gray-800/50 backdrop-blur-sm border ${
+                      errors.name ? 'border-red-500' : 'border-gray-600/50'
+                    } rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all`}
+                    placeholder="Enter your full name"
+                    disabled={isSubmitting}
+                  />
+                  {errors.name && (
+                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                      <AlertCircle className="w-3 h-3" />
+                      <span>{errors.name}</span>
+                    </p>
+                  )}
+                </div>
 
-              <div className="space-y-3">
-                <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                  Inquiry Type
-                </label>
-                <select
-                  name="inquiry"
-                  value={formData.inquiry}
-                  onChange={handleInputChange}
-                  className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
-                >
-                  <option value="general" className="bg-gray-800">
-                    General Inquiry
-                  </option>
-                  <option value="sales" className="bg-gray-800">
-                    Sales & Pricing
-                  </option>
-                  <option value="support" className="bg-gray-800">
-                    Technical Support
-                  </option>
-                  <option value="demo" className="bg-gray-800">
-                    Request Demo
-                  </option>
-                  <option value="partnership" className="bg-gray-800">
-                    Partnership
-                  </option>
-                </select>
-              </div>
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`w-full bg-gray-800/50 backdrop-blur-sm border ${
+                      errors.email ? 'border-red-500' : 'border-gray-600/50'
+                    } rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all`}
+                    placeholder="Enter your email address"
+                    disabled={isSubmitting}
+                  />
+                  {errors.email && (
+                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                      <AlertCircle className="w-3 h-3" />
+                      <span>{errors.email}</span>
+                    </p>
+                  )}
+                </div>
 
-              <div className="md:col-span-2 space-y-3">
-                <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                  Subject *
-                </label>
-                <input
-                  type="text"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleInputChange}
-                  className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
-                  placeholder="Brief subject of your inquiry"
-                />
-              </div>
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className={`w-full bg-gray-800/50 backdrop-blur-sm border ${
+                      errors.phone ? 'border-red-500' : 'border-gray-600/50'
+                    } rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all`}
+                    placeholder="Enter your phone number"
+                    disabled={isSubmitting}
+                  />
+                  {errors.phone && (
+                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                      <AlertCircle className="w-3 h-3" />
+                      <span>{errors.phone}</span>
+                    </p>
+                  )}
+                </div>
 
-              <div className="md:col-span-2 space-y-3">
-                <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                  Message *
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  rows="6"
-                  className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all resize-none"
-                  placeholder="Please provide details about your inquiry, gym size, current challenges, or specific requirements..."
-                />
-              </div>
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                    Inquiry Type
+                  </label>
+                  <select
+                    name="inquiry"
+                    value={formData.inquiry}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
+                    disabled={isSubmitting}
+                  >
+                    <option value="general" className="bg-gray-800">
+                      General Inquiry
+                    </option>
+                    <option value="sales" className="bg-gray-800">
+                      Sales & Pricing
+                    </option>
+                    <option value="support" className="bg-gray-800">
+                      Technical Support
+                    </option>
+                    <option value="demo" className="bg-gray-800">
+                      Request Demo
+                    </option>
+                    <option value="partnership" className="bg-gray-800">
+                      Partnership
+                    </option>
+                  </select>
+                </div>
 
-              <div className="md:col-span-2 text-center">
-                <button
-                  type="submit"
-                  className="group relative px-12 py-4 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white rounded-full font-bold text-lg transition-all transform hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/25"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 via-pink-600 to-purple-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
-                  <div className="relative flex items-center space-x-3">
-                    <Send className="w-5 h-5" />
-                    <span>Send Message</span>
-                  </div>
-                </button>
+                {/* Gym Details Section */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                    <Building2 className="w-4 h-4 inline mr-1" />
+                    Gym/Business Name
+                  </label>
+                  <input
+                    type="text"
+                    name="gymName"
+                    value={formData.gymName}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
+                    placeholder="Your gym or business name"
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                    <User className="w-4 h-4 inline mr-1" />
+                    Owner/Manager Name
+                  </label>
+                  <input
+                    type="text"
+                    name="ownerName"
+                    value={formData.ownerName}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
+                    placeholder="Owner or manager name"
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                <div className="md:col-span-2 space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                    Subject *
+                  </label>
+                  <input
+                    type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    className={`w-full bg-gray-800/50 backdrop-blur-sm border ${
+                      errors.subject ? 'border-red-500' : 'border-gray-600/50'
+                    } rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all`}
+                    placeholder="Brief subject of your inquiry"
+                    disabled={isSubmitting}
+                  />
+                  {errors.subject && (
+                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                      <AlertCircle className="w-3 h-3" />
+                      <span>{errors.subject}</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="md:col-span-2 space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                    Message *
+                  </label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    rows="6"
+                    className={`w-full bg-gray-800/50 backdrop-blur-sm border ${
+                      errors.message ? 'border-red-500' : 'border-gray-600/50'
+                    } rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all resize-none`}
+                    placeholder="Please provide details about your inquiry, gym size, current challenges, or specific requirements..."
+                    disabled={isSubmitting}
+                  />
+                  {errors.message && (
+                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                      <AlertCircle className="w-3 h-3" />
+                      <span>{errors.message}</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="md:col-span-2 text-center">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="group relative px-12 py-4 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white rounded-full font-bold text-lg transition-all transform hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-600 via-pink-600 to-purple-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
+                    <div className="relative flex items-center justify-center space-x-3">
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span>Sending...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-5 h-5" />
+                          <span>Send Message</span>
+                        </>
+                      )}
+                    </div>
+                  </button>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
 

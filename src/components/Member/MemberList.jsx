@@ -99,24 +99,45 @@ const MemberList = ({
     )}&background=f97316&color=fff&size=80&rounded=true`;
   };
 
-  // Filter and sort members
+  // Improved filter and sort members
   const filteredAndSortedMembers = useMemo(() => {
     if (!members || !Array.isArray(members)) return [];
 
     return members.filter((member) => {
-      // Search filter
+      // Search filter - improved
       const searchMatch = !searchTerm || 
         member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         member.phoneNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         member.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // Status filter
-      const statusMatch = statusFilter === 'all' || 
-        member.paymentStatus?.toLowerCase() === statusFilter.toLowerCase();
+      // Status filter - fixed
+      let statusMatch = true;
+      if (statusFilter !== 'all') {
+        const memberStatus = member.paymentStatus?.toLowerCase();
+        if (statusFilter === 'paid') {
+          statusMatch = memberStatus === 'paid' || memberStatus === 'active';
+        } else if (statusFilter === 'pending') {
+          statusMatch = memberStatus === 'pending';
+        } else if (statusFilter === 'overdue') {
+          statusMatch = memberStatus === 'overdue' || memberStatus === 'expired';
+        }
+      }
 
-      // Plan filter
-      const planMatch = planFilter === 'all' || 
-        member.planDuration?.toLowerCase().includes(planFilter.toLowerCase());
+      // Plan filter - fixed and improved
+      let planMatch = true;
+      if (planFilter !== 'all') {
+        const memberPlan = member.planDuration?.toLowerCase();
+        if (planFilter === '1 month') {
+          planMatch = memberPlan?.includes('1') && memberPlan?.includes('month');
+        } else if (planFilter === '3 months') {
+          planMatch = memberPlan?.includes('3') && memberPlan?.includes('month');
+        } else if (planFilter === '6 months') {
+          planMatch = memberPlan?.includes('6') && memberPlan?.includes('month');
+        } else if (planFilter === '12 months') {
+          planMatch = memberPlan?.includes('12') && memberPlan?.includes('month') || 
+                     memberPlan?.includes('1') && memberPlan?.includes('year');
+        }
+      }
 
       return searchMatch && statusMatch && planMatch;
     });
@@ -130,7 +151,6 @@ const MemberList = ({
   const handleEditMember = (member) => {
     console.log("Edit member:", member);
     setIsModalOpen(false);
-    navigate(`/edit-member/${member.phoneNo}`);
     navigate(`/edit-member/${member.phoneNo}`);
   };
 
@@ -268,11 +288,11 @@ const MemberList = ({
                         Due Members
                       </Link>
                       <button
-                        onClick={() => navigate("/search-member")}
+                        onClick={() => navigate("/contact")}
                         className="w-full flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors"
                       >
-                        <Edit className="w-4 h-4" />
-                        Edit Member
+                        <Mail className="w-4 h-4" />
+                        Contact Us
                       </button>
                       <div className="border-t border-gray-100 my-2"></div>
                       <button
@@ -289,9 +309,7 @@ const MemberList = ({
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Stats Cards with Gradients */}
+      </div>{/* Stats Cards with Gradients */}
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-gradient-to-br from-white to-blue-50 rounded-lg p-6 shadow-md border border-blue-100 hover:shadow-lg transition-all duration-300 hover:scale-105">
@@ -339,23 +357,23 @@ const MemberList = ({
               <p className="text-gray-600">Manage your gym members</p>
             </div>
             
-            {/* Filter Controls */}
+            {/* Enhanced Filter Controls */}
             <div className="flex flex-wrap items-center gap-3">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white shadow-sm hover:shadow-md transition-shadow"
               >
                 <option value="all">All Status</option>
-                <option value="paid">Paid</option>
+                <option value="paid">Paid/Active</option>
                 <option value="pending">Pending</option>
-                <option value="overdue">Overdue</option>
+                <option value="overdue">Overdue/Expired</option>
               </select>
               
               <select
                 value={planFilter}
                 onChange={(e) => setPlanFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white shadow-sm hover:shadow-md transition-shadow"
               >
                 <option value="all">All Plans</option>
                 <option value="1 month">1 Month</option>
@@ -371,7 +389,7 @@ const MemberList = ({
                     setPlanFilter('all');
                     setCurrentPage(1);
                   }}
-                  className="px-3 py-2 text-gray-600 hover:text-red-600 text-sm underline transition-colors"
+                  className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg text-sm font-medium transition-colors shadow-sm hover:shadow-md"
                 >
                   Clear Filters
                 </button>
@@ -419,6 +437,7 @@ const MemberList = ({
               {paginatedMembers.map((member, index) => {
                 const isDueToday = isDateToday(member.nextDueDate);
                 const isPending = member.paymentStatus?.toLowerCase() === "pending";
+                const isOverdue = member.paymentStatus?.toLowerCase() === "overdue" || member.paymentStatus?.toLowerCase() === "expired";
                 
                 return (
                   <div
@@ -427,16 +446,19 @@ const MemberList = ({
                       setSelectedMember(member);
                       setIsModalOpen(true);
                     }}
-                    className="bg-gradient-to-br from-white to-gray-50 rounded-lg shadow-md border border-gray-200 p-6 cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 group relative"
+                    className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-xl shadow-lg border border-gray-200/50 p-6 cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] group relative overflow-hidden backdrop-blur-sm"
                   >
+                    {/* Subtle Background Pattern */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
                     {/* Status Indicator */}
                     {isDueToday && (
-                      <div className="absolute top-4 right-4 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                      <div className="absolute top-4 right-4 w-3 h-3 bg-gradient-to-r from-red-500 to-orange-500 rounded-full animate-pulse shadow-lg"></div>
                     )}
 
                     {/* Member Photo and Basic Info */}
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-gray-200 group-hover:border-blue-400 transition-colors shadow-md">
+                    <div className="flex items-center gap-4 mb-4 relative z-10">
+                      <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-gradient-to-r from-blue-400 to-purple-400 group-hover:border-blue-500 transition-all shadow-lg">
                         <img
                           src={member.photoUrl || getFallbackImage(member.name)}
                           alt={member.name}
@@ -451,10 +473,11 @@ const MemberList = ({
                           {member.name}
                         </h3>
                         <p className="text-sm text-gray-500">{member.gender}, {member.age} years</p>
-                        <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-1 ${
-                          isPending ? 'bg-red-100 text-red-800' :
-                          isDueToday ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
+                        <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mt-1 shadow-sm ${
+                          isPending ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300' :
+                          isOverdue ? 'bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 border border-orange-300' :
+                          isDueToday ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border border-yellow-300' :
+                          'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border border-green-300'
                         }`}>
                           {member.paymentStatus}
                         </div>
@@ -462,44 +485,46 @@ const MemberList = ({
                     </div>
 
                     {/* Contact Information */}
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="space-y-2 mb-4 relative z-10">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 p-2 bg-blue-50/50 rounded-lg">
                         <Phone className="w-4 h-4 text-blue-500" />
                         <span className="truncate">{member.phoneNo}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 p-2 bg-green-50/50 rounded-lg">
                         <Mail className="w-4 h-4 text-green-500" />
                         <span className="truncate">{member.email}</span>
                       </div>
                     </div>
 
                     {/* Plan Details */}
-                    <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-3 space-y-2">
+                    <div className="bg-gradient-to-r from-gray-50/80 via-blue-50/80 to-purple-50/80 rounded-xl p-4 space-y-3 backdrop-blur-sm border border-white/50 relative z-10">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Plan</span>
-                        <span className="text-sm font-medium text-gray-900">{member.planDuration}</span>
+                        <span className="text-sm text-gray-600 font-medium">Plan</span>
+                        <span className="text-sm font-semibold text-gray-900 bg-white/60 px-2 py-1 rounded-lg">{member.planDuration}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Amount</span>
-                        <span className="text-sm font-bold text-green-600">₹{member.feesAmount}</span>
+                        <span className="text-sm text-gray-600 font-medium">Amount</span>
+                        <span className="text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹{member.feesAmount}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Due Date</span>
-                        <span className={`text-sm font-medium ${isDueToday ? 'text-red-600' : 'text-gray-900'}`}>
+                        <span className="text-sm text-gray-600 font-medium">Due Date</span>
+                        <span className={`text-sm font-medium px-2 py-1 rounded-lg ${
+                          isDueToday ? 'text-red-600 bg-red-100' : 'text-gray-900 bg-white/60'
+                        }`}>
                           {formatDate(member.nextDueDate)}
                         </span>
                       </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-2 mt-4 pt-3 border-t border-gray-200">
+                    <div className="flex gap-2 mt-4 pt-3 border-t border-gray-200/50 relative z-10">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedMember(member);
                           setIsModalOpen(true);
                         }}
-                        className="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1"
+                        className="flex-1 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-600 hover:from-blue-100 hover:to-blue-200 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1 border border-blue-200 hover:border-blue-300"
                       >
                         <Eye className="w-4 h-4" />
                         View
@@ -509,39 +534,43 @@ const MemberList = ({
                           e.stopPropagation();
                           handleEditMember(member);
                         }}
-                        className="flex-1 bg-gray-50 text-gray-600 hover:bg-gray-100 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1"
+                        className="flex-1 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 hover:from-gray-100 hover:to-gray-200 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1 border border-gray-200 hover:border-gray-300"
                       >
                         <Edit className="w-4 h-4" />
                         Edit
                       </button>
                     </div>
-
-                    {/* Hover Effect Overlay */}
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
                 );
               })}
             </div>
 
-            {/* Pagination Controls */}
+            {/* COMPLETE PAGINATION SECTION - CLEARLY VISIBLE */}
             {totalPages > 1 && (
-              <div className="mt-8 bg-gradient-to-r from-white to-blue-50 rounded-lg shadow-md border border-blue-100 p-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
-                    Showing {startIndex + 1} to {Math.min(startIndex + ITEMS_PER_PAGE, filteredAndSortedMembers.length)} of {filteredAndSortedMembers.length} results
+              <div className="mt-8 bg-white rounded-xl shadow-lg border-2 border-blue-200 p-8">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                  {/* Results Info */}
+                  <div className="text-base text-gray-700 font-medium bg-blue-50 px-4 py-2 rounded-lg">
+                    Showing <span className="font-bold text-blue-700 text-lg">{startIndex + 1}</span> to{" "}
+                    <span className="font-bold text-blue-700 text-lg">
+                      {Math.min(startIndex + ITEMS_PER_PAGE, filteredAndSortedMembers.length)}
+                    </span>{" "}
+                    of <span className="font-bold text-blue-700 text-lg">{filteredAndSortedMembers.length}</span> results
                   </div>
                   
-                  <div className="flex items-center gap-2">
+                  {/* Pagination Controls */}
+                  <div className="flex items-center gap-3">
+                    {/* Previous Button */}
                     <button
                       onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                       disabled={currentPage === 1}
-                      className="p-2 rounded-lg border border-gray-300 text-gray-600 hover:text-blue-600 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="flex items-center justify-center w-12 h-12 rounded-xl border-2 border-blue-300 bg-white text-blue-600 hover:text-white hover:bg-blue-500 hover:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 font-bold shadow-md"
                     >
-                      <ChevronLeft className="w-4 h-4" />
+                      <ChevronLeft className="w-6 h-6" />
                     </button>
                     
-                    <div className="flex items-center gap-1">
-                      {/* Page numbers */}
+                    {/* Page Number Buttons */}
+                    <div className="flex items-center gap-2">
                       {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                         let pageNum;
                         if (totalPages <= 5) {
@@ -558,10 +587,10 @@ const MemberList = ({
                           <button
                             key={pageNum}
                             onClick={() => setCurrentPage(pageNum)}
-                            className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                            className={`min-w-[48px] h-12 px-4 py-2 rounded-xl text-base font-bold transition-all duration-300 shadow-md ${
                               currentPage === pageNum
-                                ? 'bg-blue-600 text-white'
-                                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                                ? 'bg-blue-600 text-white border-2 border-blue-600 transform scale-110 shadow-xl'
+                                : 'bg-white text-blue-600 border-2 border-blue-300 hover:text-white hover:bg-blue-500 hover:border-blue-500 hover:scale-105'
                             }`}
                           >
                             {pageNum}
@@ -570,14 +599,20 @@ const MemberList = ({
                       })}
                     </div>
                     
+                    {/* Next Button */}
                     <button
                       onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                       disabled={currentPage === totalPages}
-                      className="p-2 rounded-lg border border-gray-300 text-gray-600 hover:text-blue-600 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="flex items-center justify-center w-12 h-12 rounded-xl border-2 border-blue-300 bg-white text-blue-600 hover:text-white hover:bg-blue-500 hover:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 font-bold shadow-md"
                     >
-                      <ChevronRight className="w-4 h-4" />
+                      <ChevronRight className="w-6 h-6" />
                     </button>
                   </div>
+                </div>
+                
+                {/* Page Info */}
+                <div className="mt-4 text-center text-sm text-gray-600 bg-gray-50 py-2 rounded-lg">
+                  Page <span className="font-bold text-blue-600">{currentPage}</span> of <span className="font-bold text-blue-600">{totalPages}</span>
                 </div>
               </div>
             )}
@@ -586,19 +621,19 @@ const MemberList = ({
 
         {/* Summary Footer */}
         {members && members.length > 0 && (
-          <div className="mt-8 bg-gradient-to-r from-white to-blue-50 rounded-lg shadow-md border border-blue-100 p-4">
-            <div className="flex justify-between items-center text-sm text-gray-600">
-              <span>
-                Total: {filteredAndSortedMembers.length} members
+          <div className="mt-8 bg-gradient-to-r from-white via-blue-50/50 to-white rounded-xl shadow-lg border border-blue-100 p-6">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <span className="text-gray-600">
+                Total: <span className="font-bold text-blue-600">{filteredAndSortedMembers.length}</span> members
                 {(statusFilter !== 'all' || planFilter !== 'all' || searchTerm) && (
-                  <span className="text-blue-600 ml-1">(filtered from {members.length})</span>
+                  <span className="text-purple-600 ml-1 font-medium">(filtered from {members.length})</span>
                 )}
               </span>
               <button
                 onClick={handleAddMember}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 hover:scale-105 shadow-md"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl transition-all duration-200 flex items-center gap-2 hover:scale-105 shadow-lg font-medium"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
                 Add Member
               </button>
             </div>
@@ -610,10 +645,10 @@ const MemberList = ({
       {isModalOpen && selectedMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setIsModalOpen(false)}
           />
-          <div className="relative bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-blue-100">
+          <div className="relative bg-gradient-to-br from-white via-blue-50/50 to-purple-50/50 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-blue-100 backdrop-blur-sm">
             {/* Close Button */}
             <button
               onClick={() => setIsModalOpen(false)}

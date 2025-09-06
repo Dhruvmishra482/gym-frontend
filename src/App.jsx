@@ -6,7 +6,7 @@ import DashboardPage from "./components/pages/DashboardPage";
 import HeroMain from "./components/Hero/HeroMain";
 import Features from "./components/NavbarNavigation/Features";
 import PricingPage from "./components/NavbarNavigation/PricingPage";
-import ContactUs from "./components/NavbarNavigation/ContactUs";
+// import ContactUs from "./components/NavbarNavigation/ContactUs";
 import AddMemberPage from "./components/pages/AddMemberPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { useAuthStore } from "./store/AuthStore";
@@ -20,6 +20,7 @@ import EditMemberForm from "./components/Member/EditMemberForm";
 import EditMemberBySearch from "./components/pages/EditMemberBySearch";
 import DueMembersPage from "./components/pages/DueMembersPage";
 import MyProfile from "./components/pages/MyProfilePage";
+import ContactUs from "./components/NavbarNavigation/ContactUs";
 const App = () => {
   const { user, loading, checkAuth, isInitialized } = useAuthStore();
   const location = useLocation();
@@ -84,7 +85,7 @@ const App = () => {
           path="/search-member"
           element={
             <ProtectedRoute allowedRoles={["owner"]}>
-              <EditMemberBySearch />
+              <ContactUs/>
             </ProtectedRoute>
           }
         />
