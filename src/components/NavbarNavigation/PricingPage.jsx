@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
 import {
   Check,
   X,
@@ -14,18 +13,23 @@ import {
   Sparkles,
   ArrowRight,
   ChevronDown,
+  ChevronUp,
 } from "lucide-react";
-import Navigation from "../Hero/Navigation";
 
 const PricingPage = () => {
   const [billingPeriod, setBillingPeriod] = useState("monthly");
   const [hoveredCard, setHoveredCard] = useState(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [activeFeature, setActiveFeature] = useState(0);
+  const [expandedPlans, setExpandedPlans] = useState({});
 
-  // Get current location
-  const location = useLocation();
-  const showCTA = location.pathname === "/pricing";
+  // Toggle expanded features for a specific plan
+  const togglePlanExpansion = (planIndex) => {
+    setExpandedPlans(prev => ({
+      ...prev,
+      [planIndex]: !prev[planIndex]
+    }));
+  };
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -61,125 +65,88 @@ const PricingPage = () => {
 
   const plans = [
     {
-      name: "Starter",
-      tagline: "Launch Your Fitness Empire",
+      name: "Basic",
+      tagline: "Start Your Gym Journey",
       description:
-        "Perfect for boutique studios and personal trainers ready to scale",
-      monthlyPrice: 39,
-      yearlyPrice: 390,
+        "Perfect for small gyms and personal trainers who want to digitize and automate their operations.",
+      monthlyPrice: 399,
+      yearlyPrice: 3990,
       icon: <Rocket className="w-8 h-8" />,
       color: "from-cyan-400 via-blue-500 to-purple-600",
       glowColor: "cyan",
       features: [
         { name: "Up to 150 members", included: true, highlight: false },
         { name: "AI-powered member insights", included: true, highlight: true },
-        { name: "Smart payment automation", included: true, highlight: false },
-        {
-          name: "Real-time dashboard analytics",
-          included: true,
-          highlight: false,
-        },
-        { name: "24/7 chat support", included: true, highlight: false },
-        { name: "Advanced staff management", included: true, highlight: false },
-        { name: "Custom workout templates", included: true, highlight: true },
-        { name: "Multi-location support", included: false, highlight: false },
-        { name: "White-label branding", included: false, highlight: false },
-        { name: "Advanced nutrition AI", included: false, highlight: false },
+        { name: "Smart payment reminders (WhatsApp)", included: true, highlight: true },
+        { name: "Member dashboard with profiles", included: true, highlight: false },
+        { name: "24/7 chat & email support", included: true, highlight: false },
+        { name: "Search active members", included: true, highlight: false },
+        { name: "Add new members manually", included: true, highlight: false },
+        { name: "Basic analytics reports", included: true, highlight: false },
+        { name: "Due notifications to owner", included: true, highlight: true },
+        { name: "Single location support", included: true, highlight: false },
       ],
       popular: false,
       buttonText: "Start Your Journey",
-      savings: "Save $78 yearly",
+      savings: "Save ₹798 yearly",
     },
     {
-      name: "Professional",
-      tagline: "Dominate Your Market",
-      description: "For ambitious gym owners ready to revolutionize fitness",
-      monthlyPrice: 99,
-      yearlyPrice: 990,
+      name: "Advanced",
+      tagline: "Scale Your Fitness Business",
+      description:
+        "For growing gyms that want automation, advanced AI features, and multi-location management.",
+      monthlyPrice: 699,
+      yearlyPrice: 6990,
       icon: <Crown className="w-8 h-8" />,
       color: "from-orange-400 via-red-500 to-pink-600",
       glowColor: "orange",
       features: [
         { name: "Up to 1000 members", included: true, highlight: false },
-        {
-          name: "Advanced AI recommendations",
-          included: true,
-          highlight: true,
-        },
-        { name: "Complete automation suite", included: true, highlight: true },
-        {
-          name: "Predictive analytics engine",
-          included: true,
-          highlight: true,
-        },
-        {
-          name: "Priority phone + chat support",
-          included: true,
-          highlight: false,
-        },
-        {
-          name: "Unlimited staff & trainers",
-          included: true,
-          highlight: false,
-        },
-        { name: "Smart nutrition planning", included: true, highlight: true },
+        { name: "Advanced AI recommendations", included: true, highlight: true },
+        { name: "Automated WhatsApp & SMS notifications", included: true, highlight: true },
         { name: "Multi-location dashboard", included: true, highlight: true },
-        { name: "Custom branding package", included: true, highlight: false },
-        {
-          name: "Advanced member retention AI",
-          included: true,
-          highlight: true,
-        },
+        { name: "Predictive fee tracking & insights", included: true, highlight: true },
+        { name: "Smart nutrition suggestions", included: true, highlight: true },
+        { name: "Custom branding & themes", included: true, highlight: false },
+        { name: "Advanced member retention AI", included: true, highlight: true },
+        { name: "Trainer/staff management", included: true, highlight: false },
+        { name: "Priority phone + chat support", included: true, highlight: false },
       ],
-      popular: true,
+      popular: false,
       buttonText: "Unleash Your Potential",
-      savings: "Save $198 yearly",
+      savings: "Save ₹1,398 yearly",
     },
     {
       name: "Enterprise",
-      tagline: "Industry Leadership",
-      description: "For fitness empires that demand the extraordinary",
-      monthlyPrice: 199,
-      yearlyPrice: 1990,
+      tagline: "For fitness empires that want AI + automation at the highest level",
+      description:
+        "Everything in Advanced Plan plus the most powerful tools to run multiple gyms, maximize member engagement, and boost revenue.",
+      monthlyPrice: 999,
+      yearlyPrice: 9990,
       icon: <Sparkles className="w-8 h-8" />,
       color: "from-purple-400 via-pink-500 to-red-500",
       glowColor: "purple",
       features: [
-        { name: "Unlimited everything", included: true, highlight: true },
-        { name: "Custom AI model training", included: true, highlight: true },
-        {
-          name: "White-glove setup & migration",
-          included: true,
-          highlight: true,
-        },
-        {
-          name: "Real-time business intelligence",
-          included: true,
-          highlight: true,
-        },
+        { name: "Unlimited members (no cap)", included: true, highlight: true },
+        { name: "Manage multiple branches/locations from one dashboard", included: true, highlight: true },
+        { name: "Staff & trainer role management (logins + permissions)", included: true, highlight: true },
+        { name: "Automated daily WhatsApp reports (new joins, renewals, fees due, inactive)", included: true, highlight: true },
+        { name: "Fees due reminder 3 days before automatically", included: true, highlight: true },
+        { name: "Daily WhatsApp reminders till fees is paid", included: true, highlight: true },
+        { name: "On due date → Direct QR code payment link via WhatsApp", included: true, highlight: true },
+        { name: "AI diet plan based on progress & attendance", included: true, highlight: true },
+        { name: "AI workout plan based on goals & time in gym", included: true, highlight: true },
+        { name: "Automatic updates if progress slows or sessions missed", included: true, highlight: true },
+        { name: "Advanced financial reports (revenue, dues, retention)", included: true, highlight: true },
+        { name: "Full inactive/old member history with re-activation", included: true, highlight: true },
+        { name: "Priority WhatsApp + phone support", included: true, highlight: true },
         { name: "Dedicated success manager", included: true, highlight: true },
-        {
-          name: "Global franchise management",
-          included: true,
-          highlight: true,
-        },
-        {
-          name: "Advanced biometric integration",
-          included: true,
-          highlight: true,
-        },
-        { name: "Custom API & webhooks", included: true, highlight: false },
-        { name: "Enterprise security suite", included: true, highlight: false },
-        {
-          name: "Personalized onboarding program",
-          included: true,
-          highlight: true,
-        },
+        { name: "Early access to premium upcoming features", included: true, highlight: true },
       ],
-      popular: false,
+      popular: true,
       buttonText: "Claim Your Throne",
-      savings: "Save $398 yearly",
-    },
+      savings: "Save ₹1,998 yearly",
+    }
   ];
 
   const features = [
@@ -225,8 +192,6 @@ const PricingPage = () => {
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
-
-      <Navigation />
 
       {/* Hero Section */}
       <section className="relative z-10 py-20 text-center">
@@ -312,16 +277,18 @@ const PricingPage = () => {
         </div>
       </section>
 
-      {/* Pricing Cards - Compact Version */}
-      <section className="relative z-10 ">
+      {/* Pricing Cards - Improved with Expandable Features */}
+      <section className="relative z-10 pb-20">
         <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {plans.map((plan, index) => (
               <div
                 key={index}
                 className={`relative group cursor-pointer transition-all duration-500 ${
                   plan.popular ? "lg:scale-105 lg:-translate-y-2" : ""
-                } ${hoveredCard === index ? "scale-102" : ""}`}
+                } ${hoveredCard === index ? "scale-102" : ""} ${
+                  expandedPlans[index] ? "h-auto" : ""
+                }`}
                 onMouseEnter={() => setHoveredCard(index)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
@@ -331,7 +298,7 @@ const PricingPage = () => {
                 ></div>
 
                 <div
-                  className={`relative bg-black/40 backdrop-blur-2xl rounded-2xl p-6 border transition-all duration-500 ${
+                  className={`relative bg-black/40 backdrop-blur-2xl rounded-2xl p-6 border transition-all duration-500 flex flex-col min-h-full ${
                     plan.popular
                       ? "border-orange-400/50 bg-gradient-to-b from-orange-500/20 via-black/40 to-black/40"
                       : "border-white/20 group-hover:border-white/40"
@@ -366,7 +333,7 @@ const PricingPage = () => {
                     <div className="mb-6">
                       <div className="flex items-baseline justify-center mb-1">
                         <span className="text-4xl font-black bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-                          $
+                          ₹
                           {billingPeriod === "monthly"
                             ? plan.monthlyPrice
                             : plan.yearlyPrice}
@@ -383,23 +350,24 @@ const PricingPage = () => {
                     </div>
                   </div>
 
-                  {/* Show only top 5 features */}
-                  <ul className="space-y-3 mb-6">
+                  {/* Features List with Expandable Functionality */}
+                  <div className="space-y-3 mb-6 flex-grow">
+                    {/* Always show first 5 features */}
                     {plan.features.slice(0, 5).map((feature, featureIndex) => (
-                      <li
+                      <div
                         key={featureIndex}
-                        className={`flex items-center text-sm transition-all duration-300 ${
+                        className={`flex items-start text-sm transition-all duration-300 ${
                           feature.highlight
                             ? "bg-gradient-to-r from-orange-400/20 to-transparent rounded-lg p-2 -ml-2"
                             : ""
                         }`}
                       >
                         {feature.included ? (
-                          <div className="w-5 h-5 bg-green-400 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                          <div className="w-5 h-5 bg-green-400 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
                             <Check className="w-3 h-3 text-black" />
                           </div>
                         ) : (
-                          <div className="w-5 h-5 bg-gray-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                          <div className="w-5 h-5 bg-gray-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
                             <X className="w-3 h-3 text-gray-400" />
                           </div>
                         )}
@@ -408,22 +376,77 @@ const PricingPage = () => {
                             feature.included ? "text-white" : "text-gray-500"
                           } ${
                             feature.highlight ? "font-semibold" : ""
-                          } text-sm`}
+                          } text-sm leading-relaxed flex-1`}
                         >
                           {feature.name}
                           {feature.highlight && (
                             <Sparkles className="inline w-3 h-3 ml-1 text-orange-400" />
                           )}
                         </span>
-                      </li>
+                      </div>
                     ))}
-                    <li className="text-center text-white/60 text-sm pt-2">
-                      + {plan.features.length - 5} more features
-                    </li>
-                  </ul>
+
+                    {/* Expandable additional features with smooth transition */}
+                    <div className={`overflow-hidden transition-all duration-500 ${
+                      expandedPlans[index] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}>
+                      {plan.features.slice(5).map((feature, featureIndex) => (
+                        <div
+                          key={featureIndex + 5}
+                          className={`flex items-start text-sm transition-all duration-300 mb-3 ${
+                            feature.highlight
+                              ? "bg-gradient-to-r from-orange-400/20 to-transparent rounded-lg p-2 -ml-2"
+                              : ""
+                          }`}
+                        >
+                          {feature.included ? (
+                            <div className="w-5 h-5 bg-green-400 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
+                              <Check className="w-3 h-3 text-black" />
+                            </div>
+                          ) : (
+                            <div className="w-5 h-5 bg-gray-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
+                              <X className="w-3 h-3 text-gray-400" />
+                            </div>
+                          )}
+                          <span
+                            className={`${
+                              feature.included ? "text-white" : "text-gray-500"
+                            } ${
+                              feature.highlight ? "font-semibold" : ""
+                            } text-sm leading-relaxed flex-1`}
+                          >
+                            {feature.name}
+                            {feature.highlight && (
+                              <Sparkles className="inline w-3 h-3 ml-1 text-orange-400" />
+                            )}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Expand/Collapse Button */}
+                    {plan.features.length > 5 && (
+                      <button
+                        onClick={() => togglePlanExpansion(index)}
+                        className="w-full text-center text-orange-400 hover:text-orange-300 text-sm pt-3 transition-colors duration-300 flex items-center justify-center group border-t border-white/10 mt-4"
+                      >
+                        <span className="mr-2 font-medium">
+                          {expandedPlans[index] 
+                            ? "Show Less Features" 
+                            : `+ ${plan.features.length - 5} More Features`
+                          }
+                        </span>
+                        {expandedPlans[index] ? (
+                          <ChevronUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-300" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform duration-300" />
+                        )}
+                      </button>
+                    )}
+                  </div>
 
                   <button
-                    className={`group w-full py-3 px-4 rounded-xl font-bold text-base transition-all duration-300 hover:scale-105 hover:shadow-xl relative overflow-hidden ${
+                    className={`group w-full py-4 px-6 rounded-xl font-bold text-base transition-all duration-300 hover:scale-105 hover:shadow-xl relative overflow-hidden mt-auto ${
                       plan.popular
                         ? "bg-gradient-to-r from-orange-400 to-pink-500 text-black hover:from-orange-500 hover:to-pink-600 shadow-xl shadow-orange-500/30"
                         : "bg-white/10 text-white border border-white/20 hover:bg-white/20 hover:border-white/40"
@@ -481,50 +504,46 @@ const PricingPage = () => {
         </div>
       </section>
 
-      {/* CTA Section - Only show when on /pricing route */}
-      {showCTA && (
-        <section className="relative z-10 py-32">
-          <div className="container mx-auto px-6 text-center">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-6xl font-black text-white mb-8">
-                Ready to{" "}
-                <span className="bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text text-transparent">
-                  Revolutionize
-                </span>{" "}
-                Your Gym?
-              </h2>
-              <p className="text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed">
-                Join the fitness revolution. Start your free trial today and
-                discover why over 10,000 gym owners trust FitForge.
+      {/* CTA Section */}
+      <section className="relative z-10 py-32">
+        <div className="container mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-6xl font-black text-white mb-8">
+              Ready to{" "}
+              <span className="bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text text-transparent">
+                Revolutionize
+              </span>{" "}
+              Your Gym?
+            </h2>
+            <p className="text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed">
+              Join the fitness revolution. Start your free trial today and
+              discover why over 10,000 gym owners trust FitForge.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <button className="group bg-gradient-to-r from-orange-400 to-pink-500 text-black px-12 py-5 rounded-2xl font-bold text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/50 relative overflow-hidden">
+                <span className="relative z-10 flex items-center">
+                  Start Free Trial
+                  <Rocket className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+              </button>
+
+              <button className="group border-2 border-white/20 text-white hover:border-white hover:bg-white/10 px-12 py-5 rounded-2xl font-bold text-xl transition-all duration-300 backdrop-blur-lg">
+                Watch Demo
+                <ChevronDown className="inline w-6 h-6 ml-3 group-hover:translate-y-1 transition-transform duration-300" />
+              </button>
+            </div>
+
+            <div className="mt-16 text-white/60">
+              <p>
+                ✨ No credit card required • 14-day free trial • Cancel
+                anytime
               </p>
-
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                <Link to="/signup">
-                  <button className="group bg-gradient-to-r from-orange-400 to-pink-500 text-black px-12 py-5 rounded-2xl font-bold text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/50 relative overflow-hidden">
-                    <span className="relative z-10 flex items-center">
-                      Start Free Trial
-                      <Rocket className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-                  </button>
-                </Link>
-
-                <button className="group border-2 border-white/20 text-white hover:border-white hover:bg-white/10 px-12 py-5 rounded-2xl font-bold text-xl transition-all duration-300 backdrop-blur-lg">
-                  Watch Demo
-                  <ChevronDown className="inline w-6 h-6 ml-3 group-hover:translate-y-1 transition-transform duration-300" />
-                </button>
-              </div>
-
-              <div className="mt-16 text-white/60">
-                <p>
-                  ✨ No credit card required • 14-day free trial • Cancel
-                  anytime
-                </p>
-              </div>
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
     </div>
   );
 };
