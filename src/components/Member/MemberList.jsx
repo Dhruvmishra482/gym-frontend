@@ -287,6 +287,13 @@ const MemberList = ({
                         <Users className="w-4 h-4" />
                         Due Members
                       </Link>
+                        <Link
+                        to="/my-subscription"
+                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors"
+                      >
+                        <User className="w-4 h-4" />
+                         My Subscription
+                      </Link>
                       <button
                         onClick={() => navigate("/contact")}
                         className="w-full flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors"
