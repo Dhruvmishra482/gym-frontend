@@ -172,6 +172,7 @@ import PaymentSuccessPage from "./components/pages/PaymentSuccessPage";
 // If you get an error here, create the PaymentFailedPage.jsx file first
 import PaymentFailedPage from "./components/pages/PaymentFailedPage";
 
+import MySubscription from "./components/pages/MySubscription";
 const App = () => {
   const { user, loading, checkAuth, isInitialized } = useAuthStore();
   const location = useLocation();
@@ -207,6 +208,8 @@ const App = () => {
     "/payment",
     "/payment/success",
     "/payment/failed",
+    "/my-subscription"
+
   ];
   
   const isEditMemberPath = location.pathname.startsWith("/edit-member");
@@ -311,6 +314,15 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+         <Route
+          path="/my-subscription"
+          element={
+            <ProtectedRoute allowedRoles={["owner"]}>
+            <MySubscription/>
+            </ProtectedRoute>
+          }
+        />
+
 
         {/* Auth routes */}
         <Route
