@@ -167,7 +167,7 @@ const Features = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black overflow-hidden relative">
+    <div className="relative min-h-screen overflow-hidden bg-black">
       {/* Animated Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-teal-900/20" />
@@ -194,38 +194,38 @@ const Features = () => {
       </div>
 
       {/* Mind-blowing Hero */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 z-10">
-        <div className="max-w-7xl mx-auto text-center">
+      <section className="relative z-10 px-4 pb-20 sm:px-6 lg:px-8">
+        <div className="mx-auto text-center max-w-7xl">
           <div className="relative">
             <div className="relative z-10">
-              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500/20 to-yellow-500/20 backdrop-blur-sm border border-orange-500/30 rounded-full px-6 py-3 mb-8">
+              <div className="inline-flex items-center px-6 py-3 mb-8 space-x-2 border rounded-full bg-gradient-to-r from-orange-500/20 to-yellow-500/20 backdrop-blur-sm border-orange-500/30">
                 <Sparkles className="w-5 h-5 text-yellow-400 animate-spin" />
-                <span className="text-orange-300 font-semibold">
+                <span className="font-semibold text-orange-300">
                   Revolutionary Features
                 </span>
                 <Zap className="w-5 h-5 text-orange-400 animate-pulse" />
               </div>
 
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 leading-none">
-                <span className="bg-gradient-to-r from-orange-400 via-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-pulse">
+              <h1 className="mb-8 text-6xl font-black leading-none md:text-8xl lg:text-9xl">
+                <span className="text-transparent bg-gradient-to-r from-orange-400 via-yellow-400 via-pink-400 to-purple-400 bg-clip-text animate-pulse">
                   FEATURES
                 </span>
-                <div className="text-2xl md:text-4xl mt-4 font-light text-slate-300">
+                <div className="mt-4 text-2xl font-light md:text-4xl text-slate-300">
                   that will{" "}
-                  <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent font-black animate-bounce">
+                  <span className="font-black text-transparent bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text animate-bounce">
                     BLOW YOUR MIND
                   </span>
                 </div>
               </h1>
 
               <div className="max-w-4xl mx-auto mb-12">
-                <p className="text-2xl md:text-3xl text-slate-300 leading-relaxed font-light">
+                <p className="text-2xl font-light leading-relaxed md:text-3xl text-slate-300">
                   Experience the{" "}
-                  <span className="text-orange-400 font-bold">
+                  <span className="font-bold text-orange-400">
                     next evolution
                   </span>{" "}
                   of gym management with
-                  <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-bold">
+                  <span className="font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
                     {" "}
                     AI-powered features
                   </span>{" "}
@@ -240,10 +240,10 @@ const Features = () => {
       {/* Revolutionary Features Grid */}
       <section
         ref={containerRef}
-        className="relative py-20 px-4 sm:px-6 lg:px-8 z-10"
+        className="relative z-10 sm:px-6 lg:px-8"
       >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               const isHovered = hoveredCard === feature.id;
@@ -409,48 +409,48 @@ const Features = () => {
 
       {/* Epic CTA */}
       {showCTA && (
-        <section className="relative py-32 px-4 sm:px-6 lg:px-8 z-10">
+        <section className="relative z-10 px-4 py-32 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto text-center">
             <div className="relative">
               {/* Background Effects */}
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-purple-500/10 to-cyan-500/10 blur-3xl rounded-full animate-pulse" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500/10 via-purple-500/10 to-cyan-500/10 blur-3xl animate-pulse" />
 
               <div className="relative z-10">
-                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500/20 to-purple-500/20 backdrop-blur-sm border border-orange-500/30 rounded-full px-6 py-3 mb-8">
+                <div className="inline-flex items-center px-6 py-3 mb-8 space-x-2 border rounded-full bg-gradient-to-r from-orange-500/20 to-purple-500/20 backdrop-blur-sm border-orange-500/30">
                   <Rocket className="w-5 h-5 text-orange-400 animate-bounce" />
-                  <span className="text-orange-300 font-semibold">
+                  <span className="font-semibold text-orange-300">
                     Ready for Takeoff?
                   </span>
                 </div>
 
-                <h2 className="text-5xl md:text-7xl font-black mb-8">
-                  <span className="bg-gradient-to-r from-orange-400 via-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                <h2 className="mb-8 text-5xl font-black md:text-7xl">
+                  <span className="text-transparent bg-gradient-to-r from-orange-400 via-yellow-400 via-pink-400 to-purple-400 bg-clip-text">
                     EXPERIENCE THE FUTURE
                   </span>
                 </h2>
 
-                <p className="text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+                <p className="max-w-4xl mx-auto mb-12 text-2xl leading-relaxed text-slate-300">
                   Join the{" "}
-                  <span className="text-orange-400 font-bold">
+                  <span className="font-bold text-orange-400">
                     fitness revolution
                   </span>{" "}
                   and witness how AI transforms your gym into a{" "}
-                  <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-bold">
+                  <span className="font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text">
                     next-generation powerhouse
                   </span>
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <div className="flex flex-col justify-center gap-6 sm:flex-row">
                   <Link to="/signup" className="relative inline-block group">
-                    <span className="group relative flex items-center justify-center bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 hover:from-orange-400 hover:via-yellow-400 hover:to-orange-400 text-white px-12 py-6 rounded-full text-xl font-black transition-all duration-500 transform hover:scale-110 hover:rotate-1 shadow-2xl hover:shadow-orange-500/50">
+                    <span className="relative flex items-center justify-center px-12 py-6 text-xl font-black text-white transition-all duration-500 transform rounded-full shadow-2xl group bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 hover:from-orange-400 hover:via-yellow-400 hover:to-orange-400 hover:scale-110 hover:rotate-1 hover:shadow-orange-500/50">
                       <Target className="w-6 h-6 mr-3 group-hover:animate-spin" />
                       LAUNCH NOW
                       <Sparkles className="w-6 h-6 ml-3 group-hover:animate-bounce" />
                     </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-600 via-yellow-600 to-orange-600 rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity animate-pulse pointer-events-none" />
+                    <div className="absolute inset-0 transition-opacity rounded-full opacity-50 pointer-events-none bg-gradient-to-r from-orange-600 via-yellow-600 to-orange-600 blur-xl group-hover:opacity-100 animate-pulse" />
                   </Link>
 
-                  <button className="group relative border-2 border-purple-500 text-purple-400 hover:text-white hover:border-purple-400 px-12 py-6 rounded-full text-xl font-black transition-all duration-500 transform hover:scale-110 hover:-rotate-1 hover:bg-purple-500/20">
+                  <button className="relative px-12 py-6 text-xl font-black text-purple-400 transition-all duration-500 transform border-2 border-purple-500 rounded-full group hover:text-white hover:border-purple-400 hover:scale-110 hover:-rotate-1 hover:bg-purple-500/20">
                     <span className="flex items-center justify-center">
                       <Zap className="w-6 h-6 mr-3 group-hover:animate-pulse" />
                       WATCH MAGIC
