@@ -33,6 +33,13 @@ const AuthModal = ({ isOpen, onClose, defaultTab = "login" }) => {
   const [otp, setOtp] = useState("");
   const [userData, setUserData] = useState(null);
 
+  // FIXED: Update activeTab when defaultTab prop changes
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(defaultTab);
+    }
+  }, [defaultTab, isOpen]);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -413,6 +420,19 @@ const AuthModal = ({ isOpen, onClose, defaultTab = "login" }) => {
                     </svg>
                     Continue with Google
                   </button>
+
+                  <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        window.location.href = '/forgot-password';
+                      }}
+                      style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', textDecoration: 'underline', fontSize: '14px' }}
+                    >
+                      Forgot your password?
+                    </button>
+                  </div>
 
                   <div style={{ textAlign: 'center' }}>
                     <span style={{ color: '#6b7280' }}>Don't have an account? </span>

@@ -70,45 +70,53 @@ const BasicAnalyticsReports = ({
     subscriptionStatus
   } = profileProps || {};
 
+  // Local state for profile dropdown if profileProps doesn't provide it
+  const [localProfileOpen, setLocalProfileOpen] = useState(false);
+  
+  // Use local state if profileProps doesn't provide the state management
+  const profileOpen = profileProps?.isProfileOpen !== undefined ? isProfileOpen : localProfileOpen;
+  const setProfileOpen = profileProps?.setIsProfileOpen || setLocalProfileOpen;
+
   // Get user's subscription plan - match DashboardPage logic
   const userSubscriptionPlan = subscriptionStatus?.plan || user?.subscriptionPlan || userPlan || 'NONE';
 
-  // Get gym details from user object - match DashboardPage structure
-  const gymName = user?.gymName || user?.businessName || 'IRON THRONE';
-  const gymTagline = user?.tagline || 'Gym Management';
+  // Get gym details from user object - match DashboardPage structure exactly
+  const gymName = user?.gymDetails?.gymName || 'IRON THRONE';
+  const gymLogo = user?.gymDetails?.gymLogo;
+  const gymTagline = 'Gym Management';
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setIsProfileOpen(false);
+        setProfileOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setIsProfileOpen]);
+  }, [setProfileOpen]);
 
   // Debug logging
-  console.log('🔧 BasicAnalyticsReports received props:', {
-    membersData,
-    userPlan,
-    userSubscriptionPlan,
-    lastUpdated,
-    hasOnRefresh: !!onRefresh,
-    user,
-    gymName,
-    subscriptionStatus
-  });
+  // console.log('🔧 BasicAnalyticsReports received props:', {
+  //   membersData,
+  //   userPlan,
+  //   userSubscriptionPlan,
+  //   lastUpdated,
+  //   hasOnRefresh: !!onRefresh,
+  //   user,
+  //   gymName,
+  //   subscriptionStatus
+  // });
 
   // Process analytics data - same logic as before but with better error handling
   const analytics = useMemo(() => {
-    console.log('🔍 Processing membersData:', membersData);
+    // console.log('🔍 Processing membersData:', membersData);
     
     // Check if membersData contains subscription placeholder strings
     if (typeof membersData.totalMembers === 'string' && 
         membersData.totalMembers.includes('Available with subscription')) {
-      console.log('❌ Detected subscription placeholder data');
+      // console.log('❌ Detected subscription placeholder data');
       return {
         totalMembers: 0,
         activeMembers: 0,
@@ -130,7 +138,7 @@ const BasicAnalyticsReports = ({
     // Check if membersData is an analytics object from backend
     if (typeof membersData.totalMembers === 'number' || 
         (membersData.totalMembers !== undefined && !isNaN(Number(membersData.totalMembers)))) {
-      console.log('✅ Using analytics data directly from backend');
+      // console.log('✅ Using analytics data directly from backend');
       
       return {
         totalMembers: Number(membersData.totalMembers) || 0,
@@ -153,11 +161,11 @@ const BasicAnalyticsReports = ({
     }
 
     // Fallback: Calculate from member array (legacy support)
-    console.log('📊 Calculating analytics from member array');
+    // console.log('📊 Calculating analytics from member array');
     const memberArray = Array.isArray(membersData) ? membersData : [];
     
     if (memberArray.length === 0) {
-      console.log('⚠️ No member data available');
+      // console.log('⚠️ No member data available');
       return {
         totalMembers: 0,
         activeMembers: 0,
@@ -539,17 +547,35 @@ const BasicAnalyticsReports = ({
         <div className="sticky top-0 z-40 border-b border-blue-100 shadow-lg bg-gradient-to-r from-white via-blue-50 to-white">
           <div className="px-6 py-4 mx-auto max-w-7xl">
             <div className="flex items-center justify-between">
-              {/* Logo with Plan Badge */}
+              {/* Logo with Plan Badge - FIXED VERSION */}
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg shadow-md bg-gradient-to-br from-blue-500 to-purple-600">
-                  <Crown className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 overflow-hidden transition-colors border-2 border-blue-200 rounded-full">
+                  {user?.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt={getOwnerDisplayName()}
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
+                    />
+                  ) : null}
+
+                  <div
+                    className={`w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium text-sm ${
+                      user?.profileImage ? "hidden" : "flex"
+                    }`}
+                  >
+                    <Crown className="w-6 h-6 text-white" />
+                  </div>
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">
-                    {gymName}
+                    {user?.gymDetails?.gymName || gymName}
                   </h1>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm text-gray-600">{gymTagline}</p>
+                    <p className="text-sm text-gray-600">Gym Management</p>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       userSubscriptionPlan === 'ENTERPRISE' ? 'bg-purple-100 text-purple-700' :
                       userSubscriptionPlan === 'ADVANCED' ? 'bg-orange-100 text-orange-700' :
@@ -586,7 +612,8 @@ const BasicAnalyticsReports = ({
                 <div className="relative" ref={profileRef}>
                   <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center gap-3 p-2 transition-all duration-200 rounded-lg hover:bg-blue-100 group"
+                    className="relative z-50 flex items-center gap-3 p-2 transition-all duration-200 rounded-lg cursor-pointer hover:bg-blue-100 group"
+                    style={{ pointerEvents: 'auto' }}
                   >
                     <div className="w-8 h-8 overflow-hidden transition-colors border-2 border-blue-200 rounded-full group-hover:border-blue-400">
                       {user?.profileImage ? (
@@ -750,17 +777,28 @@ const BasicAnalyticsReports = ({
       <div className="sticky top-0 z-40 border-b border-blue-100 shadow-lg bg-gradient-to-r from-white via-blue-50 to-white">
         <div className="px-6 py-4 mx-auto max-w-7xl">
           <div className="flex items-center justify-between">
-            {/* Logo with Plan Badge */}
+            {/* Logo with Plan Badge - EXACT SAME AS MEMBERLIST */}
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg shadow-md bg-gradient-to-br from-blue-500 to-purple-600">
-                <Crown className="w-6 h-6 text-white" />
+              <div className="rounded-lg">
+                {gymLogo ? (
+                  <img 
+                    src={gymLogo} 
+                    alt="Gym Logo" 
+                    className="object-cover w-10 h-10 rounded"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                ) : null}
+                <Crown className={`w-6 h-6 text-white ${gymLogo ? 'hidden' : ''}`} />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">
                   {gymName}
                 </h1>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm text-gray-600">{gymTagline}</p>
+                  <p className="text-sm text-gray-600">Gym Management</p>
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                     userSubscriptionPlan === 'ENTERPRISE' ? 'bg-purple-100 text-purple-700' :
                     userSubscriptionPlan === 'ADVANCED' ? 'bg-orange-100 text-orange-700' :
@@ -802,10 +840,13 @@ const BasicAnalyticsReports = ({
                 Add Member
               </button>
 
-              {/* Profile Dropdown - Full Version with all menu items */}
-              <div className="relative" ref={profileRef}>
+              {/* Profile Dropdown - FIXED Z-INDEX AND POSITIONING */}
+              <div className="relative z-50" ref={profileRef}>
                 <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  onClick={() => {
+                    console.log('Profile button clicked, current state:', profileOpen);
+                    setProfileOpen(!profileOpen);
+                  }}
                   className="flex items-center gap-3 p-2 transition-all duration-200 rounded-lg hover:bg-blue-100 group"
                 >
                   <div className="w-8 h-8 overflow-hidden transition-colors border-2 border-blue-200 rounded-full group-hover:border-blue-400">
@@ -819,10 +860,20 @@ const BasicAnalyticsReports = ({
                           e.target.nextSibling.style.display = "flex";
                         }}
                       />
+                    ) : gymLogo ? (
+                      <img
+                        src={gymLogo}
+                        alt="Gym Logo"
+                        className="object-cover w-full h-full"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "flex";
+                        }}
+                      />
                     ) : null}
                     <div
                       className={`w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium text-sm ${
-                        user?.profileImage ? "hidden" : "flex"
+                        user?.profileImage || gymLogo ? "hidden" : "flex"
                       }`}
                     >
                       {getOwnerInitials()}
@@ -830,12 +881,12 @@ const BasicAnalyticsReports = ({
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-gray-600 transition-transform ${
-                      isProfileOpen ? "rotate-180" : ""
+                      profileOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
 
-                {isProfileOpen && (
+                {profileOpen && (
                   <div className="absolute right-0 z-50 w-56 mt-2 overflow-hidden duration-200 bg-white border border-gray-200 rounded-lg shadow-xl top-full animate-in slide-in-from-top-2">
                     <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50">
                       <div className="flex items-center gap-3">
@@ -850,10 +901,20 @@ const BasicAnalyticsReports = ({
                                 e.target.nextSibling.style.display = "flex";
                               }}
                             />
+                          ) : gymLogo ? (
+                            <img
+                              src={gymLogo}
+                              alt="Gym Logo"
+                              className="object-cover w-full h-full"
+                              onError={(e) => {
+                                e.target.style.display = "none";
+                                e.target.nextSibling.style.display = "flex";
+                              }}
+                            />
                           ) : null}
                           <div
                             className={`w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium ${
-                              user?.profileImage ? "hidden" : "flex"
+                              user?.profileImage || gymLogo ? "hidden" : "flex"
                             }`}
                           >
                             {getOwnerInitials()}
@@ -863,8 +924,10 @@ const BasicAnalyticsReports = ({
                           <div className="font-medium text-gray-900">
                             {getOwnerDisplayName()}
                           </div>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            Owner
+                          <div className="text-sm text-gray-500 truncate">
+                            Owner of {gymName}
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
                             <span className={`px-1.5 py-0.5 text-xs font-medium rounded ${
                               userSubscriptionPlan === 'ENTERPRISE' ? 'bg-purple-100 text-purple-700' :
                               userSubscriptionPlan === 'ADVANCED' ? 'bg-orange-100 text-orange-700' :

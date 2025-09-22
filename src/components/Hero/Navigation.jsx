@@ -139,17 +139,17 @@ const Navigation = ({ onOpenAuthModal }) => {
     { name: "Contact", id: "contact" },
   ];
 
-  // Handle auth modal opening
+  // Handle auth modal opening - FIXED: Now passes correct tab
   const handleLoginClick = () => {
     if (onOpenAuthModal) {
-      onOpenAuthModal("login");
+      onOpenAuthModal("login"); // Pass "login" tab
     }
     setIsMobileMenuOpen(false);
   };
 
   const handleSignupClick = () => {
     if (onOpenAuthModal) {
-      onOpenAuthModal("signup");
+      onOpenAuthModal("signup"); // Pass "signup" tab
     }
     setIsMobileMenuOpen(false);
   };

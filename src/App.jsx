@@ -1,8 +1,5 @@
-
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Navigation from "./components/Hero/Navigation";
-import LoginPage from "./components/pages/LoginPage";
-import SignUpPage from "./components/pages/SignUpPage";
 import DashboardPage from "./components/pages/DashboardPage";
 import HeroMain from "./components/Hero/HeroMain";
 import Features from "./components/NavbarNavigation/Features";
@@ -25,13 +22,12 @@ import ContactUs from "./components/NavbarNavigation/ContactUs";
 // Payment related imports
 import PaymentPage from "./components/pages/PaymentPage";
 import PaymentSuccessPage from "./components/pages/PaymentSuccessPage";
-// Only import PaymentFailedPage if the file exists
-// If you get an error here, create the PaymentFailedPage.jsx file first
 import PaymentFailedPage from "./components/pages/PaymentFailedPage";
 
 import MySubscription from "./components/pages/MySubscription";
 import BasicAnalyticsReports from "./components/Member/BasicAnalyticsReports";
 import MyAnalyticsPage from "./components/pages/AnalyticsPage";
+
 const App = () => {
   const { user, loading, checkAuth, isInitialized } = useAuthStore();
   const location = useLocation();
@@ -91,7 +87,7 @@ const App = () => {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/contact" element={<ContactUs />} />
         
-        {/* Existing protected routes */}
+        {/* Protected routes */}
         <Route
           path="/edit-member/:phoneNumber"
           element={
@@ -190,19 +186,20 @@ const App = () => {
           }
         />
 
-
-        {/* Auth routes */}
-        <Route
-          path="/signup"
-          element={user ? <Navigate to="/dashboard" replace /> : <SignUpPage />}
-        />
+        {/* Keep these auth routes for direct URL access and password reset functionality */}
         <Route path="/verify-email" element={<VerifyEmailPage />} />
-        <Route
-          path="/login"
-          element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />}
-        />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+
+        {/* Redirect old auth routes to home - AuthModal will handle login/signup */}
+        <Route
+          path="/login"
+          element={<Navigate to="/" replace />}
+        />
+        <Route
+          path="/signup"
+          element={<Navigate to="/" replace />}
+        />
 
         {/* Fallback routes */}
         <Route path="/unauthorized" element={<div>Unauthorized Access</div>} />

@@ -1,5 +1,3 @@
-
-
 import { create } from "zustand";
 import { loginService, fetchCurrentUser, logoutService, forgotPasswordAPI, resetPasswordAPI } from "../components/services/authService";
 import { getSubscriptionStatus } from "../components/services/paymentService";
@@ -25,6 +23,12 @@ export const useAuthStore = create((set, get) => ({
   hasActiveSubscription: () => {
     const { subscription } = get();
     return subscription?.isActive && subscription?.plan !== "NONE";
+  },
+
+  // Helper method to check if user needs onboarding
+  needsOnboarding: () => {
+    const { user } = get();
+    return !user?.gymDetails?.isOnboardingComplete;
   },
 
   // Initialize method
@@ -124,7 +128,7 @@ export const useAuthStore = create((set, get) => ({
     return get().fetchSubscriptionStatus(true);
   },
 
-  // Login method
+  // Login method - UPDATED to ensure gym details are included
   login: async (email, password) => {
     set({ loading: true, error: null });
     try {
@@ -132,6 +136,16 @@ export const useAuthStore = create((set, get) => ({
       const user = data.user || null;
       
       if (user) {
+        // Ensure user object includes gym details structure
+        if (!user.gymDetails) {
+          user.gymDetails = {
+            gymName: null,
+            gymLogo: null,
+            isOnboardingComplete: false,
+            onboardingCompletedAt: null
+          };
+        }
+        
         const cookieOptions = {
           days: 7,
           secure: window.location.protocol === 'https:',
@@ -190,6 +204,16 @@ export const useAuthStore = create((set, get) => ({
 
   setUser: (user) => {
     if (user) {
+      // Ensure gym details are present
+      if (!user.gymDetails) {
+        user.gymDetails = {
+          gymName: null,
+          gymLogo: null,
+          isOnboardingComplete: false,
+          onboardingCompletedAt: null
+        };
+      }
+      
       const cookieOptions = {
         days: 7,
         secure: window.location.protocol === 'https:',
@@ -202,7 +226,7 @@ export const useAuthStore = create((set, get) => ({
     set({ user, isInitialized: true });
   },
 
-  // Check auth method
+  // Check auth method - UPDATED to ensure gym details
   checkAuth: async () => {
     const currentState = get();
     
@@ -227,6 +251,16 @@ export const useAuthStore = create((set, get) => ({
       const user = data.user || null;
       
       if (user) {
+        // Ensure gym details are present
+        if (!user.gymDetails) {
+          user.gymDetails = {
+            gymName: null,
+            gymLogo: null,
+            isOnboardingComplete: false,
+            onboardingCompletedAt: null
+          };
+        }
+        
         const cookieOptions = {
           days: 7,
           secure: window.location.protocol === 'https:',
@@ -272,31 +306,102 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Refresh user method
-  refreshUser: async () => {
-    if (!cookieUtils.exists(IS_AUTHENTICATED_COOKIE)) {
-      return;
-    }
+  // UPDATED: Refresh user method with gym details handling
+// In AuthStore
+// Enhanced refreshUser method in AuthStore with detailed debugging
+refreshUser: async () => {
+  console.log('🔄 Starting refreshUser...');
+  
+  if (!cookieUtils.exists(IS_AUTHENTICATED_COOKIE)) {
+    console.log('❌ No auth cookie found');
+    return;
+  }
 
-    try {
-      const data = await fetchCurrentUser();
-      const user = data.user || null;
+  try {
+    console.log('📡 Calling fetchCurrentUser API...');
+    const data = await fetchCurrentUser();
+    
+    console.log('✅ fetchCurrentUser response:', data);
+    
+    if (data.success && data.user) {
+      const user = data.user;
       
-      if (user) {
-        const cookieOptions = {
-          days: 7,
-          secure: window.location.protocol === 'https:',
-          sameSite: 'Lax'
+      console.log('👤 User data received:', {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        gymDetails: user.gymDetails
+      });
+      
+      // Ensure gym details structure
+      if (!user.gymDetails) {
+        console.log('⚠️ No gymDetails found, creating default structure');
+        user.gymDetails = {
+          gymName: null,
+          gymLogo: null,
+          isOnboardingComplete: false,
+          onboardingCompletedAt: null
         };
-        
-        cookieUtils.setJSON(AUTH_COOKIE_NAME, user, cookieOptions);
-        set({ user });
-        
-        get().refreshSubscription();
       }
-    } catch (error) {
-      console.log("Failed to refresh user data:", error);
+      
+      const cookieOptions = {
+        days: 7,
+        secure: window.location.protocol === 'https:',
+        sameSite: 'Lax'
+      };
+      
+      console.log('💾 Saving user to cookies...');
+      cookieUtils.setJSON(AUTH_COOKIE_NAME, user, cookieOptions);
+      
+      console.log('🔄 Updating AuthStore state...');
+      const currentState = get();
+      set({ 
+        user,
+        error: null
+      });
+      
+      // Verify the update worked
+      const newState = get();
+      console.log('✅ AuthStore updated:', {
+        oldGymName: currentState.user?.gymDetails?.gymName,
+        newGymName: newState.user?.gymDetails?.gymName,
+        isOnboardingComplete: newState.user?.gymDetails?.isOnboardingComplete
+      });
+      
+      // Also refresh subscription
+      get().refreshSubscription();
+      
+      return user;
+    } else {
+      console.log('❌ Invalid response from fetchCurrentUser:', data);
     }
+  } catch (error) {
+    console.error("❌ Failed to refresh user data:", error);
+  }
+},
+
+  // NEW: Method to update gym details after onboarding
+  updateGymDetails: (gymDetails) => {
+    const { user } = get();
+    if (!user) return;
+
+    const updatedUser = {
+      ...user,
+      gymDetails: {
+        ...user.gymDetails,
+        ...gymDetails
+      }
+    };
+
+    const cookieOptions = {
+      days: 7,
+      secure: window.location.protocol === 'https:',
+      sameSite: 'Lax'
+    };
+    
+    cookieUtils.setJSON(AUTH_COOKIE_NAME, updatedUser, cookieOptions);
+    set({ user: updatedUser });
+    
+    console.log('Gym details updated:', updatedUser.gymDetails);
   },
 
   clearAuth: () => {

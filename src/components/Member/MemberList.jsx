@@ -46,7 +46,7 @@ const MemberList = ({
   const navigate = useNavigate();
   const profileRef = useRef(null);
 
-  // Add missing state variables that are referenced in the code
+  // State variables
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('all');
   const [planFilter, setPlanFilter] = useState('all');
@@ -64,8 +64,10 @@ const MemberList = ({
     handleAddMember,
   } = profileProps;
 
-  // Get user's subscription plan
+  // Get user's subscription plan and gym details
   const userPlan = user?.subscriptionPlan || 'NONE';
+  const gymName = user?.gymDetails?.gymName || 'IRON THRONE';
+  const gymLogo = user?.gymDetails?.gymLogo;
 
   // Reset pagination when filters change
   useEffect(() => {
@@ -94,6 +96,8 @@ const MemberList = ({
     });
   };
 
+  
+
   const isDateToday = (dateString) => {
     if (!dateString) return false;
     const today = new Date().toISOString().split("T")[0];
@@ -112,31 +116,12 @@ const MemberList = ({
     )}&background=${bgColor}&color=fff&size=200&rounded=true&bold=true`;
   };
 
-  // Debug log for member data
-  useEffect(() => {
-    if (members && members.length > 0) {
-      console.log('=== MEMBERLIST DEBUG ===');
-      console.log('Total members:', members.length);
-      console.log('Sample member fields:', {
-        name: members[0].name,
-        paymentMethod: members[0].paymentMethod,
-        emergencyContact: members[0].emergencyContact,
-        photoUrl: members[0].photoUrl,
-        hasEmergencyContact: !!members[0].emergencyContact
-      });
-      console.log('All member emergency contacts:', 
-        members.map(m => ({ name: m.name, emergency: m.emergencyContact }))
-      );
-      console.log('=======================');
-    }
-  }, [members]);
-
   // Improved filter and sort members
   const filteredAndSortedMembers = useMemo(() => {
     if (!members || !Array.isArray(members)) return [];
 
     return members.filter((member) => {
-      // Search filter - improved
+      // Search filter
       const searchMatch = !searchTerm || 
         member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         member.phoneNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -155,7 +140,7 @@ const MemberList = ({
         }
       }
 
-      // Plan filter - fixed and improved
+      // Plan filter
       let planMatch = true;
       if (planFilter !== 'all') {
         const memberPlan = member.planDuration?.toLowerCase();
@@ -190,24 +175,41 @@ const MemberList = ({
     window.location.reload();
   };
 
+  // Add this debug code at the top of MemberList component
+console.log('MemberList render - user data:', {
+  user: user,
+  gymName: user?.gymDetails?.gymName,
+  gymLogo: user?.gymDetails?.gymLogo,
+  isOnboardingComplete: user?.gymDetails?.isOnboardingComplete
+});
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header with Gradient */}
+      {/* Header with Gradient - Shows Gym Details */}
       <div className="sticky top-0 z-40 border-b border-blue-100 shadow-lg bg-gradient-to-r from-white via-blue-50 to-white">
         <div className="px-6 py-4 mx-auto max-w-7xl">
           <div className="flex items-center justify-between">
-            {/* Logo with Plan Badge */}
+            {/* Logo with Plan Badge - Gym Logo and Name */}
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg shadow-md bg-gradient-to-br from-blue-500 to-purple-600">
-                <Crown className="w-6 h-6 text-white" />
+              <div className="rounded-lg ">
+                {gymLogo ? (
+                  <img 
+                    src={gymLogo} 
+                    alt="Gym Logo" 
+                    className="object-cover w-10 h-10 rounded"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                ) : null}
+                <Crown className={`w-6 h-6 text-white ${gymLogo ? 'hidden' : ''}`} />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">
-                  IRON THRONE
+                  {gymName}
                 </h1>
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-gray-600">Gym Management</p>
-                  {/* Plan Badge */}
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                     userPlan === 'ENTERPRISE' ? 'bg-purple-100 text-purple-700' :
                     userPlan === 'ADVANCED' ? 'bg-orange-100 text-orange-700' :
@@ -258,32 +260,42 @@ const MemberList = ({
                 Add Member
               </button>
 
-              {/* Profile Dropdown */}
+              {/* Profile Dropdown - Shows Gym Name */}
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="flex items-center gap-3 p-2 transition-all duration-200 rounded-lg hover:bg-blue-100 group"
                 >
-                  <div className="w-8 h-8 overflow-hidden transition-colors border-2 border-blue-200 rounded-full group-hover:border-blue-400">
-                    {user?.profileImage ? (
-                      <img
-                        src={user.profileImage}
-                        alt={getOwnerDisplayName()}
-                        className="object-cover w-full h-full"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.nextSibling.style.display = "flex";
-                        }}
-                      />
-                    ) : null}
-                    <div
-                      className={`w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium text-sm ${
-                        user?.profileImage ? "hidden" : "flex"
-                      }`}
-                    >
-                      {getOwnerInitials()}
-                    </div>
-                  </div>
+               <div className="w-8 h-8 overflow-hidden transition-colors border-2 border-blue-200 rounded-full group-hover:border-blue-400">
+                {user?.profileImage ? (
+                  <img
+                    src={user.profileImage}
+                    alt={getOwnerDisplayName()}
+                    className="object-cover w-full h-full"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.nextSibling.style.display = "flex";
+                    }}
+                  />
+                ) : gymLogo ? (
+                  <img
+                    src={gymLogo}
+                    alt="Gym Logo"
+                    className="object-cover w-full h-full"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.nextSibling.style.display = "flex";
+                    }}
+                  />
+                ) : null}
+                <div
+                  className={`w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium text-sm ${
+                    user?.profileImage || gymLogo ? "hidden" : "flex"
+                  }`}
+                >
+                  {getOwnerInitials()}
+                </div>
+              </div>
                   <ChevronDown
                     className={`w-4 h-4 text-gray-600 transition-transform ${
                       isProfileOpen ? "rotate-180" : ""
@@ -295,7 +307,7 @@ const MemberList = ({
                   <div className="absolute right-0 z-50 w-56 mt-2 overflow-hidden duration-200 bg-white border border-gray-200 rounded-lg shadow-xl top-full animate-in slide-in-from-top-2">
                     <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 overflow-hidden border-2 border-blue-200 rounded-full">
+                      <div className="w-10 h-10 overflow-hidden border-2 border-blue-200 rounded-full">
                           {user?.profileImage ? (
                             <img
                               src={user.profileImage}
@@ -306,10 +318,20 @@ const MemberList = ({
                                 e.target.nextSibling.style.display = "flex";
                               }}
                             />
+                          ) : gymLogo ? (
+                            <img
+                              src={gymLogo}
+                              alt="Gym Logo"
+                              className="object-cover w-full h-full"
+                              onError={(e) => {
+                                e.target.style.display = "none";
+                                e.target.nextSibling.style.display = "flex";
+                              }}
+                            />
                           ) : null}
                           <div
                             className={`w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium ${
-                              user?.profileImage ? "hidden" : "flex"
+                              user?.profileImage || gymLogo ? "hidden" : "flex"
                             }`}
                           >
                             {getOwnerInitials()}
@@ -319,8 +341,10 @@ const MemberList = ({
                           <div className="font-medium text-gray-900">
                             {getOwnerDisplayName()}
                           </div>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            Owner
+                          <div className="text-sm text-gray-500 truncate">
+                            Owner of {gymName}
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
                             <span className={`px-1.5 py-0.5 text-xs font-medium rounded ${
                               userPlan === 'ENTERPRISE' ? 'bg-purple-100 text-purple-700' :
                               userPlan === 'ADVANCED' ? 'bg-orange-100 text-orange-700' :
@@ -343,7 +367,6 @@ const MemberList = ({
                         My Profile
                       </Link>
                       
-                      {/* Conditionally show Due Members based on plan */}
                       {hasFeatureAccess(userPlan, 'dueMembers') && (
                         <Link
                           to="/due-members"
@@ -364,12 +387,12 @@ const MemberList = ({
                       
                       <Link
                         to="/my-analytics"
-                        // state={{ profileProps: profileProps }}
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 transition-colors hover:bg-blue-50"
                       >
-                        <Crown className="w-4 h-4" />
-                        My Analytic Reports
+                        <Shield className="w-4 h-4" />
+                        My Analytics
                       </Link>
+                      
                       <button
                         onClick={() => navigate("/contact")}
                         className="flex items-center w-full gap-3 px-4 py-2 text-gray-700 transition-colors hover:bg-blue-50"
@@ -377,7 +400,9 @@ const MemberList = ({
                         <Mail className="w-4 h-4" />
                         Contact Us
                       </button>
+                      
                       <div className="my-2 border-t border-gray-100"></div>
+                      
                       <button
                         onClick={handleLogout}
                         className="flex items-center w-full gap-3 px-4 py-2 text-red-600 transition-colors hover:bg-red-50"
@@ -394,7 +419,7 @@ const MemberList = ({
         </div>
       </div>
 
-      {/* Stats Cards with Gradients */}
+      {/* Stats Cards */}
       <div className="px-6 py-6 mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
           <div className="p-6 transition-all duration-300 border border-blue-100 rounded-lg shadow-md bg-gradient-to-br from-white to-blue-50 hover:shadow-lg hover:scale-105">
@@ -449,9 +474,8 @@ const MemberList = ({
               </p>
             </div>
             
-            {/* Enhanced Filter Controls - Show status filter only for Advanced/Enterprise */}
+            {/* Filter Controls */}
             <div className="flex flex-wrap items-center gap-3">
-              {/* Status Filter - Only show if user has access */}
               {hasFeatureAccess(userPlan, 'statusFiltering') ? (
                 <select
                   value={statusFilter}
@@ -502,14 +526,13 @@ const MemberList = ({
             </div>
           </div>
         </div>
-
         {/* Members Cards Grid */}
         {!members || members.length === 0 ? (
           <div className="p-8 text-center border border-blue-100 rounded-lg shadow-md bg-gradient-to-br from-white to-blue-50">
             <Users className="w-16 h-16 mx-auto mb-4 text-blue-300" />
             <h3 className="mb-2 text-lg font-medium text-gray-900">No Members Found</h3>
             <p className="mb-4 text-gray-500">
-              Get started by adding your first member.
+              Get started by adding your first member to {gymName}.
             </p>
             <button
               onClick={handleAddMember}
@@ -543,9 +566,6 @@ const MemberList = ({
                 const isDueToday = isDateToday(member.nextDueDate);
                 const isPending = member.paymentStatus?.toLowerCase() === "pending";
                 const isOverdue = member.paymentStatus?.toLowerCase() === "overdue" || member.paymentStatus?.toLowerCase() === "expired";
-                
-                // Debug log for each member
-                console.log(`Member ${member.name} emergency contact:`, member.emergencyContact);
                 
                 return (
                   <div
@@ -681,13 +701,11 @@ const MemberList = ({
                   <div className="flex items-center gap-1">
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
                       .filter(page => {
-                        // Show first, last, current, and pages around current
                         return page === 1 || 
                                page === totalPages || 
                                Math.abs(page - currentPage) <= 1;
                       })
                       .map((page, index, array) => {
-                        // Add ellipsis if there's a gap
                         const showEllipsis = index > 0 && page - array[index - 1] > 1;
                         
                         return (
