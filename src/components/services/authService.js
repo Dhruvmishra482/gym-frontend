@@ -1,5 +1,3 @@
-
-
 import axiosInstance from "../../axiosConfig";
 
 export const signUpService = async (userData) => {
@@ -61,12 +59,31 @@ export const loginService = async (email, password) => {
   }
 }
 
+// FIXED: fetchCurrentUser to properly extract user data
 export const fetchCurrentUser = async () => {
   try {
-    const res = await axiosInstance.get("/auth/me",{ withCredentials: true });
-    return res.data; // { user }
+    console.log('🔍 Fetching current user profile...');
+    const res = await axiosInstance.get("/owner/profile");
+    
+    console.log('✅ Profile API response:', {
+      success: res.data.success,
+      hasData: !!res.data.data,
+      gymName: res.data.data?.gymDetails?.gymName,
+      isOnboardingComplete: res.data.data?.gymDetails?.isOnboardingComplete
+    });
+    
+    if (res.data.success && res.data.data) {
+      // Return the structure expected by AuthStore
+      return {
+        success: true,
+        user: res.data.data // Extract the actual user data
+      };
+    } else {
+      throw new Error(res.data.message || 'Failed to fetch user profile');
+    }
   } catch (err) {
-    throw null;
+    console.error('❌ fetchCurrentUser error:', err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || "Failed to fetch current user");
   }
 };
 
@@ -78,9 +95,6 @@ export const logoutService = async () => {
     throw err.response?.data?.message || "Logout failed!";
   }
 };
-
-
-
 
 // Forgot Password API
 export const forgotPasswordAPI = async (email) => {

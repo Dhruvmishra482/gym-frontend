@@ -1,16 +1,38 @@
+// src/components/Hero/Navigation.jsx
 import React, { useState, useEffect } from "react";
-import { Rocket, Menu, X } from "lucide-react";
+import { Rocket, Menu, X, User, LogIn } from "lucide-react";
+import imagelogo from "../Images/Untitled_design-removebg-preview.png"
 
-const Navigation = () => {
+const Navigation = ({ onOpenAuthModal }) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [isMainPage, setIsMainPage] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isAuthPage, setIsAuthPage] = useState(false);
+
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    if (currentPath === "/login" || currentPath === "/signup") {
+      setIsAuthPage(true);
+    } else {
+      setIsAuthPage(false);
+    }
+  }, [window.location.pathname]);
 
   useEffect(() => {
     const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  // Enhanced scroll detection for header background
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Check if we're on the main page or a separate page
@@ -58,7 +80,7 @@ const Navigation = () => {
         },
       ];
 
-      const scrollPosition = window.scrollY + 200; // Offset for better UX
+      const scrollPosition = window.scrollY + 100; // Offset for better UX
 
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = sections[i];
@@ -88,7 +110,7 @@ const Navigation = () => {
 
     const element = document.querySelector(`[data-section="${sectionId}"]`);
     if (element) {
-      const headerHeight = 120; // Account for fixed header height
+      const headerHeight = 56; // Account for fixed header height
       const elementPosition = element.offsetTop - headerHeight;
 
       // Smooth scroll with enhanced easing
@@ -117,154 +139,156 @@ const Navigation = () => {
     { name: "Contact", id: "contact" },
   ];
 
+  // Handle auth modal opening - FIXED: Now passes correct tab
+  const handleLoginClick = () => {
+    if (onOpenAuthModal) {
+      onOpenAuthModal("login"); // Pass "login" tab
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleSignupClick = () => {
+    if (onOpenAuthModal) {
+      onOpenAuthModal("signup"); // Pass "signup" tab
+    }
+    setIsMobileMenuOpen(false);
+  };
+
   return (
-    <header className="fixed top-[-30px] left-0 right-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-orange-500/30 h-20 lg:h-24 xl:h-28">
+   <header 
+  className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-16
+    ${isAuthPage 
+      ? "bg-black" 
+      : isScrolled 
+        ? "bg-black/20 backdrop-blur-md border-b border-white/10" 
+        : "bg-black/10 backdrop-blur-sm"
+    }`}
+>
+
       <div
-        className="absolute inset-0 opacity-20 pointer-events-none"
+        className="absolute inset-0 pointer-events-none opacity-5"
         style={{
-          background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,165,0,0.15) 0%, transparent 50%)`,
+          background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,165,0,0.08) 0%, transparent 50%)`,
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-        <div className="flex justify-between items-center py-3 min-h-[70px]">
-          {/* Logo Section */}
+      <div className="px-4 pt-2 mx-auto max-w-7xl lg:px-6">
+        <div className="flex items-center justify-between h-14">
+          {/* Logo Section - Minimal */}
           <button
             onClick={() =>
               isMainPage
                 ? scrollToSection("home")
                 : (window.location.href = "/home")
             }
-            className="flex items-center space-x-2 lg:space-x-4 group relative"
+            className="flex items-center space-x-2 group"
           >
-            <div className="relative flex items-center">
-              <img
-                src="src\Images\WhatsApp_Image_2025-08-28_at_1.26.04_AM-removebg-preview (1).png"
-                alt="logo"
-                className="w-20 sm:w-24 lg:w-28 xl:w-32 pt-1 object-contain transform group-hover:rotate-12 transition-transform duration-300 shadow-lg rounded-lg"
-              />
-              <div className="absolute inset-0 blur-lg opacity-30 group-hover:opacity-50 transition-opacity bg-blue-500/20 rounded-lg" />
-            </div>
-            <span className="text-lg sm:text-xl lg:text-2xl font-black bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 bg-clip-text text-transparent group-hover:animate-pulse transition-all duration-300 hidden sm:block absolute left-20 sm:left-24 lg:left-28 xl:left-32 top-14">
+             <img src={imagelogo} alt="FitTracker Logo" className="w-auto h-20"/>
+            
+            <span className="hidden text-xl font-bold text-white sm:block">
               FitTracker
             </span>
           </button>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-6 lg:space-x-8">
+          {/* Desktop Navigation - Clean */}
+          <nav className="items-center hidden space-x-8 md:flex">
             {navItems.map((item) => (
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.id)}
-                className={`text-lg font-semibold transition-all duration-300 hover:scale-110 relative group ${
+                className={`text-xl font-medium transition-colors duration-200 ${
                   isActive(item.name)
-                    ? "text-yellow-400"
-                    : "text-slate-300 hover:text-orange-400"
+                    ? "text-white"
+                    : "text-gray-300 hover:text-white"
                 }`}
               >
                 {item.name}
-                <div
-                  className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-orange-400 to-yellow-400 transition-all duration-300 ${
-                    isActive(item.name) ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-                ></div>
               </button>
             ))}
           </nav>
 
-          {/* Desktop SignUp Button */}
-          <a
-            href="/signup"
-            className="hidden md:block relative group inline-block pb-2"
-          >
-            <span className="relative z-10 flex items-center bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-400 hover:to-yellow-400 text-white px-4 lg:px-6 py-2 lg:py-2.5 rounded-full text-base lg:text-lg font-bold transition-all duration-300 transform hover:scale-105 hover:rotate-1 shadow-lg">
-              <Rocket className="w-4 h-4 lg:w-5 lg:h-5 mr-2 group-hover:animate-bounce" />
-              SignUp
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-full blur-lg opacity-40 group-hover:opacity-60 transition-opacity pointer-events-none" />
-          </a>
+          {/* Desktop Auth Buttons - Minimal */}
+          <div className="items-center hidden space-x-3 md:flex">
+            <button
+              onClick={handleLoginClick}
+              className="text-xl font-medium text-gray-300 hover:text-white transition-colors duration-200 px-3 py-1.5"
+            >
+              Login
+            </button>
+            
+            <button
+              onClick={handleSignupClick}
+              className="bg-white/90 backdrop-blur-sm text-black text-xl font-medium px-4 py-1.5 rounded-full hover:bg-white transition-all duration-200"
+            >
+              Sign up
+            </button>
+          </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - Minimal */}
           <button
             onClick={toggleMobileMenu}
-            className="md:hidden relative z-50 p-2 text-slate-300 hover:text-orange-400 transition-colors duration-300"
+            className="p-2 text-gray-300 transition-colors duration-200 md:hidden hover:text-white"
           >
             {isMobileMenuOpen ? (
-              <X className="w-5 h-5 sm:w-6 sm:h-6" />
+              <X className="w-5 h-5" />
             ) : (
-              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+              <Menu className="w-5 h-5" />
             )}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - Clean */}
       <div
-        className={`md:hidden fixed inset-0 z-40 transition-opacity duration-300 ${
+        className={`md:hidden fixed inset-0 z-40 transition-opacity duration-200 ${
           isMobileMenuOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
       >
         <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/30"
           onClick={toggleMobileMenu}
         />
 
-        {/* Mobile Menu Panel */}
+        {/* Mobile Menu Panel - More transparent */}
         <div
-          className={`absolute top-20 lg:top-24 xl:top-28 right-0 w-72 sm:w-80 bg-black/95 backdrop-blur-2xl border-l border-orange-500/30 h-screen transform transition-transform duration-300 ${
+          className={`absolute top-14 right-0 w-64 bg-black/30 backdrop-blur-xl border-l border-white/20 h-screen transform transition-transform duration-200 ${
             isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="p-6 space-y-6">
+          <div className="p-4 space-y-4">
             {/* Mobile Navigation Links */}
-            <nav className="space-y-4">
+            <nav className="space-y-2">
               {navItems.map((item) => (
                 <button
                   key={item.name}
                   onClick={() => scrollToSection(item.id)}
-                  className={`block w-full text-left text-lg font-semibold transition-all duration-300 relative group py-2 border-b hover:border-orange-400/50 ${
+                  className={`block w-full text-left text-sm font-medium py-2 px-3 rounded transition-colors duration-200 ${
                     isActive(item.name)
-                      ? "text-yellow-400 border-yellow-400/50"
-                      : "text-slate-300 hover:text-orange-400 border-slate-700/50"
+                      ? "text-white bg-white/10"
+                      : "text-gray-300 hover:text-white hover:bg-white/5"
                   }`}
                 >
                   {item.name}
-                  <div
-                    className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-orange-400 to-yellow-400 transition-all duration-300 ${
-                      isActive(item.name) ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                  ></div>
                 </button>
               ))}
             </nav>
 
-            {/* Mobile Sign Up Button */}
-            <a
-              href="/signup"
-              onClick={toggleMobileMenu}
-              className="block relative group mt-8"
-            >
-              <span className="relative z-10 flex items-center justify-center bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-400 hover:to-yellow-400 text-white px-6 py-3 rounded-full text-lg font-bold transition-all duration-300 transform hover:scale-105 shadow-lg w-full">
-                <Rocket className="w-5 h-5 mr-2 group-hover:animate-bounce" />
-                Sign Up Now
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-full blur-lg opacity-40 group-hover:opacity-60 transition-opacity pointer-events-none" />
-            </a>
+            <div className="pt-4 space-y-2 border-t border-gray-700/50">
+              <button
+                onClick={handleLoginClick}
+                className="block w-full px-3 py-2 text-sm font-medium text-center text-gray-400 transition-colors duration-200 rounded hover:text-orange-300 hover:bg-gray-800/30"
+              >
+                Login
+              </button>
 
-            {/* Mobile Menu Decoration */}
-            <div className="mt-8 pt-6 border-t border-slate-700/50">
-              <div className="text-center">
-                <img
-                  src="src\Images\WhatsApp_Image_2025-08-28_at_1.26.04_AM-removebg-preview (1).png"
-                  alt="logo"
-                  className="w-12 h-8 mx-auto object-contain opacity-60"
-                />
-                <p className="text-slate-400 text-sm mt-2">
-                  Start your fitness journey
-                </p>
-              </div>
+              <button
+                onClick={handleSignupClick}
+                className="block w-full px-3 py-2 text-sm font-medium text-center text-white transition-colors duration-200 bg-orange-500 rounded hover:bg-orange-600"
+              >
+                Sign up
+              </button>
             </div>
           </div>
         </div>

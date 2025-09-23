@@ -154,13 +154,13 @@ export default function ContactUs() {
       content: (
         <div>
           <p className="mb-2">
-            <strong>General Inquiries:</strong> info@fitforge.com
+            <strong>General Inquiries:</strong> govind@fittracker.in
           </p>
           <p className="mb-2">
-            <strong>Technical Support:</strong> support@fitforge.com
+            <strong>Technical Support:</strong> dhruv@fittracker.in
           </p>
           <p>
-            <strong>Sales:</strong> sales@fitforge.com
+            <strong>Sales:</strong> sales@fittacker.com
           </p>
         </div>
       ),
@@ -171,10 +171,10 @@ export default function ContactUs() {
       content: (
         <div>
           <p className="mb-2">
-            <strong>Main Line:</strong> +1 (555) 123-4567
+            <strong>Main Line:</strong> +91 62390-38301
           </p>
           <p className="mb-2">
-            <strong>Support:</strong> +1 (555) 123-4568
+            <strong>Support:</strong> +91 94657-37989
           </p>
           <p className="text-sm text-purple-300">
             Available 24/7 for emergencies
@@ -188,10 +188,10 @@ export default function ContactUs() {
       content: (
         <div>
           <p className="mb-2">
-            <strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM PST
+            <strong>Monday - Friday:</strong> 10:00 AM - 11:00 
           </p>
           <p className="mb-2">
-            <strong>Saturday:</strong> 10:00 AM - 4:00 PM PST
+            <strong>Saturday:</strong> 08:00 AM - 11:00 PM 
           </p>
           <p className="mb-2">
             <strong>Sunday:</strong> Closed
@@ -204,67 +204,68 @@ export default function ContactUs() {
     },
   ];
 
-  const features = [
-    {
-      icon: <Users className="w-6 h-6" />,
-      title: "Dedicated Account Manager",
-      description: "Get personalized support from our expert team",
-      gradient: "from-orange-400 to-pink-400",
-    },
-    {
-      icon: <Shield className="w-6 h-6" />,
-      title: "Enterprise Security",
-      description: "Bank-level security for your gym's data",
-      gradient: "from-cyan-400 to-blue-400",
-    },
-    {
-      icon: <Headphones className="w-6 h-6" />,
-      title: "24/7 Technical Support",
-      description: "Round-the-clock assistance when you need it",
-      gradient: "from-purple-400 to-pink-400",
-    },
-  ];
+ const features = [
+  {
+    icon: <Users className="w-6 h-6" />,
+    title: "Dedicated Success Manager",
+    description: "Personalized guidance to ensure your gym’s growth",
+    gradient: "from-orange-400 to-pink-400",
+  },
+  {
+    icon: <Shield className="w-6 h-6" />,
+    title: "Enterprise-Grade Security",
+    description: "Bank-level protection to keep your member data safe",
+    gradient: "from-cyan-400 to-blue-400",
+  },
+  {
+    icon: <Headphones className="w-6 h-6" />,
+    title: "24/7 Priority Support",
+    description: "Instant help anytime via chat, call, or WhatsApp",
+    gradient: "from-purple-400 to-pink-400",
+  },
+];
+
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden py-10">
+    <div className="relative min-h-screen py-10 overflow-hidden bg-black">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-orange-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute rounded-full top-20 left-10 w-72 h-72 bg-gradient-to-br from-orange-500/20 to-pink-500/20 blur-3xl animate-pulse"></div>
+        <div className="absolute delay-1000 rounded-full top-40 right-20 w-96 h-96 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 blur-3xl animate-pulse"></div>
+        <div className="absolute rounded-full bottom-20 left-1/3 w-80 h-80 bg-gradient-to-br from-purple-500/20 to-pink-500/20 blur-3xl animate-pulse delay-2000"></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-16">
+      <div className="relative z-10 px-6 py-16 mx-auto max-w-7xl">
         {/* Hero Section */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-600/20 to-pink-600/20 backdrop-blur-sm border border-orange-500/30 rounded-full px-6 py-3 mb-8">
+        <div className="mb-16 text-center">
+          <div className="inline-flex items-center px-6 py-3 mb-8 space-x-2 border rounded-full bg-gradient-to-r from-orange-600/20 to-pink-600/20 backdrop-blur-sm border-orange-500/30">
             <Sparkles className="w-5 h-5 text-orange-400" />
-            <span className="text-orange-300 font-semibold">
+            <span className="font-semibold text-orange-300">
               Revolutionary Support
             </span>
             <Zap className="w-5 h-5 text-pink-400" />
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-black mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-orange-400 via-yellow-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="mb-6 text-6xl font-black leading-tight md:text-8xl">
+            <span className="text-transparent bg-gradient-to-r from-orange-400 via-yellow-400 to-pink-400 bg-clip-text">
               CONTACT
             </span>
             <br />
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text">
               US
             </span>
           </h1>
 
           <div className="max-w-4xl mx-auto mb-8">
-            <p className="text-xl text-gray-300 mb-4">
+            <p className="mb-4 text-xl text-gray-300">
               Experience the{" "}
-              <span className="bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent font-bold">
+              <span className="font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
                 next evolution
               </span>{" "}
               of gym management support with
             </p>
             <p className="text-2xl font-bold">
-              <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text">
                 AI-powered assistance
               </span>{" "}
               <span className="text-gray-300">that seems like magic</span>
@@ -275,16 +276,16 @@ export default function ContactUs() {
           {isInitialized && (
             <div className="mb-8">
               {isLoggedIn ? (
-                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 backdrop-blur-sm border border-green-500/30 rounded-full px-4 py-2">
+                <div className="inline-flex items-center px-4 py-2 space-x-2 border rounded-full bg-gradient-to-r from-green-600/20 to-emerald-600/20 backdrop-blur-sm border-green-500/30">
                   <User className="w-4 h-4 text-green-400" />
-                  <span className="text-green-300 text-sm">
+                  <span className="text-sm text-green-300">
                     Logged in as {user.firstName} {user.lastName}
                   </span>
                 </div>
               ) : (
-                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 backdrop-blur-sm border border-blue-500/30 rounded-full px-4 py-2">
+                <div className="inline-flex items-center px-4 py-2 space-x-2 border rounded-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 backdrop-blur-sm border-blue-500/30">
                   <Users className="w-4 h-4 text-blue-400" />
-                  <span className="text-blue-300 text-sm">
+                  <span className="text-sm text-blue-300">
                     Contact us - No account required
                   </span>
                 </div>
@@ -294,18 +295,18 @@ export default function ContactUs() {
         </div>
 
         {/* Contact Information Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16 max-w-6xl mx-auto">
+        <div className="grid max-w-6xl gap-8 mx-auto mb-16 md:grid-cols-3">
           {contactInfo.map((info, index) => (
-            <div key={index} className="group relative h-full">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-              <div className="relative bg-gray-900/50 backdrop-blur-xl rounded-2xl p-8 border border-gray-700/50 hover:border-orange-400/50 transition-all duration-300 transform hover:-translate-y-2 h-full flex flex-col">
-                <div className="text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text mb-6">
+            <div key={index} className="relative h-full group">
+              <div className="absolute inset-0 transition-all duration-300 bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-500/20 rounded-2xl blur-xl group-hover:blur-2xl"></div>
+              <div className="relative flex flex-col h-full p-8 transition-all duration-300 transform border bg-gray-900/50 backdrop-blur-xl rounded-2xl border-gray-700/50 hover:border-orange-400/50 hover:-translate-y-2">
+                <div className="mb-6 text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
                   {info.icon}
                 </div>
-                <h3 className="text-xl font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent mb-4">
+                <h3 className="mb-4 text-xl font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
                   {info.title}
                 </h3>
-                <div className="text-gray-300 text-sm flex-grow">
+                <div className="flex-grow text-sm text-gray-300">
                   {info.content}
                 </div>
               </div>
@@ -316,10 +317,10 @@ export default function ContactUs() {
         {/* Contact Form */}
         <div className="relative mb-16">
           <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-purple-500/10 to-cyan-500/10 rounded-3xl blur-2xl"></div>
-          <div className="relative bg-gray-900/40 backdrop-blur-xl rounded-3xl p-10 border border-gray-700/30">
-            <div className="text-center mb-10">
-              <h2 className="text-4xl font-black mb-4">
-                <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+          <div className="relative p-10 border bg-gray-900/40 backdrop-blur-xl rounded-3xl border-gray-700/30">
+            <div className="mb-10 text-center">
+              <h2 className="mb-4 text-4xl font-black">
+                <span className="text-transparent bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text">
                   Send Us a Message
                 </span>
               </h2>
@@ -327,9 +328,9 @@ export default function ContactUs() {
                 Let's discuss how we can revolutionize your gym management
               </p>
               {isLoggedIn && (
-                <div className="mt-4 inline-flex items-center space-x-2 bg-green-900/30 border border-green-500/30 rounded-lg px-4 py-2">
+                <div className="inline-flex items-center px-4 py-2 mt-4 space-x-2 border rounded-lg bg-green-900/30 border-green-500/30">
                   <CheckCircle className="w-4 h-4 text-green-400" />
-                  <span className="text-green-300 text-sm">
+                  <span className="text-sm text-green-300">
                     Form pre-filled with your account details
                   </span>
                 </div>
@@ -338,29 +339,29 @@ export default function ContactUs() {
 
             {/* Success/Error Messages */}
             {submitStatus === 'success' && (
-              <div className="mb-8 bg-green-900/30 border border-green-500/30 rounded-lg p-4 flex items-center space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+              <div className="flex items-center p-4 mb-8 space-x-3 border rounded-lg bg-green-900/30 border-green-500/30">
+                <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-400" />
                 <div>
-                  <p className="text-green-300 font-medium">Message sent successfully!</p>
-                  <p className="text-green-400 text-sm">We'll get back to you within 24 hours.</p>
+                  <p className="font-medium text-green-300">Message sent successfully!</p>
+                  <p className="text-sm text-green-400">We'll get back to you within 24 hours.</p>
                 </div>
               </div>
             )}
 
             {submitStatus === 'error' && (
-              <div className="mb-8 bg-red-900/30 border border-red-500/30 rounded-lg p-4 flex items-center space-x-3">
-                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+              <div className="flex items-center p-4 mb-8 space-x-3 border rounded-lg bg-red-900/30 border-red-500/30">
+                <AlertCircle className="flex-shrink-0 w-5 h-5 text-red-400" />
                 <div>
-                  <p className="text-red-300 font-medium">Failed to send message</p>
-                  <p className="text-red-400 text-sm">{errors.submit || "Please try again later."}</p>
+                  <p className="font-medium text-red-300">Failed to send message</p>
+                  <p className="text-sm text-red-400">{errors.submit || "Please try again later."}</p>
                 </div>
               </div>
             )}
 
             <form onSubmit={handleSubmit}>
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="grid gap-8 md:grid-cols-2">
                 <div className="space-y-3">
-                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                  <label className="block text-sm font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
                     Full Name *
                   </label>
                   <input
@@ -375,7 +376,7 @@ export default function ContactUs() {
                     disabled={isSubmitting}
                   />
                   {errors.name && (
-                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                    <p className="flex items-center space-x-1 text-sm text-red-400">
                       <AlertCircle className="w-3 h-3" />
                       <span>{errors.name}</span>
                     </p>
@@ -383,7 +384,7 @@ export default function ContactUs() {
                 </div>
 
                 <div className="space-y-3">
-                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                  <label className="block text-sm font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
                     Email Address *
                   </label>
                   <input
@@ -398,7 +399,7 @@ export default function ContactUs() {
                     disabled={isSubmitting}
                   />
                   {errors.email && (
-                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                    <p className="flex items-center space-x-1 text-sm text-red-400">
                       <AlertCircle className="w-3 h-3" />
                       <span>{errors.email}</span>
                     </p>
@@ -406,7 +407,7 @@ export default function ContactUs() {
                 </div>
 
                 <div className="space-y-3">
-                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                  <label className="block text-sm font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
                     Phone Number
                   </label>
                   <input
@@ -421,7 +422,7 @@ export default function ContactUs() {
                     disabled={isSubmitting}
                   />
                   {errors.phone && (
-                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                    <p className="flex items-center space-x-1 text-sm text-red-400">
                       <AlertCircle className="w-3 h-3" />
                       <span>{errors.phone}</span>
                     </p>
@@ -429,14 +430,14 @@ export default function ContactUs() {
                 </div>
 
                 <div className="space-y-3">
-                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                  <label className="block text-sm font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
                     Inquiry Type
                   </label>
                   <select
                     name="inquiry"
                     value={formData.inquiry}
                     onChange={handleInputChange}
-                    className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
+                    className="w-full px-6 py-4 text-white transition-all border bg-gray-800/50 backdrop-blur-sm border-gray-600/50 rounded-xl focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30"
                     disabled={isSubmitting}
                   >
                     <option value="general" className="bg-gray-800">
@@ -459,8 +460,8 @@ export default function ContactUs() {
 
                 {/* Gym Details Section */}
                 <div className="space-y-3">
-                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                    <Building2 className="w-4 h-4 inline mr-1" />
+                  <label className="block text-sm font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
+                    <Building2 className="inline w-4 h-4 mr-1" />
                     Gym/Business Name
                   </label>
                   <input
@@ -468,15 +469,15 @@ export default function ContactUs() {
                     name="gymName"
                     value={formData.gymName}
                     onChange={handleInputChange}
-                    className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
+                    className="w-full px-6 py-4 text-white placeholder-gray-500 transition-all border bg-gray-800/50 backdrop-blur-sm border-gray-600/50 rounded-xl focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30"
                     placeholder="Your gym or business name"
                     disabled={isSubmitting}
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                    <User className="w-4 h-4 inline mr-1" />
+                  <label className="block text-sm font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
+                    <User className="inline w-4 h-4 mr-1" />
                     Owner/Manager Name
                   </label>
                   <input
@@ -484,14 +485,14 @@ export default function ContactUs() {
                     name="ownerName"
                     value={formData.ownerName}
                     onChange={handleInputChange}
-                    className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all"
+                    className="w-full px-6 py-4 text-white placeholder-gray-500 transition-all border bg-gray-800/50 backdrop-blur-sm border-gray-600/50 rounded-xl focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30"
                     placeholder="Owner or manager name"
                     disabled={isSubmitting}
                   />
                 </div>
 
-                <div className="md:col-span-2 space-y-3">
-                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                <div className="space-y-3 md:col-span-2">
+                  <label className="block text-sm font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
                     Subject *
                   </label>
                   <input
@@ -506,15 +507,15 @@ export default function ContactUs() {
                     disabled={isSubmitting}
                   />
                   {errors.subject && (
-                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                    <p className="flex items-center space-x-1 text-sm text-red-400">
                       <AlertCircle className="w-3 h-3" />
                       <span>{errors.subject}</span>
                     </p>
                   )}
                 </div>
 
-                <div className="md:col-span-2 space-y-3">
-                  <label className="block text-sm font-bold bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                <div className="space-y-3 md:col-span-2">
+                  <label className="block text-sm font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text">
                     Message *
                   </label>
                   <textarea
@@ -529,20 +530,20 @@ export default function ContactUs() {
                     disabled={isSubmitting}
                   />
                   {errors.message && (
-                    <p className="text-red-400 text-sm flex items-center space-x-1">
+                    <p className="flex items-center space-x-1 text-sm text-red-400">
                       <AlertCircle className="w-3 h-3" />
                       <span>{errors.message}</span>
                     </p>
                   )}
                 </div>
 
-                <div className="md:col-span-2 text-center">
+                <div className="text-center md:col-span-2">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative px-12 py-4 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white rounded-full font-bold text-lg transition-all transform hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="relative px-12 py-4 text-lg font-bold text-white transition-all transform rounded-full group bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-600 via-pink-600 to-purple-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
+                    <div className="absolute inset-0 transition-opacity rounded-full opacity-0 bg-gradient-to-r from-orange-600 via-pink-600 to-purple-600 group-hover:opacity-100 blur-xl"></div>
                     <div className="relative flex items-center justify-center space-x-3">
                       {isSubmitting ? (
                         <>
@@ -564,22 +565,22 @@ export default function ContactUs() {
         </div>
 
         {/* Features Section */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-black mb-8">
+        <div className="mb-16 text-center">
+          <h2 className="mb-8 text-4xl font-black">
             <span className="text-gray-300">Why Choose</span>
             <br />
-            <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="text-transparent bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text">
               FitForge Support?
             </span>
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-8 mt-12">
+          <div className="grid gap-8 mt-12 md:grid-cols-3">
             {features.map((feature, index) => (
-              <div key={index} className="group relative">
+              <div key={index} className="relative group">
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-20 rounded-2xl blur-xl group-hover:opacity-30 transition-all duration-300`}
                 ></div>
-                <div className="relative bg-gray-900/50 backdrop-blur-xl rounded-2xl p-8 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 transform hover:-translate-y-2">
+                <div className="relative p-8 transition-all duration-300 transform border bg-gray-900/50 backdrop-blur-xl rounded-2xl border-gray-700/50 hover:border-gray-600/50 hover:-translate-y-2">
                   <div
                     className={`text-transparent bg-gradient-to-r ${feature.gradient} bg-clip-text mb-6 flex justify-center`}
                   >
@@ -590,7 +591,7 @@ export default function ContactUs() {
                   >
                     {feature.title}
                   </h3>
-                  <p className="text-gray-300 text-sm leading-relaxed">
+                  <p className="text-sm leading-relaxed text-gray-300">
                     {feature.description}
                   </p>
                 </div>
@@ -603,24 +604,24 @@ export default function ContactUs() {
         {showCTA && (
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-purple-500/20 to-cyan-500/20 rounded-3xl blur-2xl"></div>
-            <div className="relative bg-gray-900/40 backdrop-blur-xl rounded-3xl p-12 border border-gray-700/30 text-center">
-              <h3 className="text-3xl font-black mb-6">
-                <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+            <div className="relative p-12 text-center border bg-gray-900/40 backdrop-blur-xl rounded-3xl border-gray-700/30">
+              <h3 className="mb-6 text-3xl font-black">
+                <span className="text-transparent bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text">
                   Ready to Get Started?
                 </span>
               </h3>
-              <p className="text-gray-300 text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
+              <p className="max-w-3xl mx-auto mb-8 text-lg leading-relaxed text-gray-300">
                 Join thousands of gyms worldwide who trust FitForge to manage
                 their operations efficiently. Schedule a personalized demo today
                 and see the difference.
               </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <button className="group relative px-10 py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-full font-bold text-lg transition-all transform hover:scale-105">
-                  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-pink-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
+              <div className="flex flex-col justify-center gap-6 sm:flex-row">
+                <button className="relative px-10 py-4 text-lg font-bold text-white transition-all transform rounded-full group bg-gradient-to-r from-orange-500 to-pink-500 hover:scale-105">
+                  <div className="absolute inset-0 transition-opacity rounded-full opacity-0 bg-gradient-to-r from-orange-600 to-pink-600 group-hover:opacity-100 blur-xl"></div>
                   <span className="relative">Schedule Demo</span>
                 </button>
 
-                <button className="group relative px-10 py-4 bg-transparent border-2 border-gray-600 text-gray-300 rounded-full font-bold text-lg hover:border-purple-400 hover:text-purple-300 transition-all">
+                <button className="relative px-10 py-4 text-lg font-bold text-gray-300 transition-all bg-transparent border-2 border-gray-600 rounded-full group hover:border-purple-400 hover:text-purple-300">
                   <span className="relative">View Pricing</span>
                 </button>
               </div>
