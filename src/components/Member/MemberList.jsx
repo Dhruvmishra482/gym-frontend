@@ -32,13 +32,13 @@ const MemberList = ({
   stats,
   searchTerm,
   setSearchTerm,
-  mousePosition,
+ 
   selectedMember,
   setSelectedMember,
   isModalOpen,
   setIsModalOpen,
-  profileProps,
-  isSearching = false,
+  profileProps
+  = false,
 }) => {
   const navigate = useNavigate();
   const profileRef = useRef(null);
@@ -57,7 +57,7 @@ const MemberList = ({
     getOwnerDisplayName,
     getOwnerInitials,
     handleLogout,
-    handleProfileClick,
+    // handleProfileClick,
   } = profileProps;
 
   // Reset pagination when filters change
@@ -293,6 +293,13 @@ const MemberList = ({
                       >
                         <User className="w-4 h-4" />
                          My Subscription
+                      </Link>
+                       <Link
+                        to="/crowd-dashboard"
+                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors"
+                      >
+                        <User className="w-4 h-4" />
+                         Crowd dashboard
                       </Link>
                       <button
                         onClick={() => navigate("/contact")}

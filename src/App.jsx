@@ -173,6 +173,8 @@ import PaymentSuccessPage from "./components/pages/PaymentSuccessPage";
 import PaymentFailedPage from "./components/pages/PaymentFailedPage";
 
 import MySubscription from "./components/pages/MySubscription";
+import CrowdManagementPage from "./components/pages/CrowdManagementPage";
+import SlotBookingPage from "./components/pages/SlotBookingPage";
 const App = () => {
   const { user, loading, checkAuth, isInitialized } = useAuthStore();
   const location = useLocation();
@@ -208,7 +210,9 @@ const App = () => {
     "/payment",
     "/payment/success",
     "/payment/failed",
-    "/my-subscription"
+    "/my-subscription",
+     "/crowd-dashboard",
+      "/book-slot" 
 
   ];
   
@@ -231,6 +235,7 @@ const App = () => {
         <Route path="/features" element={<Features />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path="/book-slot" element={<SlotBookingPage />} />
         
         {/* Existing protected routes */}
         <Route
@@ -241,6 +246,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/crowd-dashboard"
+  element={
+    <ProtectedRoute allowedRoles={["owner"]}>
+      <CrowdManagementPage />
+    </ProtectedRoute>
+  }
+/>
 
         <Route
           path="/search-member"
